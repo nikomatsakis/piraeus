@@ -1,16 +1,88 @@
 {
   "requirement": "The application MUST delegate interpretation of SSH configuration settings to OpenSSH commands: `ssh` when connecting and `ssh -G <host>` when it needs the effective configuration for a supplied host name. Apart from discovering names in `Host` declarations, it MUST NOT use the parsed configuration to determine connection settings.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Use OpenSSH to establish connections and resolve effective host settings.",
+  "determination": true,
+  "rationale": "Checked that ssh2-config is used only for alias collection and that the SSH command passes the selected alias to OpenSSH without interpreting configuration values. The command test passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/hosts.rs",
+      "line_start": 7,
+      "line_end": 11,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
+        "pub fn discover_hosts() -> Result<Vec<String>, String> {",
+        "    let config = SshConfig::parse_default_file(ParseRule::ALLOW_UNSUPPORTED_FIELDS)",
+        "        .map_err(|error| format!(\"Could not read ~/.ssh/config: {error}\"))?;",
+        "    Ok(literal_hosts(&config))",
         "}"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 18,
+      "line_end": 18,
+      "text": [
+        "    // {impl}`requirements.forwarding.ssh_config`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 80,
+      "line_end": 101,
+      "text": [
+        "fn ssh_command(spec: &ForwardSpec) -> Command {",
+        "    let mut command = Command::new(\"ssh\");",
+        "    command",
+        "        .args([",
+        "            \"-N\",",
+        "            \"-T\",",
+        "            \"-o\",",
+        "            \"BatchMode=yes\",",
+        "            \"-o\",",
+        "            \"ExitOnForwardFailure=yes\",",
+        "            \"-o\",",
+        "            \"ConnectTimeout=10\",",
+        "            \"-L\",",
+        "        ])",
+        "        .arg(format!(",
+        "            \"127.0.0.1:{}:localhost:{}\",",
+        "            spec.local_port, spec.remote_port",
+        "        ))",
+        "        .arg(\"--\")",
+        "        .arg(&spec.host);",
+        "    command",
+        "}"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 197,
+      "line_end": 197,
+      "text": [
+        "    // {test}`requirements.forwarding.ssh_config`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 199,
+      "line_end": 216,
+      "text": [
+        "    fn ssh_receives_alias_and_forward_as_arguments() {",
+        "        let command = ssh_command(&ForwardSpec {",
+        "            host: \"chronos\".into(),",
+        "            remote_port: 8030,",
+        "            local_port: 8031,",
+        "        });",
+        "        let args: Vec<_> = command",
+        "            .get_args()",
+        "            .map(|arg| arg.to_string_lossy())",
+        "            .collect();",
+        "        assert!(args.iter().any(|arg| arg == \"ExitOnForwardFailure=yes\"));",
+        "        assert!(",
+        "            args.iter()",
+        "                .any(|arg| arg == \"127.0.0.1:8031:localhost:8030\")",
+        "        );",
+        "        assert_eq!(args[args.len() - 2], \"--\");",
+        "        assert_eq!(args[args.len() - 1], \"chronos\");",
+        "    }"
       ]
     }
   ]

@@ -1,16 +1,91 @@
 {
   "requirement": "Pressing `b` MUST open `http://localhost:P` in the system's default browser, where `P` is the actual local port of the selected port forward.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Make b open the selected local port in the default browser.",
+  "determination": true,
+  "rationale": "Checked b dispatch and the platform default-browser opener using http://localhost at the selected actual local port. The port and opener-failure test passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 300,
+      "line_end": 300,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
-        "}"
+        "            // {impl}`requirements.browser.open`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 555,
+      "line_end": 562,
+      "text": [
+        "    fn open_selected(&mut self) {",
+        "        let Some(index) = self.selected else { return };",
+        "        let port = self.forwards[index].spec.local_port;",
+        "        if let Err(error) = self.backend.open_browser(port) {",
+        "            self.forwards[index].error = Some(format!(\"Could not open browser: {error}\"));",
+        "            self.forwards[index].phase = Phase::Error;",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 924,
+      "line_end": 924,
+      "text": [
+        "    // {test}`requirements.browser.open`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 927,
+      "line_end": 944,
+      "text": [
+        "    fn browser_uses_actual_local_port_and_exposes_failures() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8030\", Choice::Manual, \"8031\", 0);",
+        "        app.on_key(key(KeyCode::Char('b')));",
+        "        assert_eq!(state.borrow().browser_ports, [8031]);",
+        "        state.borrow_mut().browser_error = Some(\"no opener\".into());",
+        "        app.on_key(key(KeyCode::Char('b')));",
+        "        assert!(app.forwards[0].is_error());",
+        "        app.on_key(key(KeyCode::Char('i')));",
+        "        assert!(app.show_info);",
+        "        assert!(",
+        "            app.forwards[0]",
+        "                .error",
+        "                .as_ref()",
+        "                .unwrap()",
+        "                .contains(\"no opener\")",
+        "        );",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 56,
+      "line_end": 77,
+      "text": [
+        "    fn open_browser(&mut self, port: u16) -> Result<(), String> {",
+        "        let url = format!(\"http://localhost:{port}\");",
+        "        #[cfg(target_os = \"macos\")]",
+        "        let mut command = Command::new(\"open\");",
+        "        #[cfg(target_os = \"linux\")]",
+        "        let mut command = Command::new(\"xdg-open\");",
+        "        #[cfg(target_os = \"windows\")]",
+        "        let mut command = {",
+        "            let mut command = Command::new(\"cmd\");",
+        "            command.args([\"/C\", \"start\", \"\"]);",
+        "            command",
+        "        };",
+        "        let status = command",
+        "            .arg(url)",
+        "            .status()",
+        "            .map_err(|error| format!(\"Could not launch the default browser: {error}\"))?;",
+        "        if status.success() {",
+        "            Ok(())",
+        "        } else {",
+        "            Err(format!(\"Browser opener exited with {status}\"))",
+        "        }",
+        "    }"
       ]
     }
   ]

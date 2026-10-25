@@ -1,16 +1,80 @@
 {
   "requirement": "Pressing `x` MUST stop the selected managed port forward, if it is running, and remove its row from the table.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Make x stop and remove the selected managed forward.",
+  "determination": true,
+  "rationale": "Checked x dispatch, owned-process stop, row removal, and selection adjustment. The selected-row removal test passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 302,
+      "line_end": 302,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
-        "}"
+        "            // {impl}`requirements.forwarding.remove`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 502,
+      "line_end": 510,
+      "text": [
+        "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
+        "        if let Some(mut process) = self.forwards[index].process.take()",
+        "            && let Err(error) = process.stop()",
+        "        {",
+        "            self.forwards[index].process = Some(process);",
+        "            return Err(error);",
+        "        }",
+        "        Ok(())",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 512,
+      "line_end": 526,
+      "text": [
+        "    fn remove_selected(&mut self) {",
+        "        let Some(index) = self.selected else { return };",
+        "        if let Err(error) = self.stop_forward(index) {",
+        "            self.forwards[index].error = Some(error);",
+        "            self.forwards[index].phase = Phase::Error;",
+        "            return;",
+        "        }",
+        "        self.forwards.remove(index);",
+        "        self.selected = if self.forwards.is_empty() {",
+        "            None",
+        "        } else {",
+        "            Some(index.min(self.forwards.len() - 1))",
+        "        };",
+        "        self.show_info = false;",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 849,
+      "line_end": 849,
+      "text": [
+        "    // {test}`requirements.forwarding.remove`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 851,
+      "line_end": 863,
+      "text": [
+        "    fn selection_and_remove_use_the_visible_row() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8000\", Choice::Preferred, \"\", 0);",
+        "        add(&mut app, \"8001\", Choice::Preferred, \"\", 1);",
+        "        assert_eq!(app.selected, Some(1));",
+        "        app.on_key(key(KeyCode::Up));",
+        "        assert_eq!(app.selected, Some(0));",
+        "        app.on_key(key(KeyCode::Char('x')));",
+        "        assert_eq!(state.borrow().stops, [0]);",
+        "        assert_eq!(app.forwards.len(), 1);",
+        "        assert_eq!(app.forwards[0].spec.host, \"mnemosyne\");",
+        "        assert_eq!(app.selected, Some(0));",
+        "    }"
       ]
     }
   ]

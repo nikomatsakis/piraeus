@@ -1,16 +1,122 @@
 {
   "requirement": "Pressing `r` MUST stop the SSH processes for all listed port forwards that are running and attempt to recreate every listed port forward, including those currently in an error state.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Make r restart every listed forward, including failed ones.",
+  "determination": true,
+  "rationale": "Checked r dispatch, stop-then-relaunch for every row including failed rows, and both refresh tests.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 304,
+      "line_end": 304,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
-        "}"
+        "            // {impl}`requirements.forwarding.refresh`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 502,
+      "line_end": 510,
+      "text": [
+        "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
+        "        if let Some(mut process) = self.forwards[index].process.take()",
+        "            && let Err(error) = process.stop()",
+        "        {",
+        "            self.forwards[index].process = Some(process);",
+        "            return Err(error);",
+        "        }",
+        "        Ok(())",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 528,
+      "line_end": 553,
+      "text": [
+        "    fn refresh(&mut self) {",
+        "        let mut stopped = Vec::with_capacity(self.forwards.len());",
+        "        for index in 0..self.forwards.len() {",
+        "            match self.stop_forward(index) {",
+        "                Ok(()) => stopped.push(index),",
+        "                Err(error) => {",
+        "                    self.forwards[index].error = Some(error);",
+        "                    self.forwards[index].phase = Phase::Error;",
+        "                }",
+        "            }",
+        "        }",
+        "        for index in stopped {",
+        "            let spec = self.forwards[index].spec.clone();",
+        "            match self.backend.launch(&spec) {",
+        "                Ok(process) => {",
+        "                    self.forwards[index].process = Some(process);",
+        "                    self.forwards[index].phase = Phase::Starting;",
+        "                    self.forwards[index].error = None;",
+        "                }",
+        "                Err(error) => {",
+        "                    self.forwards[index].phase = Phase::Error;",
+        "                    self.forwards[index].error = Some(error);",
+        "                }",
+        "            }",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 865,
+      "line_end": 865,
+      "text": [
+        "    // {test}`requirements.forwarding.refresh`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 868,
+      "line_end": 881,
+      "text": [
+        "    fn refresh_recreates_failed_and_running_rows() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8000\", Choice::Preferred, \"\", 0);",
+        "        add(&mut app, \"8001\", Choice::Preferred, \"\", 1);",
+        "        state.borrow_mut().processes[0] = ProcessState::Exited(\"connection lost\".into());",
+        "        app.tick();",
+        "        assert!(app.forwards[0].status().contains(\"connection lost\"));",
+        "        app.on_key(key(KeyCode::Char('r')));",
+        "        assert_eq!(state.borrow().stops, [1]);",
+        "        assert_eq!(state.borrow().launches.len(), 4);",
+        "        assert_eq!(app.forwards.len(), 2);",
+        "        assert_eq!(app.forwards[0].phase, Phase::Starting);",
+        "        assert_eq!(app.forwards[1].phase, Phase::Starting);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 884,
+      "line_end": 884,
+      "text": [
+        "    // {test}`requirements.forwarding.refresh`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 886,
+      "line_end": 900,
+      "text": [
+        "    fn live_ssh_fault_is_visible_and_refresh_stops_its_process() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8000\", Choice::Preferred, \"\", 0);",
+        "        state.borrow_mut().processes[0] = ProcessState::Fault(\"remote connection refused\".into());",
+        "        app.tick();",
+        "        assert!(app.forwards[0].is_error());",
+        "        assert!(",
+        "            app.forwards[0]",
+        "                .status()",
+        "                .contains(\"remote connection refused\")",
+        "        );",
+        "        app.on_key(key(KeyCode::Char('r')));",
+        "        assert_eq!(state.borrow().stops, [0]);",
+        "        assert_eq!(state.borrow().launches.len(), 2);",
+        "    }"
       ]
     }
   ]

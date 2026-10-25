@@ -1,16 +1,171 @@
 {
   "requirement": "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by a pfm-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Detect who occupies the preferred port and search upward for the first free port.",
+  "determination": true,
+  "rationale": "Checked managed/unmanaged/free classification and ascending free-port search. Order and conflict-option tests passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 175,
+      "line_end": 228,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
+        "    // {impl}`requirements.forwarding.detect_conflict`",
+        "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
+        "        let conflict = self",
+        "            .forwards",
+        "            .iter()",
+        "            .position(|forward| forward.spec.local_port == preferred && forward.process.is_some())",
+        "            .map(Conflict::Managed)",
+        "            .unwrap_or_else(|| {",
+        "                if self.backend.port_free(preferred) {",
+        "                    Conflict::Free",
+        "                } else {",
+        "                    Conflict::Unmanaged",
+        "                }",
+        "            });",
+        "        let suggested = match conflict {",
+        "            Conflict::Free => None,",
+        "            _ => first_free_after(preferred, |port| self.port_is_free(port)),",
+        "        };",
+        "        let (offered, default) = match conflict {",
+        "            Conflict::Free => (vec![Choice::Preferred, Choice::Manual], Choice::Preferred),",
+        "            Conflict::Managed(_) => {",
+        "                let mut offered = vec![Choice::Replace];",
+        "                if suggested.is_some() {",
+        "                    offered.push(Choice::Suggested);",
+        "                }",
+        "                offered.push(Choice::Manual);",
+        "                let default = if suggested.is_some() {",
+        "                    Choice::Suggested",
+        "                } else {",
+        "                    Choice::Replace",
+        "                };",
+        "                (offered, default)",
+        "            }",
+        "            Conflict::Unmanaged => {",
+        "                let mut offered = Vec::new();",
+        "                if suggested.is_some() {",
+        "                    offered.push(Choice::Suggested);",
+        "                }",
+        "                offered.push(Choice::Manual);",
+        "                let default = if suggested.is_some() {",
+        "                    Choice::Suggested",
+        "                } else {",
+        "                    Choice::Manual",
+        "                };",
+        "                (offered, default)",
+        "            }",
+        "        };",
+        "        PortChoices {",
+        "            conflict,",
+        "            suggested,",
+        "            offered,",
+        "            default,",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 799,
+      "line_end": 799,
+      "text": [
+        "    // {test}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 801,
+      "line_end": 817,
+      "text": [
+        "    fn managed_conflict_suggests_next_port_and_can_replace() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8030\", Choice::Preferred, \"\", 0);",
+        "        let options = app.port_choices(8030);",
+        "        assert_eq!(options.conflict, Conflict::Managed(0));",
+        "        assert_eq!(options.suggested, Some(8031));",
+        "        assert_eq!(",
+        "            options.offered,",
+        "            [Choice::Replace, Choice::Suggested, Choice::Manual]",
+        "        );",
+        "        assert_eq!(options.default, Choice::Suggested);",
+        "        add(&mut app, \"8030\", Choice::Replace, \"\", 1);",
+        "        assert_eq!(state.borrow().stops, [0]);",
+        "        assert_eq!(app.forwards.len(), 1);",
+        "        assert_eq!(app.forwards[0].spec.host, \"mnemosyne\");",
+        "        assert_eq!(app.forwards[0].spec.local_port, 8030);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 820,
+      "line_end": 820,
+      "text": [
+        "    // {test}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 822,
+      "line_end": 834,
+      "text": [
+        "    fn unmanaged_conflict_never_offers_replacement() {",
+        "        let (mut app, state) = setup();",
+        "        state.borrow_mut().busy.insert(8030);",
+        "        let options = app.port_choices(8030);",
+        "        assert_eq!(options.conflict, Conflict::Unmanaged);",
+        "        assert_eq!(options.suggested, Some(8031));",
+        "        assert_eq!(options.offered, [Choice::Suggested, Choice::Manual]);",
+        "        assert_eq!(options.default, Choice::Suggested);",
+        "        add(&mut app, \"8030\", options.default, \"\", 0);",
+        "        assert_eq!(app.forwards[0].spec.local_port, 8031);",
+        "        assert!(state.borrow().busy.contains(&8030));",
+        "        assert!(state.borrow().stops.is_empty());",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/ports.rs",
+      "line_start": 16,
+      "line_end": 16,
+      "text": [
+        "// {impl}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/ports.rs",
+      "line_start": 18,
+      "line_end": 22,
+      "text": [
+        "pub fn first_free_after(preferred: u16, mut is_free: impl FnMut(u16) -> bool) -> Option<u16> {",
+        "    ((u32::from(preferred) + 1)..=u32::from(u16::MAX))",
+        "        .map(|port| port as u16)",
+        "        .find(|&port| is_free(port))",
         "}"
+      ]
+    },
+    {
+      "file": "src/ports.rs",
+      "line_start": 38,
+      "line_end": 38,
+      "text": [
+        "    // {test}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/ports.rs",
+      "line_start": 40,
+      "line_end": 48,
+      "text": [
+        "    fn suggestion_checks_ports_in_order() {",
+        "        let mut checked = Vec::new();",
+        "        let suggestion = first_free_after(8030, |port| {",
+        "            checked.push(port);",
+        "            port == 8032",
+        "        });",
+        "        assert_eq!(suggestion, Some(8032));",
+        "        assert_eq!(checked, [8031, 8032]);",
+        "    }"
       ]
     }
   ]

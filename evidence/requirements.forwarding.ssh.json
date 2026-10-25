@@ -1,16 +1,164 @@
 {
   "requirement": "The application MUST create local port forwards through SSH, connecting a port on localhost to the same service port on the selected remote SSH host. It MUST track the SSH processes it starts so that subsequent actions affect only port forwards it manages.\n\nFor example, a forward for `chronos` remote port `3000` using local port `3001` makes the remote service available at `localhost:3001`.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Start and track SSH local-forward processes for selected hosts and ports.",
+  "determination": true,
+  "rationale": "Checked the OpenSSH launch arguments, owned Child tracking, and SSH command test. The local listener maps the chosen local port to localhost on the selected SSH host at the remote port.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 485,
+      "line_end": 485,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
+        "    // {impl}`requirements.forwarding.ssh`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 487,
+      "line_end": 500,
+      "text": [
+        "    fn start_forward(&mut self, spec: ForwardSpec) {",
+        "        let (phase, error, process) = match self.backend.launch(&spec) {",
+        "            Ok(process) => (Phase::Starting, None, Some(process)),",
+        "            Err(error) => (Phase::Error, Some(error), None),",
+        "        };",
+        "        self.forwards.push(Forward {",
+        "            spec,",
+        "            phase,",
+        "            error,",
+        "            process,",
+        "        });",
+        "        self.selected = Some(self.forwards.len() - 1);",
+        "        self.show_info = false;",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 502,
+      "line_end": 510,
+      "text": [
+        "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
+        "        if let Some(mut process) = self.forwards[index].process.take()",
+        "            && let Err(error) = process.stop()",
+        "        {",
+        "            self.forwards[index].process = Some(process);",
+        "            return Err(error);",
+        "        }",
+        "        Ok(())",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 17,
+      "line_end": 17,
+      "text": [
+        "    // {impl}`requirements.forwarding.ssh`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 19,
+      "line_end": 54,
+      "text": [
+        "    fn launch(&mut self, spec: &ForwardSpec) -> Result<Box<dyn ManagedProcess>, String> {",
+        "        let mut child = ssh_command(spec)",
+        "            .stdin(Stdio::null())",
+        "            .stdout(Stdio::null())",
+        "            .stderr(Stdio::piped())",
+        "            .spawn()",
+        "            .map_err(|error| format!(\"Could not start SSH: {error}\"))?;",
+        "        let stderr = child",
+        "            .stderr",
+        "            .take()",
+        "            .ok_or(\"Could not capture SSH diagnostics.\")?;",
+        "        let (sender, receiver) = mpsc::channel();",
+        "        thread::spawn(move || {",
+        "            for line in BufReader::new(stderr).lines() {",
+        "                match line {",
+        "                    Ok(line) => {",
+        "                        if sender.send(line).is_err() {",
+        "                            break;",
+        "                        }",
+        "                    }",
+        "                    Err(error) => {",
+        "                        let _ = sender.send(format!(\"Could not read SSH diagnostics: {error}\"));",
+        "                        break;",
+        "                    }",
+        "                }",
+        "            }",
+        "        });",
+        "        Ok(Box::new(SshProcess {",
+        "            child,",
+        "            local_port: spec.local_port,",
+        "            stderr: receiver,",
+        "            stderr_lines: Vec::new(),",
+        "            started: Instant::now(),",
+        "            running: false,",
+        "        }))",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 80,
+      "line_end": 101,
+      "text": [
+        "fn ssh_command(spec: &ForwardSpec) -> Command {",
+        "    let mut command = Command::new(\"ssh\");",
+        "    command",
+        "        .args([",
+        "            \"-N\",",
+        "            \"-T\",",
+        "            \"-o\",",
+        "            \"BatchMode=yes\",",
+        "            \"-o\",",
+        "            \"ExitOnForwardFailure=yes\",",
+        "            \"-o\",",
+        "            \"ConnectTimeout=10\",",
+        "            \"-L\",",
+        "        ])",
+        "        .arg(format!(",
+        "            \"127.0.0.1:{}:localhost:{}\",",
+        "            spec.local_port, spec.remote_port",
+        "        ))",
+        "        .arg(\"--\")",
+        "        .arg(&spec.host);",
+        "    command",
         "}"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 196,
+      "line_end": 196,
+      "text": [
+        "    // {test}`requirements.forwarding.ssh`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 199,
+      "line_end": 216,
+      "text": [
+        "    fn ssh_receives_alias_and_forward_as_arguments() {",
+        "        let command = ssh_command(&ForwardSpec {",
+        "            host: \"chronos\".into(),",
+        "            remote_port: 8030,",
+        "            local_port: 8031,",
+        "        });",
+        "        let args: Vec<_> = command",
+        "            .get_args()",
+        "            .map(|arg| arg.to_string_lossy())",
+        "            .collect();",
+        "        assert!(args.iter().any(|arg| arg == \"ExitOnForwardFailure=yes\"));",
+        "        assert!(",
+        "            args.iter()",
+        "                .any(|arg| arg == \"127.0.0.1:8031:localhost:8030\")",
+        "        );",
+        "        assert_eq!(args[args.len() - 2], \"--\");",
+        "        assert_eq!(args[args.len() - 1], \"chronos\");",
+        "    }"
       ]
     }
   ]

@@ -1,15 +1,118 @@
 {
   "requirement": "Pressing `q` MUST stop all port forwards managed by the application and then exit the TUI.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Make q stop all managed forwards before quitting.",
+  "determination": true,
+  "rationale": "Checked q dispatch, stop of all owned processes, terminal restoration, and quit from the add dialog. Both quit tests and the PTY smoke test passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 270,
+      "line_end": 270,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
+        "        // {impl}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 502,
+      "line_end": 510,
+      "text": [
+        "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
+        "        if let Some(mut process) = self.forwards[index].process.take()",
+        "            && let Err(error) = process.stop()",
+        "        {",
+        "            self.forwards[index].process = Some(process);",
+        "            return Err(error);",
+        "        }",
+        "        Ok(())",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 564,
+      "line_end": 574,
+      "text": [
+        "    fn quit(&mut self) {",
+        "        let mut failed = false;",
+        "        for index in 0..self.forwards.len() {",
+        "            if let Err(error) = self.stop_forward(index) {",
+        "                self.forwards[index].error = Some(error);",
+        "                self.forwards[index].phase = Phase::Error;",
+        "                failed = true;",
+        "            }",
+        "        }",
+        "        self.should_quit = !failed;",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 902,
+      "line_end": 902,
+      "text": [
+        "    // {test}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 904,
+      "line_end": 911,
+      "text": [
+        "    fn quit_stops_every_managed_process() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8000\", Choice::Preferred, \"\", 0);",
+        "        add(&mut app, \"8001\", Choice::Preferred, \"\", 1);",
+        "        app.on_key(key(KeyCode::Char('q')));",
+        "        assert!(app.should_quit);",
+        "        assert_eq!(state.borrow().stops, [0, 1]);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 913,
+      "line_end": 913,
+      "text": [
+        "    // {test}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 915,
+      "line_end": 922,
+      "text": [
+        "    fn quit_stops_forwards_even_while_dialog_is_open() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8000\", Choice::Preferred, \"\", 0);",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        app.on_key(key(KeyCode::Char('q')));",
+        "        assert!(app.should_quit);",
+        "        assert_eq!(state.borrow().stops, [0]);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/main.rs",
+      "line_start": 20,
+      "line_end": 37,
+      "text": [
+        "fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {",
+        "    let mut redraw = true;",
+        "    while !app.should_quit {",
+        "        if redraw {",
+        "            terminal.draw(|frame| draw(frame, app))?;",
+        "            redraw = false;",
+        "        }",
+        "        if event::poll(Duration::from_millis(100))?",
+        "            && let Event::Key(key) = event::read()?",
+        "            && key.kind == KeyEventKind::Press",
+        "        {",
+        "            app.on_key(key);",
+        "            redraw = true;",
+        "        }",
+        "        redraw |= app.tick();",
+        "    }",
+        "    Ok(())",
         "}"
       ]
     }

@@ -1,16 +1,183 @@
 {
   "requirement": "If a manually entered local port is already occupied, the add-forward dialog MUST show that conflict and require the user to choose a free port before confirming. It MUST NOT stop the occupying process.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Detect conflicts on manually entered local ports, explain them inline, and preserve the occupying process.",
+  "determination": true,
+  "rationale": "Checked manual-port availability against managed processes and OS occupancy; busy manual choices stay in the dialog and do not stop another process. Both conflict tests passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 230,
+      "line_end": 236,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
-        "}"
+        "    fn port_is_free(&self, port: u16) -> bool {",
+        "        !self",
+        "            .forwards",
+        "            .iter()",
+        "            .any(|forward| forward.spec.local_port == port && forward.process.is_some())",
+        "            && self.backend.port_free(port)",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 404,
+      "line_end": 404,
+      "text": [
+        "    // {impl}`requirements.forwarding.manual_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 410,
+      "line_end": 483,
+      "text": [
+        "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
+        "        let Some(host) = self.hosts.get(dialog.host_index).cloned() else {",
+        "            dialog.error = Some(",
+        "                self.host_error",
+        "                    .clone()",
+        "                    .unwrap_or_else(|| \"No SSH hosts found in ~/.ssh/config.\".into()),",
+        "            );",
+        "            self.dialog = Some(dialog);",
+        "            return;",
+        "        };",
+        "        let remote_port = match parse_port(&dialog.remote_input) {",
+        "            Ok(port) => port,",
+        "            Err(error) => {",
+        "                dialog.error = Some(format!(\"Remote port: {error}\"));",
+        "                self.dialog = Some(dialog);",
+        "                return;",
+        "            }",
+        "        };",
+        "        let options = self.port_choices(remote_port);",
+        "        if !options.offered.contains(&dialog.choice) {",
+        "            dialog.choice = options.default;",
+        "            dialog.error = Some(\"Port availability changed; review the choices.\".into());",
+        "            self.dialog = Some(dialog);",
+        "            return;",
+        "        }",
+        "        let local_port = match dialog.choice {",
+        "            Choice::Preferred if options.conflict == Conflict::Free => remote_port,",
+        "            Choice::Replace if matches!(options.conflict, Conflict::Managed(_)) => remote_port,",
+        "            Choice::Suggested => options.suggested.expect(\"suggested choice is offered\"),",
+        "            Choice::Manual => match parse_port(&dialog.manual_input) {",
+        "                Ok(port) if self.port_is_free(port) => port,",
+        "                Ok(_) => {",
+        "                    dialog.error =",
+        "                        Some(\"That local port is already in use. Choose a free port.\".into());",
+        "                    self.dialog = Some(dialog);",
+        "                    return;",
+        "                }",
+        "                Err(error) => {",
+        "                    dialog.error = Some(format!(\"Alternative local port: {error}\"));",
+        "                    self.dialog = Some(dialog);",
+        "                    return;",
+        "                }",
+        "            },",
+        "            _ => {",
+        "                dialog.choice = options.default;",
+        "                dialog.error = Some(\"Port availability changed; review the choices.\".into());",
+        "                self.dialog = Some(dialog);",
+        "                return;",
+        "            }",
+        "        };",
+        "        if let Conflict::Managed(index) = options.conflict",
+        "            && dialog.choice == Choice::Replace",
+        "        {",
+        "            if let Err(error) = self.stop_forward(index) {",
+        "                self.forwards[index].error = Some(error);",
+        "                self.forwards[index].phase = Phase::Error;",
+        "                self.dialog = None;",
+        "                return;",
+        "            }",
+        "            self.forwards.remove(index);",
+        "            self.selected = None;",
+        "        }",
+        "        if !self.port_is_free(local_port) {",
+        "            dialog.error = Some(\"That local port became unavailable. Review the choices.\".into());",
+        "            self.dialog = Some(dialog);",
+        "            return;",
+        "        }",
+        "        self.start_forward(ForwardSpec {",
+        "            host,",
+        "            remote_port,",
+        "            local_port,",
+        "        });",
+        "        self.dialog = None;",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 756,
+      "line_end": 756,
+      "text": [
+        "    // {test}`requirements.forwarding.manual_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 758,
+      "line_end": 777,
+      "text": [
+        "    fn manual_choice_keeps_remote_port_and_rejects_busy_local_port() {",
+        "        let (mut app, state) = setup();",
+        "        state.borrow_mut().busy.insert(8031);",
+        "        add(&mut app, \"8030\", Choice::Manual, \"8031\", 0);",
+        "        assert!(",
+        "            app.dialog",
+        "                .as_ref()",
+        "                .unwrap()",
+        "                .error",
+        "                .as_ref()",
+        "                .unwrap()",
+        "                .contains(\"already in use\")",
+        "        );",
+        "        assert!(state.borrow().launches.is_empty());",
+        "        app.dialog = None;",
+        "        add(&mut app, \"8030\", Choice::Manual, \"8032\", 0);",
+        "        assert_eq!(app.forwards[0].spec.remote_port, 8030);",
+        "        assert_eq!(app.forwards[0].spec.local_port, 8032);",
+        "        assert!(state.borrow().stops.is_empty());",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 779,
+      "line_end": 779,
+      "text": [
+        "    // {test}`requirements.forwarding.manual_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 781,
+      "line_end": 796,
+      "text": [
+        "    fn manual_choice_cannot_replace_managed_forward() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8030\", Choice::Preferred, \"\", 0);",
+        "        add(&mut app, \"9000\", Choice::Manual, \"8030\", 1);",
+        "        assert!(",
+        "            app.dialog",
+        "                .as_ref()",
+        "                .unwrap()",
+        "                .error",
+        "                .as_ref()",
+        "                .unwrap()",
+        "                .contains(\"already in use\")",
+        "        );",
+        "        assert_eq!(app.forwards.len(), 1);",
+        "        assert!(state.borrow().stops.is_empty());",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 128,
+      "line_end": 128,
+      "text": [
+        "// {impl}`requirements.forwarding.manual_conflict`"
       ]
     }
   ]

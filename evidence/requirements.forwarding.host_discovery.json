@@ -1,16 +1,62 @@
 {
   "requirement": "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Use ssh2-config to collect literal Host aliases from the user SSH configuration.",
+  "determination": true,
+  "rationale": "Checked ssh2-config parsing of the user SSH config and collection of nonnegated literal Host clauses. The mixed literal/wildcard/negated test passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/hosts.rs",
+      "line_start": 6,
+      "line_end": 11,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
+        "// {impl}`requirements.forwarding.host_discovery`",
+        "pub fn discover_hosts() -> Result<Vec<String>, String> {",
+        "    let config = SshConfig::parse_default_file(ParseRule::ALLOW_UNSUPPORTED_FIELDS)",
+        "        .map_err(|error| format!(\"Could not read ~/.ssh/config: {error}\"))?;",
+        "    Ok(literal_hosts(&config))",
         "}"
+      ]
+    },
+    {
+      "file": "src/hosts.rs",
+      "line_start": 20,
+      "line_end": 35,
+      "text": [
+        "fn literal_hosts(config: &SshConfig) -> Vec<String> {",
+        "    let mut names = BTreeSet::new();",
+        "    for host in config.get_hosts() {",
+        "        for clause in &host.pattern {",
+        "            let name = &clause.pattern;",
+        "            if !clause.negated",
+        "                && !name.is_empty()",
+        "                && !name.starts_with('-')",
+        "                && !name.contains(['*', '?', '[', ']'])",
+        "            {",
+        "                names.insert(name.clone());",
+        "            }",
+        "        }",
+        "    }",
+        "    names.into_iter().collect()",
+        "}"
+      ]
+    },
+    {
+      "file": "src/hosts.rs",
+      "line_start": 41,
+      "line_end": 41,
+      "text": [
+        "    // {test}`requirements.forwarding.host_discovery`"
+      ]
+    },
+    {
+      "file": "src/hosts.rs",
+      "line_start": 43,
+      "line_end": 47,
+      "text": [
+        "    fn picks_literal_aliases_only() {",
+        "        let text = b\"Host chronos mnemosyne\\n  HostName example.com\\nHost *.internal !secret\\nHost chronos\\nHost *\\n\";",
+        "        let hosts = parse_hosts(&mut &text[..]).unwrap();",
+        "        assert_eq!(hosts, [\"chronos\", \"mnemosyne\"]);",
+        "    }"
       ]
     }
   ]

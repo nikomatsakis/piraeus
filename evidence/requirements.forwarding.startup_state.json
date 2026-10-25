@@ -1,16 +1,143 @@
 {
   "requirement": "The table MUST show a new or refreshed forward as running only after its SSH process has established the chosen local listener. If startup fails, the row MUST show an error for the attempted host and ports.",
-  "determination": false,
-  "rationale": "The pfm binary currently only prints Hello, world!. Implement SSH startup verification before displaying a forward as running, and retain startup failures as error rows.",
+  "determination": true,
+  "rationale": "Checked that startup remains Starting until the owned SSH child is alive and the local listener responds; exit or timeout becomes Error. The readiness transition and error rendering tests passed.",
   "inputs": [
     {
-      "file": "src/main.rs",
-      "line_start": 1,
-      "line_end": 3,
+      "file": "src/app.rs",
+      "line_start": 239,
+      "line_end": 267,
       "text": [
-        "fn main() {",
-        "    println!(\"Hello, world!\");",
-        "}"
+        "    pub fn tick(&mut self) -> bool {",
+        "        let mut changed = false;",
+        "        for forward in &mut self.forwards {",
+        "            let Some(process) = forward.process.as_mut() else {",
+        "                continue;",
+        "            };",
+        "            match process.poll() {",
+        "                ProcessState::Starting => {}",
+        "                ProcessState::Running => {",
+        "                    if forward.error.is_none() {",
+        "                        changed |= forward.phase != Phase::Running;",
+        "                        forward.phase = Phase::Running;",
+        "                    }",
+        "                }",
+        "                ProcessState::Fault(error) => {",
+        "                    changed = true;",
+        "                    forward.phase = Phase::Error;",
+        "                    forward.error = Some(error);",
+        "                }",
+        "                ProcessState::Exited(error) => {",
+        "                    changed = true;",
+        "                    forward.phase = Phase::Error;",
+        "                    forward.error = Some(error);",
+        "                    forward.process = None;",
+        "                }",
+        "            }",
+        "        }",
+        "        changed",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 486,
+      "line_end": 500,
+      "text": [
+        "    // {impl}`requirements.forwarding.startup_state`",
+        "    fn start_forward(&mut self, spec: ForwardSpec) {",
+        "        let (phase, error, process) = match self.backend.launch(&spec) {",
+        "            Ok(process) => (Phase::Starting, None, Some(process)),",
+        "            Err(error) => (Phase::Error, Some(error), None),",
+        "        };",
+        "        self.forwards.push(Forward {",
+        "            spec,",
+        "            phase,",
+        "            error,",
+        "            process,",
+        "        });",
+        "        self.selected = Some(self.forwards.len() - 1);",
+        "        self.show_info = false;",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 679,
+      "line_end": 679,
+      "text": [
+        "    // {test}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 681,
+      "line_end": 700,
+      "text": [
+        "    fn add_dialog_creates_forward_and_waits_for_readiness() {",
+        "        let (mut app, state) = setup();",
+        "        let options = app.port_choices(8030);",
+        "        assert_eq!(options.offered, [Choice::Preferred, Choice::Manual]);",
+        "        assert_eq!(options.default, Choice::Preferred);",
+        "        add(&mut app, \"8030\", options.default, \"\", 1);",
+        "        assert!(app.dialog.is_none());",
+        "        assert_eq!(",
+        "            app.forwards[0].spec,",
+        "            ForwardSpec {",
+        "                host: \"mnemosyne\".into(),",
+        "                remote_port: 8030,",
+        "                local_port: 8030,",
+        "            }",
+        "        );",
+        "        assert_eq!(app.forwards[0].phase, Phase::Starting);",
+        "        state.borrow_mut().processes[0] = ProcessState::Running;",
+        "        app.tick();",
+        "        assert_eq!(app.forwards[0].phase, Phase::Running);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 143,
+      "line_end": 143,
+      "text": [
+        "    // {impl}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 145,
+      "line_end": 173,
+      "text": [
+        "    fn poll(&mut self) -> ProcessState {",
+        "        match self.child.try_wait() {",
+        "            Ok(Some(status)) => {",
+        "                ProcessState::Exited(self.diagnostics(&format!(\"SSH exited with {status}.\")))",
+        "            }",
+        "            Err(error) => ProcessState::Exited(format!(\"Could not check SSH process: {error}\")),",
+        "            Ok(None) => {",
+        "                if let Some(error) = self.drain_stderr() {",
+        "                    return ProcessState::Fault(error);",
+        "                }",
+        "                if self.running {",
+        "                    return ProcessState::Running;",
+        "                }",
+        "                let address = SocketAddr::from((Ipv4Addr::LOCALHOST, self.local_port));",
+        "                if TcpStream::connect_timeout(&address, Duration::from_millis(20)).is_ok() {",
+        "                    self.running = true;",
+        "                    ProcessState::Running",
+        "                } else if self.started.elapsed() > Duration::from_secs(15) {",
+        "                    let _ = self.child.kill();",
+        "                    let _ = self.child.wait();",
+        "                    ProcessState::Exited(",
+        "                        self.diagnostics(\"SSH did not open the local port in time.\"),",
+        "                    )",
+        "                } else {",
+        "                    ProcessState::Starting",
+        "                }",
+        "            }",
+        "        }",
+        "    }"
       ]
     }
   ]
