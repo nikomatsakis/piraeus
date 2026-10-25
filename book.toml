@@ -3,3 +3,14 @@ title = "Port Forward Manager"
 authors = ["Niko Matsakis"]
 language = "en"
 src = "md"
+
+[preprocessor.habeas]
+command = "habeas mdbook"
+renderers = ["html"]
+
+[output.html]
+additional-css = ["md/habeas.css"]
+
+[output.html.fold]
+enable = true
+level = 0

@@ -1,0 +1,17 @@
+{
+  "requirement": "Pressing `x` MUST stop the selected managed port forward, if it is running, and remove its row from the table.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Make x stop and remove the selected managed forward.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

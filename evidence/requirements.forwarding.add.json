@@ -1,0 +1,17 @@
+{
+  "requirement": "Pressing `a` MUST open an add-forward dialog. The dialog MUST let the user select an SSH host name discovered from the user's SSH configuration (for example, `chronos` or `mnemosyne`), enter a remote port, and select exactly one of the offered radio-style local-port choices with the keyboard. Confirming the dialog MUST create the selected port forward and add it to the table.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Implement the add-forward dialog, host and port entry, radio choices, and forward creation.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

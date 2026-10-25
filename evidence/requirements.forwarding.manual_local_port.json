@@ -1,0 +1,17 @@
+{
+  "requirement": "In every add-forward case, the dialog MUST offer a radio choice that lets the user enter an alternative **local** port explicitly. The entered remote port MUST remain unchanged when the user chooses an alternative local port.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Add an editable alternative local-port choice without changing the remote port.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

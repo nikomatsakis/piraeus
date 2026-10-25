@@ -1,0 +1,17 @@
+{
+  "requirement": "The suggested-port search MUST stop at port 65535. If it finds no free higher port, the add-forward dialog MUST explain that no suggested port is available and MUST still allow manual port entry.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Bound the suggested-port search and keep manual port entry available when no higher free port exists.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

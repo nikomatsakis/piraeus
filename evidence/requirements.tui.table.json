@@ -1,0 +1,17 @@
+{
+  "requirement": "The main view MUST be a table of port forwards managed by the application. Each row MUST show the SSH host, remote port, actual local port, and current state. A failed forwarding attempt MUST remain in the table so its error is visible.\n\nFor example:\n\n| SSH host | Remote port | Local port | State |\n| --- | ---: | ---: | --- |\n| chronos | 3000 | 3000 | ✅ Running |\n| mnemosyne | 8080 | 8081 | 🆇 Error: SSH connection failed |",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Implement a table that displays managed forwards, ports, states, and failed attempts.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

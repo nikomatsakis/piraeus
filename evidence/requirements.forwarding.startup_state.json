@@ -1,0 +1,17 @@
+{
+  "requirement": "The table MUST show a new or refreshed forward as running only after its SSH process has established the chosen local listener. If startup fails, the row MUST show an error for the attempted host and ports.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Implement SSH startup verification before displaying a forward as running, and retain startup failures as error rows.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

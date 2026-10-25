@@ -1,0 +1,17 @@
+{
+  "requirement": "The add-forward dialog MUST accept only whole-number remote and manually entered local ports from 1 through 65535. It MUST explain invalid input inside the dialog and MUST NOT start or replace a forward while the input is invalid.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Validate remote and manual local ports and explain invalid input in the add-forward dialog before starting or replacing a forward.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

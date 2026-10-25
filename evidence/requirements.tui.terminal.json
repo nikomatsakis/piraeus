@@ -1,0 +1,17 @@
+{
+  "requirement": "The application MUST run as an interactive text user interface in a terminal.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Replace the placeholder pfm main function with an interactive terminal UI.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

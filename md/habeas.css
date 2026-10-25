@@ -1,0 +1,17 @@
+.habeas-req-badge {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.habeas-shield {
+  display: block;
+}
+
+a.habeas-req-badge:hover {
+  filter: brightness(1.12);
+}
+
+a.habeas-req-badge:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}

@@ -1,0 +1,4 @@
+# Requirements index
+
+:::{requirements-index}
+:::

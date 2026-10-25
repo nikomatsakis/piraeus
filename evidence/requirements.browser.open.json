@@ -1,0 +1,17 @@
+{
+  "requirement": "Pressing `b` MUST open `http://localhost:P` in the system's default browser, where `P` is the actual local port of the selected port forward.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Make b open the selected local port in the default browser.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

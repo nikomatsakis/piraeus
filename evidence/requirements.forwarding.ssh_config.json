@@ -1,0 +1,17 @@
+{
+  "requirement": "The application MUST delegate interpretation of SSH configuration settings to OpenSSH commands: `ssh` when connecting and `ssh -G <host>` when it needs the effective configuration for a supplied host name. Apart from discovering names in `Host` declarations, it MUST NOT use the parsed configuration to determine connection settings.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Use OpenSSH to establish connections and resolve effective host settings.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

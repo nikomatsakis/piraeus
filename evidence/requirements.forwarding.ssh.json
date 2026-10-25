@@ -1,0 +1,17 @@
+{
+  "requirement": "The application MUST create local port forwards through SSH, connecting a port on localhost to the same service port on the selected remote SSH host. It MUST track the SSH processes it starts so that subsequent actions affect only port forwards it manages.\n\nFor example, a forward for `chronos` remote port `3000` using local port `3001` makes the remote service available at `localhost:3001`.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Start and track SSH local-forward processes for selected hosts and ports.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

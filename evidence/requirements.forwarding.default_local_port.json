@@ -1,0 +1,17 @@
+{
+  "requirement": "When the entered remote port is free on localhost, the add-forward dialog MUST initially select that same port as the local port and MUST also offer a user-specified alternative.\n\n```text\n(x) Use local port 8030\n( ) Use alternative local port [       ]\n```",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Offer and preselect the matching local port when it is free.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

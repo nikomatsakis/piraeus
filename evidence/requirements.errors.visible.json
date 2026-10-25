@@ -1,0 +1,17 @@
+{
+  "requirement": "When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Display forwarding failures in red table rows without modal dialogs.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

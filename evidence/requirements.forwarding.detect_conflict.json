@@ -1,0 +1,17 @@
+{
+  "requirement": "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by a pfm-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Detect who occupies the preferred port and search upward for the first free port.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

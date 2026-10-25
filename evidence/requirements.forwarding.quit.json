@@ -1,0 +1,17 @@
+{
+  "requirement": "Pressing `q` MUST stop all port forwards managed by the application and then exit the TUI.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Make q stop all managed forwards before quitting.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

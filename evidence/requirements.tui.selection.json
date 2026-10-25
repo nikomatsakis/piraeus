@@ -1,0 +1,17 @@
+{
+  "requirement": "The application MUST let the user select a table row with the keyboard. Actions that refer to a selected port forward MUST use the visibly selected row.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Add keyboard row selection and use that selection for row actions.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

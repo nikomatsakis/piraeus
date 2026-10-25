@@ -1,0 +1,17 @@
+{
+  "requirement": "Pressing `r` MUST stop the SSH processes for all listed port forwards that are running and attempt to recreate every listed port forward, including those currently in an error state.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Make r restart every listed forward, including failed ones.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "requirement": "If a process outside pfm occupies the preferred local port, the dialog MUST offer the suggested free port and a user-specified alternative. It MUST initially select the suggested free port, MUST NOT offer to replace the other process, and MUST NOT stop it.\n\n```text\n(x) Use suggested alternative local port 8031\n( ) Use alternative local port [       ]\n```",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Offer suggested and manual port choices while leaving the other process untouched.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

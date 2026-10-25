@@ -1,0 +1,17 @@
+{
+  "requirement": "Pressing `?` MUST show the available keystrokes and their actions, including how to select a row and the `a`, `b`, `x`, `q`, `r`, and `i` commands.",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Make ? show the complete keyboard help.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}

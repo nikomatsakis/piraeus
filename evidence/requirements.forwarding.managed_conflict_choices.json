@@ -1,0 +1,17 @@
+{
+  "requirement": "If a pfm-managed forward occupies the preferred local port, the dialog MUST offer three mutually exclusive choices: replace that forward on the preferred port, use the suggested free port, or enter an alternative local port. It MUST initially select the suggested free port. If the user chooses replacement, the application MUST stop the existing managed SSH process before starting the new forward and MUST update the table so the replaced forward is no longer shown as running.\n\n```text\n( ) Use local port 8030, replacing existing forward\n(x) Use suggested alternative local port 8031\n( ) Use alternative local port [       ]\n```",
+  "determination": false,
+  "rationale": "The pfm binary currently only prints Hello, world!. Offer managed replacement, suggested port, and manual port choices with the specified behavior.",
+  "inputs": [
+    {
+      "file": "src/main.rs",
+      "line_start": 1,
+      "line_end": 3,
+      "text": [
+        "fn main() {",
+        "    println!(\"Hello, world!\");",
+        "}"
+      ]
+    }
+  ]
+}
