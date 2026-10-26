@@ -1,0 +1,30 @@
+name: Render mdBook
+
+"on":
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install mdBook and Habeas
+        run: |
+          cargo install mdbook --version 0.5.4 --locked --no-default-features --features search
+          cargo install habeas --version 0.1.0 --locked
+      - name: Render book
+        run: mdbook build
+      - name: Upload rendered book
+        uses: actions/upload-artifact@v7
+        with:
+          name: mdbook
+          path: book/
+          if-no-files-found: error
