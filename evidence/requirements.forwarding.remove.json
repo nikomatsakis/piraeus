@@ -5,16 +5,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 302,
-      "line_end": 302,
+      "line_start": 321,
+      "line_end": 321,
       "text": [
         "            // {impl}`requirements.forwarding.remove`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 502,
-      "line_end": 510,
+      "line_start": 603,
+      "line_end": 611,
       "text": [
         "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
         "        if let Some(mut process) = self.forwards[index].process.take()",
@@ -29,8 +29,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 512,
-      "line_end": 526,
+      "line_start": 613,
+      "line_end": 627,
       "text": [
         "    fn remove_selected(&mut self) {",
         "        let Some(index) = self.selected else { return };",
@@ -51,16 +51,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 849,
-      "line_end": 849,
+      "line_start": 1047,
+      "line_end": 1047,
       "text": [
         "    // {test}`requirements.forwarding.remove`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 851,
-      "line_end": 863,
+      "line_start": 1049,
+      "line_end": 1061,
       "text": [
         "    fn selection_and_remove_use_the_visible_row() {",
         "        let (mut app, state) = setup();",

@@ -6,6 +6,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use crate::app::{Backend, ForwardSpec, ManagedProcess, ProcessState};
+use crate::history;
 
 pub struct SystemBackend;
 
@@ -74,6 +75,16 @@ impl Backend for SystemBackend {
         } else {
             Err(format!("Browser opener exited with {status}"))
         }
+    }
+
+    // {impl}`requirements.forwarding.add.port_history`
+    fn load_recent_ports(&self) -> Result<Vec<u16>, String> {
+        history::load_and_migrate_recent_ports()
+    }
+
+    // {impl}`requirements.forwarding.add.port_history`
+    fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String> {
+        history::save_recent_ports(&history::config_path()?, ports)
     }
 }
 

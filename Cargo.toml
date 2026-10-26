@@ -1,12 +1,20 @@
 [package]
-name = "pfm"
-version = "0.1.0"
+name = "piraeus"
+version = "1.0.0"
+authors = ["Niko Matsakis"]
 edition = "2024"
+description = "Terminal UI for managing SSH port forwards"
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+keywords = ["ssh", "port-forwarding", "tui", "terminal"]
+categories = ["command-line-utilities", "network-programming"]
 
 [dependencies]
 crossterm = "0.29.0"
 ratatui = { version = "0.30.2", default-features = false, features = ["crossterm_0_29"] }
+serde = { version = "1.0.229", features = ["derive"] }
 ssh2-config = "0.9.0"
+toml = "1.1.8"
 
 [dev-dependencies]
 habeas = "0.1.0"

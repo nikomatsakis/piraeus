@@ -5,8 +5,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 230,
-      "line_end": 236,
+      "line_start": 244,
+      "line_end": 250,
       "text": [
         "    fn port_is_free(&self, port: u16) -> bool {",
         "        !self",
@@ -19,34 +19,27 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 404,
-      "line_end": 404,
+      "line_start": 505,
+      "line_end": 505,
       "text": [
         "    // {impl}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 410,
-      "line_end": 483,
+      "line_start": 511,
+      "line_end": 584,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
-        "        let Some(host) = self.hosts.get(dialog.host_index).cloned() else {",
-        "            dialog.error = Some(",
-        "                self.host_error",
-        "                    .clone()",
-        "                    .unwrap_or_else(|| \"No SSH hosts found in ~/.ssh/config.\".into()),",
-        "            );",
+        "        let Some(host) = self.selected_host(&dialog) else {",
+        "            dialog.error = Some(\"Enter a custom SSH host name.\".into());",
         "            self.dialog = Some(dialog);",
         "            return;",
         "        };",
-        "        let remote_port = match parse_port(&dialog.remote_input) {",
-        "            Ok(port) => port,",
-        "            Err(error) => {",
-        "                dialog.error = Some(format!(\"Remote port: {error}\"));",
-        "                self.dialog = Some(dialog);",
-        "                return;",
-        "            }",
+        "        let Some(remote_port) = dialog.chosen_remote_port else {",
+        "            dialog.error = Some(\"Select a remote port.\".into());",
+        "            self.dialog = Some(dialog);",
+        "            return;",
         "        };",
         "        let options = self.port_choices(remote_port);",
         "        if !options.offered.contains(&dialog.choice) {",
@@ -102,22 +95,37 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.port_history`",
+        "        self.recent_remote_ports.retain(|port| *port != remote_port);",
+        "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.message = None;",
+        "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
+        "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
+        "        }",
         "        self.dialog = None;",
         "    }"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 756,
-      "line_end": 756,
+      "line_start": 954,
+      "line_end": 954,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 758,
-      "line_end": 777,
+      "line_start": 954,
+      "line_end": 954,
+      "text": [
+        "    // {test}`requirements.forwarding.manual_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 956,
+      "line_end": 975,
       "text": [
         "    fn manual_choice_keeps_remote_port_and_rejects_busy_local_port() {",
         "        let (mut app, state) = setup();",
@@ -143,16 +151,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 779,
-      "line_end": 779,
+      "line_start": 977,
+      "line_end": 977,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 781,
-      "line_end": 796,
+      "line_start": 979,
+      "line_end": 994,
       "text": [
         "    fn manual_choice_cannot_replace_managed_forward() {",
         "        let (mut app, state) = setup();",
@@ -174,8 +182,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 128,
-      "line_end": 128,
+      "line_start": 234,
+      "line_end": 234,
       "text": [
         "// {impl}`requirements.forwarding.manual_conflict`"
       ]

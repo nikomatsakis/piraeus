@@ -32,7 +32,23 @@ The table MUST show a new or refreshed forward as running only after its SSH pro
 :::
 
 :::{req} forwarding.add
-Pressing `a` MUST open an add-forward dialog. The dialog MUST let the user select an SSH host name discovered from the user's SSH configuration (for example, `chronos` or `mnemosyne`), enter a remote port, and select exactly one of the offered radio-style local-port choices with the keyboard. Confirming the dialog MUST create the selected port forward and add it to the table.
+Pressing `a` MUST begin an add-forward flow with separate host, remote-port, and local-port stages, in that order. Completing the local-port stage with valid selections MUST start the forward and add it to the table.
+:::
+
+:::{req} forwarding.add.host
+The host stage MUST list hosts discovered from the user's SSH configuration and an `Other` entry, with one option visibly selected. `↑` and `↓` MUST move the selection. Typing host-name characters MUST select `Other` and enter a custom host name; the user MUST also be able to select `Other` with the arrow keys. Pressing `Enter` with a discovered host or a nonempty custom host MUST advance to the remote-port stage.
+:::
+
+:::{req} forwarding.add.remote_port
+The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.
+:::
+
+:::{req} forwarding.add.port_history
+The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.
+:::
+
+:::{req} forwarding.add.local_port
+The local-port stage MUST show the applicable radio-style local-port choices with one visibly selected. `↑` and `↓` MUST move the selection. Typing digits MUST select the manual local-port choice and enter an alternative local port without a focus change. Pressing `Enter` with a valid choice MUST complete the add-forward flow.
 :::
 
 :::{req} forwarding.port_validation
@@ -65,7 +81,7 @@ If a manually entered local port is already occupied, the add-forward dialog MUS
 :::
 
 :::{req} forwarding.detect_conflict
-Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by a pfm-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).
+Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by an application-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).
 :::
 
 :::{req} forwarding.suggestion_exhausted
@@ -73,7 +89,7 @@ The suggested-port search MUST stop at port 65535. If it finds no free higher po
 :::
 
 :::{req} forwarding.managed_conflict_choices
-If a pfm-managed forward occupies the preferred local port, the dialog MUST offer three mutually exclusive choices: replace that forward on the preferred port, use the suggested free port, or enter an alternative local port. It MUST initially select the suggested free port. If the user chooses replacement, the application MUST stop the existing managed SSH process before starting the new forward and MUST update the table so the replaced forward is no longer shown as running.
+If an application-managed forward occupies the preferred local port, the dialog MUST offer three mutually exclusive choices: replace that forward on the preferred port, use the suggested free port, or enter an alternative local port. It MUST initially select the suggested free port. If the user chooses replacement, the application MUST stop the existing managed SSH process before starting the new forward and MUST update the table so the replaced forward is no longer shown as running.
 
 ```text
 ( ) Use local port 8030, replacing existing forward
@@ -83,7 +99,7 @@ If a pfm-managed forward occupies the preferred local port, the dialog MUST offe
 :::
 
 :::{req} forwarding.unmanaged_conflict_choices
-If a process outside pfm occupies the preferred local port, the dialog MUST offer the suggested free port and a user-specified alternative. It MUST initially select the suggested free port, MUST NOT offer to replace the other process, and MUST NOT stop it.
+If a process outside the application occupies the preferred local port, the dialog MUST offer the suggested free port and a user-specified alternative. It MUST initially select the suggested free port, MUST NOT offer to replace the other process, and MUST NOT stop it.
 
 ```text
 (x) Use suggested alternative local port 8031
@@ -100,7 +116,7 @@ Pressing `r` MUST stop the SSH processes for all listed port forwards that are r
 :::
 
 :::{req} forwarding.quit
-Pressing `q` MUST stop all port forwards managed by the application and then exit the TUI.
+Pressing `q` while the main table has focus MUST stop all port forwards managed by the application and then exit the TUI.
 :::
 
 :::{req} browser.open

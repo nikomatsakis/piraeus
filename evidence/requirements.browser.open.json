@@ -5,16 +5,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 300,
-      "line_end": 300,
+      "line_start": 319,
+      "line_end": 319,
       "text": [
         "            // {impl}`requirements.browser.open`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 555,
-      "line_end": 562,
+      "line_start": 656,
+      "line_end": 663,
       "text": [
         "    fn open_selected(&mut self) {",
         "        let Some(index) = self.selected else { return };",
@@ -28,16 +28,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 924,
-      "line_end": 924,
+      "line_start": 1122,
+      "line_end": 1122,
       "text": [
         "    // {test}`requirements.browser.open`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 927,
-      "line_end": 944,
+      "line_start": 1125,
+      "line_end": 1142,
       "text": [
         "    fn browser_uses_actual_local_port_and_exposes_failures() {",
         "        let (mut app, state) = setup();",
@@ -61,8 +61,8 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 56,
-      "line_end": 77,
+      "line_start": 57,
+      "line_end": 78,
       "text": [
         "    fn open_browser(&mut self, port: u16) -> Result<(), String> {",
         "        let url = format!(\"http://localhost:{port}\");",

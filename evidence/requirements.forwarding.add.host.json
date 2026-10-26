@@ -1,0 +1,280 @@
+{
+  "requirement": "The host stage MUST list hosts discovered from the user's SSH configuration and an `Other` entry, with one option visibly selected. `↑` and `↓` MUST move the selection. Typing host-name characters MUST select `Other` and enter a custom host name; the user MUST also be able to select `Other` with the arrow keys. Pressing `Enter` with a discovered host or a nonempty custom host MUST advance to the remote-port stage.",
+  "determination": true,
+  "rationale": "Checked visible host choices, arrow navigation, typed Other entry, custom names starting with q, and use when SSH config discovery fails. Model and rendering tests passed.",
+  "inputs": [
+    {
+      "file": "src/app.rs",
+      "line_start": 379,
+      "line_end": 379,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 380,
+      "line_end": 409,
+      "text": [
+        "    fn on_host_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
+        "        match key.code {",
+        "            KeyCode::Up | KeyCode::Left => {",
+        "                dialog.host_index = wrap_index(dialog.host_index, self.hosts.len() + 1, -1);",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Down | KeyCode::Right => {",
+        "                dialog.host_index = wrap_index(dialog.host_index, self.hosts.len() + 1, 1);",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Char(ch) if is_host_char(ch) => {",
+        "                dialog.host_index = self.hosts.len();",
+        "                dialog.custom_host_input.push(ch);",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Backspace if dialog.host_index == self.hosts.len() => {",
+        "                dialog.custom_host_input.pop();",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Enter => {",
+        "                if self.selected_host(dialog).is_some() {",
+        "                    dialog.stage = AddStage::RemotePort;",
+        "                    dialog.error = None;",
+        "                } else {",
+        "                    dialog.error = Some(\"Enter a custom SSH host name.\".into());",
+        "                }",
+        "            }",
+        "            _ => {}",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 411,
+      "line_end": 418,
+      "text": [
+        "    fn selected_host(&self, dialog: &AddDialog) -> Option<String> {",
+        "        if dialog.host_index == self.hosts.len() {",
+        "            let host = dialog.custom_host_input.trim();",
+        "            (!host.is_empty()).then(|| host.to_owned())",
+        "        } else {",
+        "            self.hosts.get(dialog.host_index).cloned()",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 832,
+      "line_end": 832,
+      "text": [
+        "    // {test}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 836,
+      "line_end": 852,
+      "text": [
+        "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
+        "        let (mut app, _) = setup();",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::Host);",
+        "        app.on_key(key(KeyCode::Down));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);",
+        "        type_text(&mut app, \"8030\");",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::LocalPort);",
+        "        type_text(&mut app, \"8031\");",
+        "        assert_eq!(app.dialog.as_ref().unwrap().choice, Choice::Manual);",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.forwards[0].spec.host, \"mnemosyne\");",
+        "        assert_eq!(app.forwards[0].spec.remote_port, 8030);",
+        "        assert_eq!(app.forwards[0].spec.local_port, 8031);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 854,
+      "line_end": 854,
+      "text": [
+        "    // {test}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 857,
+      "line_end": 868,
+      "text": [
+        "    fn typing_custom_host_can_start_with_q() {",
+        "        let (mut app, _) = setup();",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        type_text(&mut app, \"qa.example\");",
+        "        assert!(!app.should_quit);",
+        "        assert_eq!(app.dialog.as_ref().unwrap().host_index, app.hosts.len());",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        type_text(&mut app, \"8030\");",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.forwards[0].spec.host, \"qa.example\");",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 870,
+      "line_end": 870,
+      "text": [
+        "    // {test}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 872,
+      "line_end": 886,
+      "text": [
+        "    fn custom_host_works_without_saved_hosts() {",
+        "        let state = Rc::new(RefCell::new(FakeState::default()));",
+        "        let mut app = App::new(",
+        "            Box::new(FakeBackend(state)),",
+        "            Err(\"SSH config unavailable\".into()),",
+        "        );",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().host_index, 0);",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::Host);",
+        "        assert!(app.dialog.as_ref().unwrap().error.is_some());",
+        "        type_text(&mut app, \"remote.example\");",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 139,
+      "line_end": 139,
+      "text": [
+        "// {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 140,
+      "line_end": 152,
+      "text": [
+        "fn draw_host_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
+        "    let mut items = app.hosts.clone();",
+        "    items.push(format!(\"Other [{}]\", dialog.custom_host_input));",
+        "    draw_picker(",
+        "        frame,",
+        "        \"Add forward · 1/3 · SSH host\",",
+        "        \"Select a saved host or type another host name.\",",
+        "        items,",
+        "        dialog.host_index,",
+        "        dialog.error.as_deref().or(app.host_error.as_deref()),",
+        "        \"↑/↓ choose  Type: Other  Enter: next  Esc: cancel\",",
+        "    );",
+        "}"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 184,
+      "line_end": 226,
+      "text": [
+        "fn draw_picker(",
+        "    frame: &mut Frame,",
+        "    title: &str,",
+        "    context: &str,",
+        "    items: Vec<String>,",
+        "    selected: usize,",
+        "    error: Option<&str>,",
+        "    hint: &str,",
+        ") {",
+        "    let area = centered(frame.area(), 76, 17);",
+        "    frame.render_widget(Clear, area);",
+        "    let block = Block::bordered().title(title);",
+        "    let inner = block.inner(area);",
+        "    frame.render_widget(block, area);",
+        "    let parts = Layout::default()",
+        "        .direction(Direction::Vertical)",
+        "        .constraints([",
+        "            Constraint::Length(2),",
+        "            Constraint::Min(1),",
+        "            Constraint::Length(3),",
+        "        ])",
+        "        .split(inner);",
+        "    frame.render_widget(Paragraph::new(context), parts[0]);",
+        "    let list_items: Vec<ListItem> = items.into_iter().map(ListItem::new).collect();",
+        "    let list = List::new(list_items)",
+        "        .highlight_symbol(\"▶ \")",
+        "        .highlight_style(",
+        "            Style::default()",
+        "                .fg(Color::Yellow)",
+        "                .add_modifier(Modifier::BOLD),",
+        "        );",
+        "    let mut state = ListState::default();",
+        "    state.select(Some(selected));",
+        "    frame.render_stateful_widget(list, parts[1], &mut state);",
+        "    let mut footer = Vec::new();",
+        "    if let Some(error) = error {",
+        "        footer.push(Line::from(error).style(Style::default().fg(Color::Red)));",
+        "    } else {",
+        "        footer.push(Line::from(\"\"));",
+        "    }",
+        "    footer.push(Line::from(hint));",
+        "    frame.render_widget(Paragraph::new(footer).wrap(Wrap { trim: false }), parts[2]);",
+        "}"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 384,
+      "line_end": 384,
+      "text": [
+        "    // {test}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 391,
+      "line_end": 421,
+      "text": [
+        "    fn three_picker_stages_render_choices_and_help() {",
+        "        let mut app = App::new(",
+        "            Box::new(FailingBackend { busy: Some(8030) }),",
+        "            Ok(vec![\"chronos\".into()]),",
+        "        );",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        let (hosts, _) = rendered(&app);",
+        "        assert!(hosts.contains(\"1/3 · SSH host\"));",
+        "        assert!(hosts.contains(\"▶ chronos\"));",
+        "        assert!(hosts.contains(\"Other [\"));",
+        "        app.on_key(key(KeyCode::Down));",
+        "        let (other, _) = rendered(&app);",
+        "        assert!(other.contains(\"▶ Other [\"));",
+        "        app.on_key(key(KeyCode::Up));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        let (remote, _) = rendered(&app);",
+        "        assert!(remote.contains(\"2/3 · Remote port\"));",
+        "        for ch in \"8030\".chars() {",
+        "            app.on_key(key(KeyCode::Char(ch)));",
+        "        }",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        let (dialog, _) = rendered(&app);",
+        "        assert!(dialog.contains(\"3/3 · Local port\"));",
+        "        assert!(dialog.contains(\"(x) Use suggested alternative local port 8031\"));",
+        "        assert!(dialog.contains(\"( ) Use alternative local port [\"));",
+        "        assert!(!dialog.contains(\"replacing existing forward\"));",
+        "        app.on_key(key(KeyCode::Char('?')));",
+        "        let (help, _) = rendered(&app);",
+        "        assert!(help.contains(\"Keyboard help\"));",
+        "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
+        "    }"
+      ]
+    }
+  ]
+}

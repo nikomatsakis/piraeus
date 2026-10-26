@@ -1,20 +1,53 @@
 {
-  "requirement": "Pressing `q` MUST stop all port forwards managed by the application and then exit the TUI.",
+  "requirement": "Pressing `q` while the main table has focus MUST stop all port forwards managed by the application and then exit the TUI.",
   "determination": true,
-  "rationale": "Checked q dispatch, stop of all owned processes, terminal restoration, and quit from the add dialog. Both quit tests and the PTY smoke test passed.",
+  "rationale": "Checked q dispatch on the main table and stopping of managed processes; typing q in a custom host does not quit. The quit and custom-host tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 270,
-      "line_end": 270,
+      "line_start": 284,
+      "line_end": 284,
       "text": [
         "        // {impl}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 502,
-      "line_end": 510,
+      "line_start": 307,
+      "line_end": 332,
+      "text": [
+        "    fn on_main_key(&mut self, key: KeyEvent) {",
+        "        match key.code {",
+        "            // {impl}`requirements.tui.selection`",
+        "            KeyCode::Down | KeyCode::Char('j') => self.select_next(),",
+        "            KeyCode::Up | KeyCode::Char('k') => self.select_previous(),",
+        "            // {impl}`requirements.forwarding.add`",
+        "            KeyCode::Char('a') => {",
+        "                self.dialog = Some(AddDialog::default());",
+        "                self.show_info = false;",
+        "            }",
+        "            // {impl}`requirements.forwarding.quit`",
+        "            KeyCode::Char('q') => self.quit(),",
+        "            // {impl}`requirements.browser.open`",
+        "            KeyCode::Char('b') => self.open_selected(),",
+        "            // {impl}`requirements.forwarding.remove`",
+        "            KeyCode::Char('x') => self.remove_selected(),",
+        "            // {impl}`requirements.forwarding.refresh`",
+        "            KeyCode::Char('r') => self.refresh(),",
+        "            // {impl}`requirements.errors.info`",
+        "            KeyCode::Char('i') => {",
+        "                self.show_info =",
+        "                    self.selected_forward().is_some_and(Forward::is_error) && !self.show_info;",
+        "            }",
+        "            _ => {}",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 603,
+      "line_end": 611,
       "text": [
         "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
         "        if let Some(mut process) = self.forwards[index].process.take()",
@@ -29,8 +62,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 564,
-      "line_end": 574,
+      "line_start": 665,
+      "line_end": 675,
       "text": [
         "    fn quit(&mut self) {",
         "        let mut failed = false;",
@@ -47,16 +80,51 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 902,
-      "line_end": 902,
+      "line_start": 855,
+      "line_end": 855,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 904,
-      "line_end": 911,
+      "line_start": 857,
+      "line_end": 868,
+      "text": [
+        "    fn typing_custom_host_can_start_with_q() {",
+        "        let (mut app, _) = setup();",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        type_text(&mut app, \"qa.example\");",
+        "        assert!(!app.should_quit);",
+        "        assert_eq!(app.dialog.as_ref().unwrap().host_index, app.hosts.len());",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        type_text(&mut app, \"8030\");",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.forwards[0].spec.host, \"qa.example\");",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 1100,
+      "line_end": 1100,
+      "text": [
+        "    // {test}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 1100,
+      "line_end": 1100,
+      "text": [
+        "    // {test}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 1102,
+      "line_end": 1109,
       "text": [
         "    fn quit_stops_every_managed_process() {",
         "        let (mut app, state) = setup();",
@@ -70,22 +138,22 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 913,
-      "line_end": 913,
+      "line_start": 1111,
+      "line_end": 1111,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 915,
-      "line_end": 922,
+      "line_start": 1113,
+      "line_end": 1120,
       "text": [
-        "    fn quit_stops_forwards_even_while_dialog_is_open() {",
+        "    fn control_c_stops_forwards_even_while_dialog_is_open() {",
         "        let (mut app, state) = setup();",
         "        add(&mut app, \"8000\", Choice::Preferred, \"\", 0);",
         "        app.on_key(key(KeyCode::Char('a')));",
-        "        app.on_key(key(KeyCode::Char('q')));",
+        "        app.on_key(KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL));",
         "        assert!(app.should_quit);",
         "        assert_eq!(state.borrow().stops, [0]);",
         "    }"

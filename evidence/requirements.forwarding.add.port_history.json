@@ -1,0 +1,534 @@
+{
+  "requirement": "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+  "determination": true,
+  "rationale": "Confirmed App saves distinct recent ports before returning to the table and reloads them at startup. XDG_CONFIG_HOME selects its absolute directory, otherwise HOME/.config is used. When the target is absent, migration checks the prior Piraeus home file, the selected XDG pfm file, and the pfm home file; unit tests cover all three imports, persistence, and precedence of the target file.",
+  "inputs": [
+    {
+      "file": "src/app.rs",
+      "line_start": 133,
+      "line_end": 141,
+      "text": [
+        "fn distinct_ports(ports: Vec<u16>) -> Vec<u16> {",
+        "    let mut distinct = Vec::new();",
+        "    for port in ports {",
+        "        if port != 0 && !distinct.contains(&port) {",
+        "            distinct.push(port);",
+        "        }",
+        "    }",
+        "    distinct",
+        "}"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 158,
+      "line_end": 183,
+      "text": [
+        "    pub fn new(backend: Box<dyn Backend>, hosts: Result<Vec<String>, String>) -> Self {",
+        "        let (hosts, host_error) = match hosts {",
+        "            Ok(hosts) => (hosts, None),",
+        "            Err(error) => (Vec::new(), Some(error)),",
+        "        };",
+        "        let (recent_remote_ports, message) = match backend.load_recent_ports() {",
+        "            Ok(ports) => (distinct_ports(ports), None),",
+        "            Err(error) => (",
+        "                Vec::new(),",
+        "                Some(format!(\"Could not load recent ports: {error}\")),",
+        "            ),",
+        "        };",
+        "        Self {",
+        "            backend,",
+        "            hosts,",
+        "            host_error,",
+        "            recent_remote_ports,",
+        "            forwards: Vec::new(),",
+        "            selected: None,",
+        "            dialog: None,",
+        "            show_help: false,",
+        "            show_info: false,",
+        "            should_quit: false,",
+        "            message,",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 511,
+      "line_end": 584,
+      "text": [
+        "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
+        "        let Some(host) = self.selected_host(&dialog) else {",
+        "            dialog.error = Some(\"Enter a custom SSH host name.\".into());",
+        "            self.dialog = Some(dialog);",
+        "            return;",
+        "        };",
+        "        let Some(remote_port) = dialog.chosen_remote_port else {",
+        "            dialog.error = Some(\"Select a remote port.\".into());",
+        "            self.dialog = Some(dialog);",
+        "            return;",
+        "        };",
+        "        let options = self.port_choices(remote_port);",
+        "        if !options.offered.contains(&dialog.choice) {",
+        "            dialog.choice = options.default;",
+        "            dialog.error = Some(\"Port availability changed; review the choices.\".into());",
+        "            self.dialog = Some(dialog);",
+        "            return;",
+        "        }",
+        "        let local_port = match dialog.choice {",
+        "            Choice::Preferred if options.conflict == Conflict::Free => remote_port,",
+        "            Choice::Replace if matches!(options.conflict, Conflict::Managed(_)) => remote_port,",
+        "            Choice::Suggested => options.suggested.expect(\"suggested choice is offered\"),",
+        "            Choice::Manual => match parse_port(&dialog.manual_input) {",
+        "                Ok(port) if self.port_is_free(port) => port,",
+        "                Ok(_) => {",
+        "                    dialog.error =",
+        "                        Some(\"That local port is already in use. Choose a free port.\".into());",
+        "                    self.dialog = Some(dialog);",
+        "                    return;",
+        "                }",
+        "                Err(error) => {",
+        "                    dialog.error = Some(format!(\"Alternative local port: {error}\"));",
+        "                    self.dialog = Some(dialog);",
+        "                    return;",
+        "                }",
+        "            },",
+        "            _ => {",
+        "                dialog.choice = options.default;",
+        "                dialog.error = Some(\"Port availability changed; review the choices.\".into());",
+        "                self.dialog = Some(dialog);",
+        "                return;",
+        "            }",
+        "        };",
+        "        if let Conflict::Managed(index) = options.conflict",
+        "            && dialog.choice == Choice::Replace",
+        "        {",
+        "            if let Err(error) = self.stop_forward(index) {",
+        "                self.forwards[index].error = Some(error);",
+        "                self.forwards[index].phase = Phase::Error;",
+        "                self.dialog = None;",
+        "                return;",
+        "            }",
+        "            self.forwards.remove(index);",
+        "            self.selected = None;",
+        "        }",
+        "        if !self.port_is_free(local_port) {",
+        "            dialog.error = Some(\"That local port became unavailable. Review the choices.\".into());",
+        "            self.dialog = Some(dialog);",
+        "            return;",
+        "        }",
+        "        self.start_forward(ForwardSpec {",
+        "            host,",
+        "            remote_port,",
+        "            local_port,",
+        "        });",
+        "        // {impl}`requirements.forwarding.add.port_history`",
+        "        self.recent_remote_ports.retain(|port| *port != remote_port);",
+        "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.message = None;",
+        "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
+        "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
+        "        }",
+        "        self.dialog = None;",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 889,
+      "line_end": 889,
+      "text": [
+        "    // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 891,
+      "line_end": 909,
+      "text": [
+        "    fn recent_remote_ports_survive_removal_and_new_app_instance() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8030\", Choice::Preferred, \"\", 0);",
+        "        add(&mut app, \"9000\", Choice::Preferred, \"\", 0);",
+        "        app.on_key(key(KeyCode::Char('x')));",
+        "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
+        "        drop(app);",
+        "",
+        "        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec![\"chronos\".into()]));",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);",
+        "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
+        "        app.on_key(key(KeyCode::Down));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(8030));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.recent_remote_ports, [8030, 9000]);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 9,
+      "line_end": 13,
+      "text": [
+        "#[derive(Default, Deserialize, Serialize)]",
+        "struct PiraeusConfig {",
+        "    #[serde(default)]",
+        "    recent_remote_ports: Vec<u16>,",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 15,
+      "line_end": 15,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 16,
+      "line_end": 20,
+      "text": [
+        "pub fn config_path() -> Result<PathBuf, String> {",
+        "    let home = env::var_os(\"HOME\").map(PathBuf::from);",
+        "    let xdg_config_home = env::var_os(\"XDG_CONFIG_HOME\");",
+        "    choose_config_path(home.as_deref(), xdg_config_home.as_deref())",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 22,
+      "line_end": 22,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 23,
+      "line_end": 30,
+      "text": [
+        "pub fn load_and_migrate_recent_ports() -> Result<Vec<u16>, String> {",
+        "    let home = env::var_os(\"HOME\").map(PathBuf::from);",
+        "    let xdg_config_home = env::var_os(\"XDG_CONFIG_HOME\");",
+        "    let config_directory = choose_config_directory(home.as_deref(), xdg_config_home.as_deref())?;",
+        "    let new_path = config_directory.join(\"piraeus\").join(\"config.toml\");",
+        "    let legacy_paths = legacy_config_paths(home.as_deref(), &config_directory);",
+        "    load_or_import(&new_path, &legacy_paths)",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 32,
+      "line_end": 39,
+      "text": [
+        "fn choose_config_path(",
+        "    home: Option<&Path>,",
+        "    xdg_config_home: Option<&OsStr>,",
+        ") -> Result<PathBuf, String> {",
+        "    Ok(choose_config_directory(home, xdg_config_home)?",
+        "        .join(\"piraeus\")",
+        "        .join(\"config.toml\"))",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 41,
+      "line_end": 54,
+      "text": [
+        "fn choose_config_directory(",
+        "    home: Option<&Path>,",
+        "    xdg_config_home: Option<&OsStr>,",
+        ") -> Result<PathBuf, String> {",
+        "    if let Some(xdg) = xdg_config_home {",
+        "        let xdg = Path::new(xdg);",
+        "        if xdg.is_absolute() {",
+        "            return Ok(xdg.to_path_buf());",
+        "        }",
+        "    }",
+        "    home.map(|home| home.join(\".config\")).ok_or_else(|| {",
+        "        \"HOME is not set, so ~/.config/piraeus/config.toml cannot be located.\".into()",
+        "    })",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 56,
+      "line_end": 66,
+      "text": [
+        "fn legacy_config_paths(home: Option<&Path>, config_directory: &Path) -> Vec<PathBuf> {",
+        "    let mut paths = Vec::new();",
+        "    if let Some(home) = home {",
+        "        paths.push(home.join(\".piraeus.toml\"));",
+        "    }",
+        "    paths.push(config_directory.join(\"pfm\").join(\"config.toml\"));",
+        "    if let Some(home) = home {",
+        "        paths.push(home.join(\".pfm.toml\"));",
+        "    }",
+        "    paths",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 68,
+      "line_end": 80,
+      "text": [
+        "fn load_or_import(new_path: &Path, legacy_paths: &[PathBuf]) -> Result<Vec<u16>, String> {",
+        "    if path_exists(new_path)? {",
+        "        return load_recent_ports(new_path);",
+        "    }",
+        "    for legacy_path in legacy_paths {",
+        "        if path_exists(legacy_path)? {",
+        "            let ports = load_recent_ports(legacy_path)?;",
+        "            save_recent_ports(new_path, &ports)?;",
+        "            return Ok(ports);",
+        "        }",
+        "    }",
+        "    Ok(Vec::new())",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 82,
+      "line_end": 85,
+      "text": [
+        "fn path_exists(path: &Path) -> Result<bool, String> {",
+        "    path.try_exists()",
+        "        .map_err(|error| format!(\"Could not inspect {}: {error}\", path.display()))",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 87,
+      "line_end": 87,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 88,
+      "line_end": 97,
+      "text": [
+        "pub fn load_recent_ports(path: &Path) -> Result<Vec<u16>, String> {",
+        "    let text = match fs::read_to_string(path) {",
+        "        Ok(text) => text,",
+        "        Err(error) if error.kind() == ErrorKind::NotFound => return Ok(Vec::new()),",
+        "        Err(error) => return Err(format!(\"Could not read {}: {error}\", path.display())),",
+        "    };",
+        "    let config: PiraeusConfig = toml::from_str(&text)",
+        "        .map_err(|error| format!(\"Could not parse {}: {error}\", path.display()))?;",
+        "    Ok(config.recent_remote_ports)",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 99,
+      "line_end": 99,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 100,
+      "line_end": 110,
+      "text": [
+        "pub fn save_recent_ports(path: &Path, ports: &[u16]) -> Result<(), String> {",
+        "    let text = toml::to_string_pretty(&PiraeusConfig {",
+        "        recent_remote_ports: ports.to_vec(),",
+        "    })",
+        "    .map_err(|error| format!(\"Could not encode recent ports: {error}\"))?;",
+        "    if let Some(parent) = path.parent() {",
+        "        fs::create_dir_all(parent)",
+        "            .map_err(|error| format!(\"Could not create {}: {error}\", parent.display()))?;",
+        "    }",
+        "    fs::write(path, text).map_err(|error| format!(\"Could not write {}: {error}\", path.display()))",
+        "}"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 118,
+      "line_end": 118,
+      "text": [
+        "    // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 120,
+      "line_end": 150,
+      "text": [
+        "    fn chooses_xdg_config_home_when_it_is_absolute() {",
+        "        let home = Path::new(\"/example/home\");",
+        "        assert_eq!(",
+        "            choose_config_path(Some(home), Some(OsStr::new(\"/example/xdg\"))).unwrap(),",
+        "            Path::new(\"/example/xdg/piraeus/config.toml\")",
+        "        );",
+        "        assert_eq!(",
+        "            choose_config_path(Some(home), Some(OsStr::new(\"relative/xdg\"))).unwrap(),",
+        "            Path::new(\"/example/home/.config/piraeus/config.toml\")",
+        "        );",
+        "        assert_eq!(",
+        "            choose_config_path(Some(home), None).unwrap(),",
+        "            Path::new(\"/example/home/.config/piraeus/config.toml\")",
+        "        );",
+        "        assert_eq!(",
+        "            choose_config_path(Some(home), Some(OsStr::new(\"\"))).unwrap(),",
+        "            Path::new(\"/example/home/.config/piraeus/config.toml\")",
+        "        );",
+        "        assert_eq!(",
+        "            choose_config_path(None, Some(OsStr::new(\"/example/xdg\"))).unwrap(),",
+        "            Path::new(\"/example/xdg/piraeus/config.toml\")",
+        "        );",
+        "        assert_eq!(",
+        "            legacy_config_paths(Some(home), Path::new(\"/example/xdg\")),",
+        "            [",
+        "                PathBuf::from(\"/example/home/.piraeus.toml\"),",
+        "                PathBuf::from(\"/example/xdg/pfm/config.toml\"),",
+        "                PathBuf::from(\"/example/home/.pfm.toml\")",
+        "            ]",
+        "        );",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 152,
+      "line_end": 152,
+      "text": [
+        "    // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 154,
+      "line_end": 167,
+      "text": [
+        "    fn saved_ports_survive_a_reload() {",
+        "        let directory = temporary_directory();",
+        "        let path = directory.join(\"piraeus\").join(\"config.toml\");",
+        "        assert_eq!(load_recent_ports(&path).unwrap(), Vec::<u16>::new());",
+        "        save_recent_ports(&path, &[8031, 8030]).unwrap();",
+        "        assert_eq!(load_recent_ports(&path).unwrap(), [8031, 8030]);",
+        "        fs::write(&path, \"recent_remote_ports = [not-a-port]\").unwrap();",
+        "        assert!(",
+        "            load_recent_ports(&path)",
+        "                .unwrap_err()",
+        "                .contains(\"Could not parse\")",
+        "        );",
+        "        fs::remove_dir_all(&directory).unwrap();",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 169,
+      "line_end": 169,
+      "text": [
+        "    // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_start": 171,
+      "line_end": 216,
+      "text": [
+        "    fn imports_legacy_history_from_home_or_xdg() {",
+        "        let directory = temporary_directory();",
+        "        let piraeus_home = directory.join(\"piraeus-home\");",
+        "        let legacy_piraeus = piraeus_home.join(\".piraeus.toml\");",
+        "        let new_piraeus = choose_config_path(Some(&piraeus_home), None).unwrap();",
+        "        save_recent_ports(&legacy_piraeus, &[8030]).unwrap();",
+        "        assert_eq!(",
+        "            load_or_import(",
+        "                &new_piraeus,",
+        "                &legacy_config_paths(Some(&piraeus_home), &piraeus_home.join(\".config\"))",
+        "            )",
+        "            .unwrap(),",
+        "            [8030]",
+        "        );",
+        "        assert_eq!(load_recent_ports(&new_piraeus).unwrap(), [8030]);",
+        "        assert!(legacy_piraeus.exists());",
+        "",
+        "        let xdg_home = directory.join(\"xdg-home\");",
+        "        let xdg = directory.join(\"xdg\");",
+        "        let legacy_xdg = xdg.join(\"pfm\").join(\"config.toml\");",
+        "        let new_xdg = choose_config_path(Some(&xdg_home), Some(xdg.as_os_str())).unwrap();",
+        "        save_recent_ports(&legacy_xdg, &[9000]).unwrap();",
+        "        let paths = legacy_config_paths(Some(&xdg_home), &xdg);",
+        "        assert_eq!(load_or_import(&new_xdg, &paths).unwrap(), [9000]);",
+        "        assert_eq!(load_recent_ports(&new_xdg).unwrap(), [9000]);",
+        "        assert!(legacy_xdg.exists());",
+        "",
+        "        let pfm_home = directory.join(\"pfm-home\");",
+        "        let legacy_pfm = pfm_home.join(\".pfm.toml\");",
+        "        let new_pfm = choose_config_path(Some(&pfm_home), None).unwrap();",
+        "        save_recent_ports(&legacy_pfm, &[7000]).unwrap();",
+        "        assert_eq!(",
+        "            load_or_import(",
+        "                &new_pfm,",
+        "                &legacy_config_paths(Some(&pfm_home), &pfm_home.join(\".config\"))",
+        "            )",
+        "            .unwrap(),",
+        "            [7000]",
+        "        );",
+        "        assert_eq!(load_recent_ports(&new_pfm).unwrap(), [7000]);",
+        "        assert!(legacy_pfm.exists());",
+        "",
+        "        save_recent_ports(&new_xdg, &[3000]).unwrap();",
+        "        assert_eq!(load_or_import(&new_xdg, &paths).unwrap(), [3000]);",
+        "        fs::remove_dir_all(&directory).unwrap();",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 80,
+      "line_end": 80,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 81,
+      "line_end": 83,
+      "text": [
+        "    fn load_recent_ports(&self) -> Result<Vec<u16>, String> {",
+        "        history::load_and_migrate_recent_ports()",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 85,
+      "line_end": 85,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_start": 86,
+      "line_end": 88,
+      "text": [
+        "    fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String> {",
+        "        history::save_recent_ports(&history::config_path()?, ports)",
+        "    }"
+      ]
+    }
+  ]
+}

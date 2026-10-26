@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Piraeus</title>
+  <desc id="desc">A harbor gate shaped like the Greek letter pi, with a golden light and two waves.</desc>
+  <rect width="128" height="128" rx="27" fill="#10263d"/>
+  <circle cx="64" cy="62" r="12" fill="#f4bf59"/>
+  <path d="M27 39h74" fill="none" stroke="#f2f6f5" stroke-linecap="round" stroke-width="10"/>
+  <path d="M39 42v36m50-36v36" fill="none" stroke="#f2f6f5" stroke-linecap="round" stroke-width="10"/>
+  <path d="M20 88c11-7 18-7 29 0s18 7 29 0 18-7 30 0" fill="none" stroke="#64d3cf" stroke-linecap="round" stroke-width="6"/>
+  <path d="M20 102c11-7 18-7 29 0s18 7 29 0 18-7 30 0" fill="none" stroke="#369eaf" stroke-linecap="round" stroke-width="6"/>
+</svg>

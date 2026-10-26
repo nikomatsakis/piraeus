@@ -5,8 +5,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 238,
-      "line_end": 267,
+      "line_start": 252,
+      "line_end": 281,
       "text": [
         "    // {impl}`requirements.errors.visible`",
         "    pub fn tick(&mut self) -> bool {",
@@ -42,16 +42,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 866,
-      "line_end": 866,
+      "line_start": 1064,
+      "line_end": 1064,
       "text": [
         "    // {test}`requirements.errors.visible`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 868,
-      "line_end": 881,
+      "line_start": 1064,
+      "line_end": 1064,
+      "text": [
+        "    // {test}`requirements.errors.visible`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 1066,
+      "line_end": 1079,
       "text": [
         "    fn refresh_recreates_failed_and_running_rows() {",
         "        let (mut app, state) = setup();",
@@ -71,16 +79,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 883,
-      "line_end": 883,
+      "line_start": 1081,
+      "line_end": 1081,
       "text": [
         "    // {test}`requirements.errors.visible`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 886,
-      "line_end": 900,
+      "line_start": 1084,
+      "line_end": 1098,
       "text": [
         "    fn live_ssh_fault_is_visible_and_refresh_stops_its_process() {",
         "        let (mut app, state) = setup();",
@@ -101,8 +109,8 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 137,
-      "line_end": 140,
+      "line_start": 148,
+      "line_end": 151,
       "text": [
         "fn is_failure_line(line: &str) -> bool {",
         "    let lower = line.to_ascii_lowercase();",
@@ -112,8 +120,8 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 144,
-      "line_end": 173,
+      "line_start": 155,
+      "line_end": 184,
       "text": [
         "    // {impl}`requirements.errors.visible`",
         "    fn poll(&mut self) -> ProcessState {",
@@ -149,16 +157,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 218,
-      "line_end": 218,
+      "line_start": 229,
+      "line_end": 229,
       "text": [
         "    // {test}`requirements.errors.visible`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 220,
-      "line_end": 225,
+      "line_start": 231,
+      "line_end": 236,
       "text": [
         "    fn recognizes_live_ssh_failure_diagnostics() {",
         "        assert!(is_failure_line(",
@@ -170,20 +178,20 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 12,
-      "line_end": 12,
+      "line_start": 13,
+      "line_end": 13,
       "text": [
         "// {impl}`requirements.errors.visible`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 15,
-      "line_end": 110,
+      "line_start": 16,
+      "line_end": 116,
       "text": [
         "pub fn draw(frame: &mut Frame, app: &App) {",
         "    let panel_height = if app.show_help {",
-        "        10",
+        "        12",
         "    } else if app.show_info {",
         "        7",
         "    } else {",
@@ -199,7 +207,7 @@
         "        ])",
         "        .split(frame.area());",
         "    frame.render_widget(",
-        "        Paragraph::new(\"SSH port forwards\").block(Block::bordered().title(\"pfm\")),",
+        "        Paragraph::new(\"SSH port forwards\").block(Block::bordered().title(\"Piraeus\")),",
         "        areas[0],",
         "    );",
         "",
@@ -261,12 +269,17 @@
         "        .message",
         "        .as_deref()",
         "        .unwrap_or(\"a add  b browser  x remove  r refresh  i info  ? help  q quit\");",
-        "    frame.render_widget(Paragraph::new(footer), areas[3]);",
+        "    let footer_style = if app.message.is_some() {",
+        "        Style::default().fg(Color::Red)",
+        "    } else {",
+        "        Style::default()",
+        "    };",
+        "    frame.render_widget(Paragraph::new(footer).style(footer_style), areas[3]);",
         "",
         "    if let Some(dialog) = &app.dialog {",
         "        draw_add_dialog(frame, app, dialog);",
         "        if app.show_help {",
-        "            let area = centered(frame.area(), 76, 11);",
+        "            let area = centered(frame.area(), 80, 14);",
         "            frame.render_widget(Clear, area);",
         "            frame.render_widget(",
         "                Paragraph::new(help_text())",
@@ -281,16 +294,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 280,
-      "line_end": 280,
+      "line_start": 359,
+      "line_end": 359,
       "text": [
         "    // {test}`requirements.errors.visible`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 283,
-      "line_end": 299,
+      "line_start": 362,
+      "line_end": 382,
       "text": [
         "    fn error_row_and_detail_render_in_table() {",
         "        let mut app = App::new(",
@@ -298,7 +311,11 @@
         "            Ok(vec![\"chronos\".into()]),",
         "        );",
         "        app.on_key(key(KeyCode::Char('a')));",
-        "        app.dialog.as_mut().unwrap().remote_input = \"8030\".into();",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        for ch in \"8030\".chars() {",
+        "            app.on_key(key(KeyCode::Char(ch)));",
+        "        }",
+        "        app.on_key(key(KeyCode::Enter));",
         "        app.on_key(key(KeyCode::Enter));",
         "        let (table, has_red) = rendered(&app);",
         "        assert!(table.contains(\"chronos\"));",

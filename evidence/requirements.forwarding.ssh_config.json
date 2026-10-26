@@ -5,11 +5,15 @@
   "inputs": [
     {
       "file": "src/hosts.rs",
-      "line_start": 7,
-      "line_end": 11,
+      "line_start": 6,
+      "line_end": 14,
       "text": [
+        "const HOST_DISCOVERY_RULES: ParseRule =",
+        "    ParseRule::ALLOW_UNKNOWN_FIELDS.union(ParseRule::ALLOW_UNSUPPORTED_FIELDS);",
+        "",
+        "// {impl}`requirements.forwarding.host_discovery`",
         "pub fn discover_hosts() -> Result<Vec<String>, String> {",
-        "    let config = SshConfig::parse_default_file(ParseRule::ALLOW_UNSUPPORTED_FIELDS)",
+        "    let config = SshConfig::parse_default_file(HOST_DISCOVERY_RULES)",
         "        .map_err(|error| format!(\"Could not read ~/.ssh/config: {error}\"))?;",
         "    Ok(literal_hosts(&config))",
         "}"
@@ -17,16 +21,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 18,
-      "line_end": 18,
+      "line_start": 19,
+      "line_end": 19,
       "text": [
         "    // {impl}`requirements.forwarding.ssh_config`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 80,
-      "line_end": 101,
+      "line_start": 91,
+      "line_end": 112,
       "text": [
         "fn ssh_command(spec: &ForwardSpec) -> Command {",
         "    let mut command = Command::new(\"ssh\");",
@@ -54,16 +58,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 197,
-      "line_end": 197,
+      "line_start": 208,
+      "line_end": 208,
       "text": [
         "    // {test}`requirements.forwarding.ssh_config`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 199,
-      "line_end": 216,
+      "line_start": 210,
+      "line_end": 227,
       "text": [
         "    fn ssh_receives_alias_and_forward_as_arguments() {",
         "        let command = ssh_command(&ForwardSpec {",

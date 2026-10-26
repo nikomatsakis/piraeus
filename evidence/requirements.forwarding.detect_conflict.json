@@ -1,12 +1,12 @@
 {
-  "requirement": "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by a pfm-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
+  "requirement": "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by an application-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
   "determination": true,
   "rationale": "Checked managed/unmanaged/free classification and ascending free-port search. Order and conflict-option tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 175,
-      "line_end": 228,
+      "line_start": 189,
+      "line_end": 242,
       "text": [
         "    // {impl}`requirements.forwarding.detect_conflict`",
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
@@ -66,16 +66,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 799,
-      "line_end": 799,
+      "line_start": 997,
+      "line_end": 997,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 801,
-      "line_end": 817,
+      "line_start": 997,
+      "line_end": 997,
+      "text": [
+        "    // {test}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 999,
+      "line_end": 1015,
       "text": [
         "    fn managed_conflict_suggests_next_port_and_can_replace() {",
         "        let (mut app, state) = setup();",
@@ -98,16 +106,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 820,
-      "line_end": 820,
+      "line_start": 1018,
+      "line_end": 1018,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 822,
-      "line_end": 834,
+      "line_start": 1020,
+      "line_end": 1032,
       "text": [
         "    fn unmanaged_conflict_never_offers_replacement() {",
         "        let (mut app, state) = setup();",

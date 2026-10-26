@@ -5,16 +5,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 291,
-      "line_end": 291,
+      "line_start": 309,
+      "line_end": 309,
       "text": [
         "            // {impl}`requirements.tui.selection`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 315,
-      "line_end": 323,
+      "line_start": 334,
+      "line_end": 342,
       "text": [
         "    fn select_next(&mut self) {",
         "        if self.forwards.is_empty() {",
@@ -29,8 +29,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 325,
-      "line_end": 333,
+      "line_start": 344,
+      "line_end": 352,
       "text": [
         "    fn select_previous(&mut self) {",
         "        if self.forwards.is_empty() {",
@@ -45,16 +45,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 848,
-      "line_end": 848,
+      "line_start": 1046,
+      "line_end": 1046,
       "text": [
         "    // {test}`requirements.tui.selection`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 851,
-      "line_end": 863,
+      "line_start": 1049,
+      "line_end": 1061,
       "text": [
         "    fn selection_and_remove_use_the_visible_row() {",
         "        let (mut app, state) = setup();",
@@ -73,20 +73,20 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 11,
-      "line_end": 11,
+      "line_start": 12,
+      "line_end": 12,
       "text": [
         "// {impl}`requirements.tui.selection`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 15,
-      "line_end": 110,
+      "line_start": 16,
+      "line_end": 116,
       "text": [
         "pub fn draw(frame: &mut Frame, app: &App) {",
         "    let panel_height = if app.show_help {",
-        "        10",
+        "        12",
         "    } else if app.show_info {",
         "        7",
         "    } else {",
@@ -102,7 +102,7 @@
         "        ])",
         "        .split(frame.area());",
         "    frame.render_widget(",
-        "        Paragraph::new(\"SSH port forwards\").block(Block::bordered().title(\"pfm\")),",
+        "        Paragraph::new(\"SSH port forwards\").block(Block::bordered().title(\"Piraeus\")),",
         "        areas[0],",
         "    );",
         "",
@@ -164,12 +164,17 @@
         "        .message",
         "        .as_deref()",
         "        .unwrap_or(\"a add  b browser  x remove  r refresh  i info  ? help  q quit\");",
-        "    frame.render_widget(Paragraph::new(footer), areas[3]);",
+        "    let footer_style = if app.message.is_some() {",
+        "        Style::default().fg(Color::Red)",
+        "    } else {",
+        "        Style::default()",
+        "    };",
+        "    frame.render_widget(Paragraph::new(footer).style(footer_style), areas[3]);",
         "",
         "    if let Some(dialog) = &app.dialog {",
         "        draw_add_dialog(frame, app, dialog);",
         "        if app.show_help {",
-        "            let area = centered(frame.area(), 76, 11);",
+        "            let area = centered(frame.area(), 80, 14);",
         "            frame.render_widget(Clear, area);",
         "            frame.render_widget(",
         "                Paragraph::new(help_text())",

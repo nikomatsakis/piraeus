@@ -5,8 +5,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 289,
-      "line_end": 313,
+      "line_start": 307,
+      "line_end": 332,
       "text": [
         "    fn on_main_key(&mut self, key: KeyEvent) {",
         "        match key.code {",
@@ -17,8 +17,9 @@
         "            KeyCode::Char('a') => {",
         "                self.dialog = Some(AddDialog::default());",
         "                self.show_info = false;",
-        "                self.message = None;",
         "            }",
+        "            // {impl}`requirements.forwarding.quit`",
+        "            KeyCode::Char('q') => self.quit(),",
         "            // {impl}`requirements.browser.open`",
         "            KeyCode::Char('b') => self.open_selected(),",
         "            // {impl}`requirements.forwarding.remove`",
@@ -37,16 +38,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 925,
-      "line_end": 925,
+      "line_start": 1123,
+      "line_end": 1123,
       "text": [
         "    // {test}`requirements.errors.info`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 927,
-      "line_end": 944,
+      "line_start": 1125,
+      "line_end": 1142,
       "text": [
         "    fn browser_uses_actual_local_port_and_exposes_failures() {",
         "        let (mut app, state) = setup();",
@@ -70,20 +71,20 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 13,
-      "line_end": 13,
+      "line_start": 14,
+      "line_end": 14,
       "text": [
         "// {impl}`requirements.errors.info`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 15,
-      "line_end": 110,
+      "line_start": 16,
+      "line_end": 116,
       "text": [
         "pub fn draw(frame: &mut Frame, app: &App) {",
         "    let panel_height = if app.show_help {",
-        "        10",
+        "        12",
         "    } else if app.show_info {",
         "        7",
         "    } else {",
@@ -99,7 +100,7 @@
         "        ])",
         "        .split(frame.area());",
         "    frame.render_widget(",
-        "        Paragraph::new(\"SSH port forwards\").block(Block::bordered().title(\"pfm\")),",
+        "        Paragraph::new(\"SSH port forwards\").block(Block::bordered().title(\"Piraeus\")),",
         "        areas[0],",
         "    );",
         "",
@@ -161,12 +162,17 @@
         "        .message",
         "        .as_deref()",
         "        .unwrap_or(\"a add  b browser  x remove  r refresh  i info  ? help  q quit\");",
-        "    frame.render_widget(Paragraph::new(footer), areas[3]);",
+        "    let footer_style = if app.message.is_some() {",
+        "        Style::default().fg(Color::Red)",
+        "    } else {",
+        "        Style::default()",
+        "    };",
+        "    frame.render_widget(Paragraph::new(footer).style(footer_style), areas[3]);",
         "",
         "    if let Some(dialog) = &app.dialog {",
         "        draw_add_dialog(frame, app, dialog);",
         "        if app.show_help {",
-        "            let area = centered(frame.area(), 76, 11);",
+        "            let area = centered(frame.area(), 80, 14);",
         "            frame.render_widget(Clear, area);",
         "            frame.render_widget(",
         "                Paragraph::new(help_text())",
@@ -181,16 +187,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 281,
-      "line_end": 281,
+      "line_start": 360,
+      "line_end": 360,
       "text": [
         "    // {test}`requirements.errors.info`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 283,
-      "line_end": 299,
+      "line_start": 362,
+      "line_end": 382,
       "text": [
         "    fn error_row_and_detail_render_in_table() {",
         "        let mut app = App::new(",
@@ -198,7 +204,11 @@
         "            Ok(vec![\"chronos\".into()]),",
         "        );",
         "        app.on_key(key(KeyCode::Char('a')));",
-        "        app.dialog.as_mut().unwrap().remote_input = \"8030\".into();",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        for ch in \"8030\".chars() {",
+        "            app.on_key(key(KeyCode::Char(ch)));",
+        "        }",
+        "        app.on_key(key(KeyCode::Enter));",
         "        app.on_key(key(KeyCode::Enter));",
         "        let (table, has_red) = rendered(&app);",
         "        assert!(table.contains(\"chronos\"));",

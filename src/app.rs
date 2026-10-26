@@ -26,6 +26,8 @@ pub trait Backend {
     fn port_free(&self, port: u16) -> bool;
     fn launch(&mut self, spec: &ForwardSpec) -> Result<Box<dyn ManagedProcess>, String>;
     fn open_browser(&mut self, port: u16) -> Result<(), String>;
+    fn load_recent_ports(&self) -> Result<Vec<u16>, String>;
+    fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String>;
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -64,31 +66,10 @@ impl Forward {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Focus {
+pub enum AddStage {
     Host,
-    Remote,
-    Choice,
-    Manual,
-}
-
-impl Focus {
-    fn next(self) -> Self {
-        match self {
-            Self::Host => Self::Remote,
-            Self::Remote => Self::Choice,
-            Self::Choice => Self::Manual,
-            Self::Manual => Self::Host,
-        }
-    }
-
-    fn previous(self) -> Self {
-        match self {
-            Self::Host => Self::Manual,
-            Self::Remote => Self::Host,
-            Self::Choice => Self::Remote,
-            Self::Manual => Self::Choice,
-        }
-    }
+    RemotePort,
+    LocalPort,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -114,31 +95,56 @@ pub struct PortChoices {
 }
 
 pub struct AddDialog {
+    pub stage: AddStage,
     pub host_index: usize,
+    pub custom_host_input: String,
+    pub remote_index: usize,
     pub remote_input: String,
+    pub chosen_remote_port: Option<u16>,
     pub manual_input: String,
     pub choice: Choice,
-    pub focus: Focus,
     pub error: Option<String>,
 }
 
 impl Default for AddDialog {
     fn default() -> Self {
         Self {
+            stage: AddStage::Host,
             host_index: 0,
+            custom_host_input: String::new(),
+            remote_index: 0,
             remote_input: String::new(),
+            chosen_remote_port: None,
             manual_input: String::new(),
             choice: Choice::Preferred,
-            focus: Focus::Remote,
             error: None,
         }
     }
+}
+
+fn wrap_index(current: usize, count: usize, direction: isize) -> usize {
+    (current as isize + direction).rem_euclid(count as isize) as usize
+}
+
+fn is_host_char(ch: char) -> bool {
+    !ch.is_control() && !ch.is_whitespace() && ch != '?'
+}
+
+fn distinct_ports(ports: Vec<u16>) -> Vec<u16> {
+    let mut distinct = Vec::new();
+    for port in ports {
+        if port != 0 && !distinct.contains(&port) {
+            distinct.push(port);
+        }
+    }
+    distinct
 }
 
 pub struct App {
     backend: Box<dyn Backend>,
     pub hosts: Vec<String>,
     pub host_error: Option<String>,
+    pub recent_remote_ports: Vec<u16>,
     pub forwards: Vec<Forward>,
     pub selected: Option<usize>,
     pub dialog: Option<AddDialog>,
@@ -154,17 +160,25 @@ impl App {
             Ok(hosts) => (hosts, None),
             Err(error) => (Vec::new(), Some(error)),
         };
+        let (recent_remote_ports, message) = match backend.load_recent_ports() {
+            Ok(ports) => (distinct_ports(ports), None),
+            Err(error) => (
+                Vec::new(),
+                Some(format!("Could not load recent ports: {error}")),
+            ),
+        };
         Self {
             backend,
             hosts,
             host_error,
+            recent_remote_ports,
             forwards: Vec::new(),
             selected: None,
             dialog: None,
             show_help: false,
             show_info: false,
             should_quit: false,
-            message: None,
+            message,
         }
     }
 
@@ -268,15 +282,19 @@ impl App {
 
     pub fn on_key(&mut self, key: KeyEvent) {
         // {impl}`requirements.forwarding.quit`
-        if (key.code == KeyCode::Char('c') && key.modifiers.contains(KeyModifiers::CONTROL))
-            || key.code == KeyCode::Char('q')
-        {
+        if key.code == KeyCode::Char('c') && key.modifiers.contains(KeyModifiers::CONTROL) {
             self.quit();
             return;
         }
         // {impl}`requirements.help.shortcuts`
         if key.code == KeyCode::Char('?') {
             self.show_help = !self.show_help;
+            return;
+        }
+        if self.show_help {
+            if key.code == KeyCode::Esc {
+                self.show_help = false;
+            }
             return;
         }
         if self.dialog.is_some() {
@@ -295,8 +313,9 @@ impl App {
             KeyCode::Char('a') => {
                 self.dialog = Some(AddDialog::default());
                 self.show_info = false;
-                self.message = None;
             }
+            // {impl}`requirements.forwarding.quit`
+            KeyCode::Char('q') => self.quit(),
             // {impl}`requirements.browser.open`
             KeyCode::Char('b') => self.open_selected(),
             // {impl}`requirements.forwarding.remove`
@@ -332,72 +351,154 @@ impl App {
         self.show_info = false;
     }
 
+    // {impl}`requirements.forwarding.add`
     fn on_dialog_key(&mut self, key: KeyEvent) {
         let mut dialog = self.dialog.take().expect("dialog exists");
-        match key.code {
-            KeyCode::Esc => return,
-            KeyCode::Enter => {
-                self.confirm_add(dialog);
-                return;
+        if key.code == KeyCode::Esc {
+            dialog.error = None;
+            match dialog.stage {
+                AddStage::Host => return,
+                AddStage::RemotePort => dialog.stage = AddStage::Host,
+                AddStage::LocalPort => dialog.stage = AddStage::RemotePort,
             }
-            KeyCode::Tab => dialog.focus = dialog.focus.next(),
-            KeyCode::BackTab => dialog.focus = dialog.focus.previous(),
-            KeyCode::Up | KeyCode::Left => self.move_dialog_selection(&mut dialog, -1),
-            KeyCode::Down | KeyCode::Right => self.move_dialog_selection(&mut dialog, 1),
-            KeyCode::Backspace => match dialog.focus {
-                Focus::Remote => {
-                    dialog.remote_input.pop();
-                    self.reset_dialog_choice(&mut dialog);
-                }
-                Focus::Manual => {
-                    dialog.manual_input.pop();
-                }
-                _ => {}
-            },
-            KeyCode::Char(ch) => match dialog.focus {
-                Focus::Remote => {
-                    dialog.remote_input.push(ch);
-                    self.reset_dialog_choice(&mut dialog);
-                }
-                Focus::Manual => {
-                    dialog.manual_input.push(ch);
-                    dialog.choice = Choice::Manual;
-                }
-                Focus::Choice if ch == ' ' => self.move_dialog_selection(&mut dialog, 1),
-                _ => {}
-            },
-            _ => {}
+            self.dialog = Some(dialog);
+            return;
         }
-        dialog.error = None;
+        if dialog.stage == AddStage::LocalPort && key.code == KeyCode::Enter {
+            self.confirm_add(dialog);
+            return;
+        }
+        match dialog.stage {
+            AddStage::Host => self.on_host_key(&mut dialog, key),
+            AddStage::RemotePort => self.on_remote_port_key(&mut dialog, key),
+            AddStage::LocalPort => self.on_local_port_key(&mut dialog, key),
+        }
         self.dialog = Some(dialog);
     }
 
-    fn move_dialog_selection(&self, dialog: &mut AddDialog, direction: isize) {
-        match dialog.focus {
-            Focus::Host if !self.hosts.is_empty() => {
-                let count = self.hosts.len() as isize;
-                dialog.host_index =
-                    (dialog.host_index as isize + direction).rem_euclid(count) as usize;
+    // {impl}`requirements.forwarding.add.host`
+    fn on_host_key(&self, dialog: &mut AddDialog, key: KeyEvent) {
+        match key.code {
+            KeyCode::Up | KeyCode::Left => {
+                dialog.host_index = wrap_index(dialog.host_index, self.hosts.len() + 1, -1);
+                dialog.error = None;
             }
-            Focus::Choice => {
-                if let Ok(remote_port) = parse_port(&dialog.remote_input) {
-                    let options = self.port_choices(remote_port).offered;
-                    let current = options
-                        .iter()
-                        .position(|choice| *choice == dialog.choice)
-                        .unwrap_or(0) as isize;
-                    let next = (current + direction).rem_euclid(options.len() as isize) as usize;
-                    dialog.choice = options[next];
+            KeyCode::Down | KeyCode::Right => {
+                dialog.host_index = wrap_index(dialog.host_index, self.hosts.len() + 1, 1);
+                dialog.error = None;
+            }
+            KeyCode::Char(ch) if is_host_char(ch) => {
+                dialog.host_index = self.hosts.len();
+                dialog.custom_host_input.push(ch);
+                dialog.error = None;
+            }
+            KeyCode::Backspace if dialog.host_index == self.hosts.len() => {
+                dialog.custom_host_input.pop();
+                dialog.error = None;
+            }
+            KeyCode::Enter => {
+                if self.selected_host(dialog).is_some() {
+                    dialog.stage = AddStage::RemotePort;
+                    dialog.error = None;
+                } else {
+                    dialog.error = Some("Enter a custom SSH host name.".into());
                 }
             }
             _ => {}
         }
     }
 
-    fn reset_dialog_choice(&self, dialog: &mut AddDialog) {
-        dialog.choice = parse_port(&dialog.remote_input)
-            .map(|port| self.port_choices(port).default)
-            .unwrap_or(Choice::Preferred);
+    fn selected_host(&self, dialog: &AddDialog) -> Option<String> {
+        if dialog.host_index == self.hosts.len() {
+            let host = dialog.custom_host_input.trim();
+            (!host.is_empty()).then(|| host.to_owned())
+        } else {
+            self.hosts.get(dialog.host_index).cloned()
+        }
+    }
+
+    // {impl}`requirements.forwarding.add.remote_port`
+    fn on_remote_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {
+        match key.code {
+            KeyCode::Up | KeyCode::Left => {
+                dialog.remote_index =
+                    wrap_index(dialog.remote_index, self.recent_remote_ports.len() + 1, -1);
+                dialog.error = None;
+            }
+            KeyCode::Down | KeyCode::Right => {
+                dialog.remote_index =
+                    wrap_index(dialog.remote_index, self.recent_remote_ports.len() + 1, 1);
+                dialog.error = None;
+            }
+            KeyCode::Char(ch) if ch.is_ascii_digit() => {
+                dialog.remote_index = self.recent_remote_ports.len();
+                dialog.remote_input.push(ch);
+                dialog.error = None;
+            }
+            KeyCode::Backspace if dialog.remote_index == self.recent_remote_ports.len() => {
+                dialog.remote_input.pop();
+                dialog.error = None;
+            }
+            KeyCode::Enter => match self.selected_remote_port(dialog) {
+                Ok(port) => {
+                    dialog.chosen_remote_port = Some(port);
+                    dialog.choice = self.port_choices(port).default;
+                    dialog.stage = AddStage::LocalPort;
+                    dialog.error = None;
+                }
+                Err(error) => dialog.error = Some(format!("Remote port: {error}")),
+            },
+            KeyCode::Char(_) => {
+                dialog.error = Some("Remote port: enter digits from 1 through 65535.".into())
+            }
+            _ => {}
+        }
+    }
+
+    fn selected_remote_port(&self, dialog: &AddDialog) -> Result<u16, &'static str> {
+        if dialog.remote_index == self.recent_remote_ports.len() {
+            parse_port(&dialog.remote_input)
+        } else {
+            self.recent_remote_ports
+                .get(dialog.remote_index)
+                .copied()
+                .ok_or("Select a recent port or enter another port.")
+        }
+    }
+
+    // {impl}`requirements.forwarding.add.local_port`
+    fn on_local_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {
+        match key.code {
+            KeyCode::Up | KeyCode::Left => self.move_local_choice(dialog, -1),
+            KeyCode::Down | KeyCode::Right => self.move_local_choice(dialog, 1),
+            KeyCode::Char(ch) if ch.is_ascii_digit() => {
+                dialog.choice = Choice::Manual;
+                dialog.manual_input.push(ch);
+                dialog.error = None;
+            }
+            KeyCode::Backspace if dialog.choice == Choice::Manual => {
+                dialog.manual_input.pop();
+                dialog.error = None;
+            }
+            KeyCode::Char(_) => {
+                dialog.error =
+                    Some("Alternative local port: enter digits from 1 through 65535.".into())
+            }
+            _ => {}
+        }
+    }
+
+    fn move_local_choice(&self, dialog: &mut AddDialog, direction: isize) {
+        let Some(remote_port) = dialog.chosen_remote_port else {
+            return;
+        };
+        let options = self.port_choices(remote_port).offered;
+        let current = options
+            .iter()
+            .position(|choice| *choice == dialog.choice)
+            .unwrap_or(0);
+        dialog.choice = options[wrap_index(current, options.len(), direction)];
+        dialog.error = None;
     }
 
     // {impl}`requirements.forwarding.port_validation`
@@ -408,22 +509,15 @@ impl App {
     // {impl}`requirements.forwarding.unmanaged_conflict_choices`
     // {impl}`requirements.forwarding.suggestion_exhausted`
     fn confirm_add(&mut self, mut dialog: AddDialog) {
-        let Some(host) = self.hosts.get(dialog.host_index).cloned() else {
-            dialog.error = Some(
-                self.host_error
-                    .clone()
-                    .unwrap_or_else(|| "No SSH hosts found in ~/.ssh/config.".into()),
-            );
+        let Some(host) = self.selected_host(&dialog) else {
+            dialog.error = Some("Enter a custom SSH host name.".into());
             self.dialog = Some(dialog);
             return;
         };
-        let remote_port = match parse_port(&dialog.remote_input) {
-            Ok(port) => port,
-            Err(error) => {
-                dialog.error = Some(format!("Remote port: {error}"));
-                self.dialog = Some(dialog);
-                return;
-            }
+        let Some(remote_port) = dialog.chosen_remote_port else {
+            dialog.error = Some("Select a remote port.".into());
+            self.dialog = Some(dialog);
+            return;
         };
         let options = self.port_choices(remote_port);
         if !options.offered.contains(&dialog.choice) {
@@ -479,6 +573,13 @@ impl App {
             remote_port,
             local_port,
         });
+        // {impl}`requirements.forwarding.add.port_history`
+        self.recent_remote_ports.retain(|port| *port != remote_port);
+        self.recent_remote_ports.insert(0, remote_port);
+        self.message = None;
+        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {
+            self.message = Some(format!("Could not save recent ports: {error}"));
+        }
         self.dialog = None;
     }
 
@@ -599,6 +700,7 @@ mod tests {
         processes: Vec<ProcessState>,
         stops: Vec<usize>,
         browser_ports: Vec<u16>,
+        recent_ports: Vec<u16>,
         launch_error: Option<String>,
         browser_error: Option<String>,
     }
@@ -636,6 +738,15 @@ mod tests {
             state.browser_ports.push(port);
             Ok(())
         }
+
+        fn load_recent_ports(&self) -> Result<Vec<u16>, String> {
+            Ok(self.0.borrow().recent_ports.clone())
+        }
+
+        fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String> {
+            self.0.borrow_mut().recent_ports = ports.to_vec();
+            Ok(())
+        }
     }
 
     impl ManagedProcess for FakeProcess {
@@ -664,13 +775,31 @@ mod tests {
         KeyEvent::new(code, KeyModifiers::NONE)
     }
 
+    fn type_text(app: &mut App, text: &str) {
+        for ch in text.chars() {
+            app.on_key(key(KeyCode::Char(ch)));
+        }
+    }
+
     fn add(app: &mut App, remote: &str, choice: Choice, manual: &str, host_index: usize) {
         app.on_key(key(KeyCode::Char('a')));
-        let dialog = app.dialog.as_mut().unwrap();
-        dialog.remote_input = remote.into();
-        dialog.choice = choice;
-        dialog.manual_input = manual.into();
-        dialog.host_index = host_index;
+        for _ in 0..host_index {
+            app.on_key(key(KeyCode::Down));
+        }
+        app.on_key(key(KeyCode::Enter));
+        type_text(app, remote);
+        app.on_key(key(KeyCode::Enter));
+        if !manual.is_empty() {
+            type_text(app, manual);
+        } else {
+            for _ in 0..4 {
+                if app.dialog.as_ref().unwrap().choice == choice {
+                    break;
+                }
+                app.on_key(key(KeyCode::Down));
+            }
+            assert_eq!(app.dialog.as_ref().unwrap().choice, choice);
+        }
         app.on_key(key(KeyCode::Enter));
     }
 
@@ -700,34 +829,103 @@ mod tests {
     }
 
     // {test}`requirements.forwarding.add`
+    // {test}`requirements.forwarding.add.host`
+    // {test}`requirements.forwarding.add.remote_port`
+    // {test}`requirements.forwarding.add.local_port`
     #[test]
     fn keyboard_can_choose_host_enter_port_and_select_radio_option() {
         let (mut app, _) = setup();
         app.on_key(key(KeyCode::Char('a')));
-        app.on_key(key(KeyCode::BackTab));
+        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::Host);
         app.on_key(key(KeyCode::Down));
-        app.on_key(key(KeyCode::Tab));
-        for ch in "8030".chars() {
-            app.on_key(key(KeyCode::Char(ch)));
-        }
-        app.on_key(key(KeyCode::Tab));
-        app.on_key(key(KeyCode::Down));
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);
+        type_text(&mut app, "8030");
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::LocalPort);
+        type_text(&mut app, "8031");
         assert_eq!(app.dialog.as_ref().unwrap().choice, Choice::Manual);
-        app.on_key(key(KeyCode::Tab));
-        for ch in "8031".chars() {
-            app.on_key(key(KeyCode::Char(ch)));
-        }
         app.on_key(key(KeyCode::Enter));
         assert_eq!(app.forwards[0].spec.host, "mnemosyne");
         assert_eq!(app.forwards[0].spec.remote_port, 8030);
         assert_eq!(app.forwards[0].spec.local_port, 8031);
     }
 
+    // {test}`requirements.forwarding.add.host`
+    // {test}`requirements.forwarding.quit`
+    #[test]
+    fn typing_custom_host_can_start_with_q() {
+        let (mut app, _) = setup();
+        app.on_key(key(KeyCode::Char('a')));
+        type_text(&mut app, "qa.example");
+        assert!(!app.should_quit);
+        assert_eq!(app.dialog.as_ref().unwrap().host_index, app.hosts.len());
+        app.on_key(key(KeyCode::Enter));
+        type_text(&mut app, "8030");
+        app.on_key(key(KeyCode::Enter));
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.forwards[0].spec.host, "qa.example");
+    }
+
+    // {test}`requirements.forwarding.add.host`
+    #[test]
+    fn custom_host_works_without_saved_hosts() {
+        let state = Rc::new(RefCell::new(FakeState::default()));
+        let mut app = App::new(
+            Box::new(FakeBackend(state)),
+            Err("SSH config unavailable".into()),
+        );
+        app.on_key(key(KeyCode::Char('a')));
+        assert_eq!(app.dialog.as_ref().unwrap().host_index, 0);
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::Host);
+        assert!(app.dialog.as_ref().unwrap().error.is_some());
+        type_text(&mut app, "remote.example");
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);
+    }
+
+    // {test}`requirements.forwarding.add.remote_port`
+    // {test}`requirements.forwarding.add.port_history`
+    #[test]
+    fn recent_remote_ports_survive_removal_and_new_app_instance() {
+        let (mut app, state) = setup();
+        add(&mut app, "8030", Choice::Preferred, "", 0);
+        add(&mut app, "9000", Choice::Preferred, "", 0);
+        app.on_key(key(KeyCode::Char('x')));
+        assert_eq!(app.recent_remote_ports, [9000, 8030]);
+        drop(app);
+
+        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec!["chronos".into()]));
+        app.on_key(key(KeyCode::Char('a')));
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);
+        assert_eq!(app.recent_remote_ports, [9000, 8030]);
+        app.on_key(key(KeyCode::Down));
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(8030));
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.recent_remote_ports, [8030, 9000]);
+    }
+
     // {test}`requirements.forwarding.port_validation`
     #[test]
     fn invalid_remote_and_manual_ports_keep_dialog_open() {
         let (mut app, state) = setup();
-        add(&mut app, "abc", Choice::Preferred, "", 0);
+        app.on_key(key(KeyCode::Char('a')));
+        app.on_key(key(KeyCode::Enter));
+        app.on_key(key(KeyCode::Char('x')));
+        assert!(
+            app.dialog
+                .as_ref()
+                .unwrap()
+                .error
+                .as_ref()
+                .unwrap()
+                .contains("enter digits")
+        );
+        app.dialog = None;
+        add(&mut app, "65536", Choice::Preferred, "", 0);
         assert!(
             app.dialog
                 .as_ref()
@@ -912,11 +1110,11 @@ mod tests {
 
     // {test}`requirements.forwarding.quit`
     #[test]
-    fn quit_stops_forwards_even_while_dialog_is_open() {
+    fn control_c_stops_forwards_even_while_dialog_is_open() {
         let (mut app, state) = setup();
         add(&mut app, "8000", Choice::Preferred, "", 0);
         app.on_key(key(KeyCode::Char('a')));
-        app.on_key(key(KeyCode::Char('q')));
+        app.on_key(KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL));
         assert!(app.should_quit);
         assert_eq!(state.borrow().stops, [0]);
     }

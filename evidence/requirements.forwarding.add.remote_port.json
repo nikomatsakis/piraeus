@@ -1,0 +1,269 @@
+{
+  "requirement": "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+  "determination": true,
+  "rationale": "Checked recent-port list, arrow selection, direct numeric entry, and transition to local choices. A second App instance reloads the ordered history in the model test.",
+  "inputs": [
+    {
+      "file": "src/app.rs",
+      "line_start": 420,
+      "line_end": 420,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 421,
+      "line_end": 456,
+      "text": [
+        "    fn on_remote_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
+        "        match key.code {",
+        "            KeyCode::Up | KeyCode::Left => {",
+        "                dialog.remote_index =",
+        "                    wrap_index(dialog.remote_index, self.recent_remote_ports.len() + 1, -1);",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Down | KeyCode::Right => {",
+        "                dialog.remote_index =",
+        "                    wrap_index(dialog.remote_index, self.recent_remote_ports.len() + 1, 1);",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Char(ch) if ch.is_ascii_digit() => {",
+        "                dialog.remote_index = self.recent_remote_ports.len();",
+        "                dialog.remote_input.push(ch);",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Backspace if dialog.remote_index == self.recent_remote_ports.len() => {",
+        "                dialog.remote_input.pop();",
+        "                dialog.error = None;",
+        "            }",
+        "            KeyCode::Enter => match self.selected_remote_port(dialog) {",
+        "                Ok(port) => {",
+        "                    dialog.chosen_remote_port = Some(port);",
+        "                    dialog.choice = self.port_choices(port).default;",
+        "                    dialog.stage = AddStage::LocalPort;",
+        "                    dialog.error = None;",
+        "                }",
+        "                Err(error) => dialog.error = Some(format!(\"Remote port: {error}\")),",
+        "            },",
+        "            KeyCode::Char(_) => {",
+        "                dialog.error = Some(\"Remote port: enter digits from 1 through 65535.\".into())",
+        "            }",
+        "            _ => {}",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 458,
+      "line_end": 467,
+      "text": [
+        "    fn selected_remote_port(&self, dialog: &AddDialog) -> Result<u16, &'static str> {",
+        "        if dialog.remote_index == self.recent_remote_ports.len() {",
+        "            parse_port(&dialog.remote_input)",
+        "        } else {",
+        "            self.recent_remote_ports",
+        "                .get(dialog.remote_index)",
+        "                .copied()",
+        "                .ok_or(\"Select a recent port or enter another port.\")",
+        "        }",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 833,
+      "line_end": 833,
+      "text": [
+        "    // {test}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 836,
+      "line_end": 852,
+      "text": [
+        "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
+        "        let (mut app, _) = setup();",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::Host);",
+        "        app.on_key(key(KeyCode::Down));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);",
+        "        type_text(&mut app, \"8030\");",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::LocalPort);",
+        "        type_text(&mut app, \"8031\");",
+        "        assert_eq!(app.dialog.as_ref().unwrap().choice, Choice::Manual);",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.forwards[0].spec.host, \"mnemosyne\");",
+        "        assert_eq!(app.forwards[0].spec.remote_port, 8030);",
+        "        assert_eq!(app.forwards[0].spec.local_port, 8031);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 888,
+      "line_end": 888,
+      "text": [
+        "    // {test}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 891,
+      "line_end": 909,
+      "text": [
+        "    fn recent_remote_ports_survive_removal_and_new_app_instance() {",
+        "        let (mut app, state) = setup();",
+        "        add(&mut app, \"8030\", Choice::Preferred, \"\", 0);",
+        "        add(&mut app, \"9000\", Choice::Preferred, \"\", 0);",
+        "        app.on_key(key(KeyCode::Char('x')));",
+        "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
+        "        drop(app);",
+        "",
+        "        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec![\"chronos\".into()]));",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);",
+        "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
+        "        app.on_key(key(KeyCode::Down));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(8030));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.recent_remote_ports, [8030, 9000]);",
+        "    }"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 165,
+      "line_end": 165,
+      "text": [
+        "// {impl}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 166,
+      "line_end": 182,
+      "text": [
+        "fn draw_remote_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
+        "    let mut items: Vec<String> = app",
+        "        .recent_remote_ports",
+        "        .iter()",
+        "        .map(|port| port.to_string())",
+        "        .collect();",
+        "    items.push(format!(\"Other [{}]\", dialog.remote_input));",
+        "    draw_picker(",
+        "        frame,",
+        "        \"Add forward · 2/3 · Remote port\",",
+        "        &format!(\"SSH host: {}\", selected_host_label(app, dialog)),",
+        "        items,",
+        "        dialog.remote_index,",
+        "        dialog.error.as_deref(),",
+        "        \"↑/↓ recent  Digits: Other  Enter: next  Esc: back\",",
+        "    );",
+        "}"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 184,
+      "line_end": 226,
+      "text": [
+        "fn draw_picker(",
+        "    frame: &mut Frame,",
+        "    title: &str,",
+        "    context: &str,",
+        "    items: Vec<String>,",
+        "    selected: usize,",
+        "    error: Option<&str>,",
+        "    hint: &str,",
+        ") {",
+        "    let area = centered(frame.area(), 76, 17);",
+        "    frame.render_widget(Clear, area);",
+        "    let block = Block::bordered().title(title);",
+        "    let inner = block.inner(area);",
+        "    frame.render_widget(block, area);",
+        "    let parts = Layout::default()",
+        "        .direction(Direction::Vertical)",
+        "        .constraints([",
+        "            Constraint::Length(2),",
+        "            Constraint::Min(1),",
+        "            Constraint::Length(3),",
+        "        ])",
+        "        .split(inner);",
+        "    frame.render_widget(Paragraph::new(context), parts[0]);",
+        "    let list_items: Vec<ListItem> = items.into_iter().map(ListItem::new).collect();",
+        "    let list = List::new(list_items)",
+        "        .highlight_symbol(\"▶ \")",
+        "        .highlight_style(",
+        "            Style::default()",
+        "                .fg(Color::Yellow)",
+        "                .add_modifier(Modifier::BOLD),",
+        "        );",
+        "    let mut state = ListState::default();",
+        "    state.select(Some(selected));",
+        "    frame.render_stateful_widget(list, parts[1], &mut state);",
+        "    let mut footer = Vec::new();",
+        "    if let Some(error) = error {",
+        "        footer.push(Line::from(error).style(Style::default().fg(Color::Red)));",
+        "    } else {",
+        "        footer.push(Line::from(\"\"));",
+        "    }",
+        "    footer.push(Line::from(hint));",
+        "    frame.render_widget(Paragraph::new(footer).wrap(Wrap { trim: false }), parts[2]);",
+        "}"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 385,
+      "line_end": 385,
+      "text": [
+        "    // {test}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_start": 391,
+      "line_end": 421,
+      "text": [
+        "    fn three_picker_stages_render_choices_and_help() {",
+        "        let mut app = App::new(",
+        "            Box::new(FailingBackend { busy: Some(8030) }),",
+        "            Ok(vec![\"chronos\".into()]),",
+        "        );",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        let (hosts, _) = rendered(&app);",
+        "        assert!(hosts.contains(\"1/3 · SSH host\"));",
+        "        assert!(hosts.contains(\"▶ chronos\"));",
+        "        assert!(hosts.contains(\"Other [\"));",
+        "        app.on_key(key(KeyCode::Down));",
+        "        let (other, _) = rendered(&app);",
+        "        assert!(other.contains(\"▶ Other [\"));",
+        "        app.on_key(key(KeyCode::Up));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        let (remote, _) = rendered(&app);",
+        "        assert!(remote.contains(\"2/3 · Remote port\"));",
+        "        for ch in \"8030\".chars() {",
+        "            app.on_key(key(KeyCode::Char(ch)));",
+        "        }",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        let (dialog, _) = rendered(&app);",
+        "        assert!(dialog.contains(\"3/3 · Local port\"));",
+        "        assert!(dialog.contains(\"(x) Use suggested alternative local port 8031\"));",
+        "        assert!(dialog.contains(\"( ) Use alternative local port [\"));",
+        "        assert!(!dialog.contains(\"replacing existing forward\"));",
+        "        app.on_key(key(KeyCode::Char('?')));",
+        "        let (help, _) = rendered(&app);",
+        "        assert!(help.contains(\"Keyboard help\"));",
+        "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
+        "    }"
+      ]
+    }
+  ]
+}

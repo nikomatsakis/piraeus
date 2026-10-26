@@ -2,10 +2,10 @@ use std::io;
 use std::time::Duration;
 
 use crossterm::event::{self, Event, KeyEventKind};
-use pfm::app::App;
-use pfm::hosts::discover_hosts;
-use pfm::runtime::SystemBackend;
-use pfm::ui::draw;
+use piraeus::app::App;
+use piraeus::hosts::discover_hosts;
+use piraeus::runtime::SystemBackend;
+use piraeus::ui::draw;
 use ratatui::DefaultTerminal;
 
 // {impl}`requirements.tui.terminal`

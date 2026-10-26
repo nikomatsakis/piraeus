@@ -5,16 +5,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 485,
-      "line_end": 485,
+      "line_start": 586,
+      "line_end": 586,
       "text": [
         "    // {impl}`requirements.forwarding.ssh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 487,
-      "line_end": 500,
+      "line_start": 588,
+      "line_end": 601,
       "text": [
         "    fn start_forward(&mut self, spec: ForwardSpec) {",
         "        let (phase, error, process) = match self.backend.launch(&spec) {",
@@ -34,8 +34,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 502,
-      "line_end": 510,
+      "line_start": 603,
+      "line_end": 611,
       "text": [
         "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
         "        if let Some(mut process) = self.forwards[index].process.take()",
@@ -50,16 +50,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 17,
-      "line_end": 17,
+      "line_start": 18,
+      "line_end": 18,
       "text": [
         "    // {impl}`requirements.forwarding.ssh`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 19,
-      "line_end": 54,
+      "line_start": 20,
+      "line_end": 55,
       "text": [
         "    fn launch(&mut self, spec: &ForwardSpec) -> Result<Box<dyn ManagedProcess>, String> {",
         "        let mut child = ssh_command(spec)",
@@ -101,8 +101,8 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 80,
-      "line_end": 101,
+      "line_start": 91,
+      "line_end": 112,
       "text": [
         "fn ssh_command(spec: &ForwardSpec) -> Command {",
         "    let mut command = Command::new(\"ssh\");",
@@ -130,16 +130,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 196,
-      "line_end": 196,
+      "line_start": 207,
+      "line_end": 207,
       "text": [
         "    // {test}`requirements.forwarding.ssh`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 199,
-      "line_end": 216,
+      "line_start": 210,
+      "line_end": 227,
       "text": [
         "    fn ssh_receives_alias_and_forward_as_arguments() {",
         "        let command = ssh_command(&ForwardSpec {",

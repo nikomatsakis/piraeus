@@ -5,8 +5,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 239,
-      "line_end": 267,
+      "line_start": 253,
+      "line_end": 281,
       "text": [
         "    pub fn tick(&mut self) -> bool {",
         "        let mut changed = false;",
@@ -41,8 +41,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 486,
-      "line_end": 500,
+      "line_start": 587,
+      "line_end": 601,
       "text": [
         "    // {impl}`requirements.forwarding.startup_state`",
         "    fn start_forward(&mut self, spec: ForwardSpec) {",
@@ -63,16 +63,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 679,
-      "line_end": 679,
+      "line_start": 808,
+      "line_end": 808,
       "text": [
         "    // {test}`requirements.forwarding.startup_state`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 681,
-      "line_end": 700,
+      "line_start": 810,
+      "line_end": 829,
       "text": [
         "    fn add_dialog_creates_forward_and_waits_for_readiness() {",
         "        let (mut app, state) = setup();",
@@ -98,16 +98,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 143,
-      "line_end": 143,
+      "line_start": 154,
+      "line_end": 154,
       "text": [
         "    // {impl}`requirements.forwarding.startup_state`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 145,
-      "line_end": 173,
+      "line_start": 156,
+      "line_end": 184,
       "text": [
         "    fn poll(&mut self) -> ProcessState {",
         "        match self.child.try_wait() {",

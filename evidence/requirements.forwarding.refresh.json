@@ -5,16 +5,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 304,
-      "line_end": 304,
+      "line_start": 323,
+      "line_end": 323,
       "text": [
         "            // {impl}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 502,
-      "line_end": 510,
+      "line_start": 603,
+      "line_end": 611,
       "text": [
         "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
         "        if let Some(mut process) = self.forwards[index].process.take()",
@@ -29,8 +29,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 528,
-      "line_end": 553,
+      "line_start": 629,
+      "line_end": 654,
       "text": [
         "    fn refresh(&mut self) {",
         "        let mut stopped = Vec::with_capacity(self.forwards.len());",
@@ -62,16 +62,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 865,
-      "line_end": 865,
+      "line_start": 1063,
+      "line_end": 1063,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 868,
-      "line_end": 881,
+      "line_start": 1063,
+      "line_end": 1063,
+      "text": [
+        "    // {test}`requirements.forwarding.refresh`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_start": 1066,
+      "line_end": 1079,
       "text": [
         "    fn refresh_recreates_failed_and_running_rows() {",
         "        let (mut app, state) = setup();",
@@ -91,16 +99,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 884,
-      "line_end": 884,
+      "line_start": 1082,
+      "line_end": 1082,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 886,
-      "line_end": 900,
+      "line_start": 1084,
+      "line_end": 1098,
       "text": [
         "    fn live_ssh_fault_is_visible_and_refresh_stops_its_process() {",
         "        let (mut app, state) = setup();",

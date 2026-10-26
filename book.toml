@@ -1,5 +1,5 @@
 [book]
-title = "Port Forward Manager"
+title = "Piraeus"
 authors = ["Niko Matsakis"]
 language = "en"
 src = "md"
@@ -10,6 +10,7 @@ renderers = ["html"]
 
 [output.html]
 additional-css = ["md/habeas.css"]
+theme = "theme"
 
 [output.html.fold]
 enable = true
