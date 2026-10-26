@@ -5,8 +5,8 @@
   "inputs": [
     {
       "file": "src/hosts.rs",
-      "line_start": 6,
-      "line_end": 7,
+      "line_start": 5,
+      "line_end": 6,
       "text": [
         "const HOST_DISCOVERY_RULES: ParseRule =",
         "    ParseRule::ALLOW_UNKNOWN_FIELDS.union(ParseRule::ALLOW_UNSUPPORTED_FIELDS);"
@@ -14,28 +14,21 @@
     },
     {
       "file": "src/hosts.rs",
-      "line_start": 9,
-      "line_end": 21,
+      "line_start": 8,
+      "line_end": 13,
       "text": [
         "// {impl}`requirements.forwarding.host_discovery`",
         "pub fn discover_hosts() -> Result<Vec<String>, String> {",
         "    let config = SshConfig::parse_default_file(HOST_DISCOVERY_RULES)",
         "        .map_err(|error| format!(\"Could not read ~/.ssh/config: {error}\"))?;",
         "    Ok(literal_hosts(&config))",
-        "}",
-        "",
-        "pub fn parse_hosts(reader: &mut impl BufRead) -> Result<Vec<String>, String> {",
-        "    let config = SshConfig::default()",
-        "        .parse(reader, HOST_DISCOVERY_RULES)",
-        "        .map_err(|error| format!(\"Could not parse SSH configuration: {error}\"))?;",
-        "    Ok(literal_hosts(&config))",
         "}"
       ]
     },
     {
       "file": "src/hosts.rs",
-      "line_start": 23,
-      "line_end": 38,
+      "line_start": 15,
+      "line_end": 30,
       "text": [
         "fn literal_hosts(config: &SshConfig) -> Vec<String> {",
         "    let mut names = BTreeSet::new();",
@@ -57,8 +50,8 @@
     },
     {
       "file": "src/hosts.rs",
-      "line_start": 44,
-      "line_end": 58,
+      "line_start": 43,
+      "line_end": 57,
       "text": [
         "    // {test}`requirements.forwarding.host_discovery`",
         "    #[test]",

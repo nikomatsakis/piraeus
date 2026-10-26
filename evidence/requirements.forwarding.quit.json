@@ -161,8 +161,8 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 28,
-      "line_end": 56,
+      "line_start": 36,
+      "line_end": 64,
       "text": [
         "fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {",
         "    let mut redraw = true;",

@@ -6,6 +6,13 @@
 
 ## Install and run
 
+From crates.io:
+
+```sh
+cargo install piraeus
+piraeus
+```
+
 From this checkout:
 
 ```sh

@@ -1,14 +1,22 @@
+// {impl}`requirements.packaging.binary_only`
+mod app;
+mod history;
+mod hosts;
+mod ports;
+mod runtime;
+mod ui;
+
 use std::io;
 use std::time::Duration;
 
+use crate::app::App;
+use crate::hosts::discover_hosts;
+use crate::runtime::SystemBackend;
+use crate::ui::{LinkAreas, draw};
 use crossterm::event::{
     self, DisableMouseCapture, EnableMouseCapture, Event, KeyEventKind, MouseButton, MouseEventKind,
 };
 use crossterm::execute;
-use piraeus::app::App;
-use piraeus::hosts::discover_hosts;
-use piraeus::runtime::SystemBackend;
-use piraeus::ui::{LinkAreas, draw};
 use ratatui::DefaultTerminal;
 
 // {impl}`requirements.tui.terminal`

@@ -138,3 +138,7 @@ Pressing `i` on a row with an error MUST show more diagnostic detail within the 
 :::{req} help.shortcuts
 Pressing `?` MUST show the available keystrokes and their actions, including how to select a row and the `a`, `b`, `x`, `q`, `r`, and `i` commands.
 :::
+
+:::{req} packaging.binary_only
+The `piraeus` Cargo package MUST provide a binary target named `piraeus` and MUST NOT provide a library target.
+:::

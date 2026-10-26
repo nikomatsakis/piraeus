@@ -5,8 +5,8 @@
   "inputs": [
     {
       "file": "src/hosts.rs",
-      "line_start": 6,
-      "line_end": 14,
+      "line_start": 5,
+      "line_end": 13,
       "text": [
         "const HOST_DISCOVERY_RULES: ParseRule =",
         "    ParseRule::ALLOW_UNKNOWN_FIELDS.union(ParseRule::ALLOW_UNSUPPORTED_FIELDS);",

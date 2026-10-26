@@ -79,7 +79,7 @@
         "        )",
         "        .block(Block::bordered().title(\"Managed forwards\"))",
         "        .row_highlight_style(Style::default().bg(Color::DarkGray))",
-        "        .highlight_symbol(\"▶ \")",
+        "        .highlight_symbol(\"\u25b6 \")",
         "        .highlight_spacing(HighlightSpacing::Always)",
         "        .column_spacing(TABLE_SPACING)",
         "        .flex(Flex::Start);",
@@ -130,7 +130,7 @@
         "            frame.render_widget(Clear, area);",
         "            frame.render_widget(",
         "                Paragraph::new(help_text())",
-        "                    .block(Block::bordered().title(\"Keyboard help — press ? to return\"))",
+        "                    .block(Block::bordered().title(\"Keyboard help \u2014 press ? to return\"))",
         "                    .wrap(Wrap { trim: false }),",
         "                area,",
         "            );",
@@ -329,8 +329,8 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 15,
-      "line_end": 26,
+      "line_start": 23,
+      "line_end": 34,
       "text": [
         "fn main() -> io::Result<()> {",
         "    let mut app = App::new(Box::new(SystemBackend), discover_hosts());",
@@ -372,8 +372,8 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 42,
-      "line_end": 48,
+      "line_start": 50,
+      "line_end": 56,
       "text": [
         "                // {impl}`requirements.browser.link`",
         "                Event::Mouse(mouse) if mouse.kind == MouseEventKind::Down(MouseButton::Left) => {",
