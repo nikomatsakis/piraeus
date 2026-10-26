@@ -1,0 +1,53 @@
+{
+  "requirement": "The `piraeus` executable MUST use `clap` to parse its command-line arguments before starting the terminal UI.",
+  "determination": true,
+  "rationale": "The binary depends on clap, derives its command-line parser, and parses arguments before creating the app or terminal. The integration test confirms --help exits successfully without starting the TUI.",
+  "inputs": [
+    {
+      "file": "Cargo.toml",
+      "line_start": 18,
+      "line_end": 19,
+      "text": [
+        "[dependencies]",
+        "clap = { version = \"4.6.7\", features = [\"derive\"] }"
+      ]
+    },
+    {
+      "file": "src/main.rs",
+      "line_start": 23,
+      "line_end": 32,
+      "text": [
+        "// {impl}`requirements.cli.argument_parsing`",
+        "#[derive(Parser)]",
+        "#[command(version, about)]",
+        "struct Cli {}",
+        "",
+        "// {impl}`requirements.tui.terminal`",
+        "fn main() -> io::Result<()> {",
+        "    Cli::parse();",
+        "    let mut app = App::new(Box::new(SystemBackend), discover_hosts());",
+        "    let mut terminal = ratatui::try_init()?;"
+      ]
+    },
+    {
+      "file": "tests/cli.rs",
+      "line_start": 3,
+      "line_end": 15,
+      "text": [
+        "// {test}`requirements.cli.argument_parsing`",
+        "#[test]",
+        "fn help_is_parsed_before_starting_the_tui() {",
+        "    let output = Command::new(env!(\"CARGO_BIN_EXE_piraeus\"))",
+        "        .arg(\"--help\")",
+        "        .output()",
+        "        .expect(\"run piraeus --help\");",
+        "",
+        "    assert!(output.status.success());",
+        "    let stdout = String::from_utf8(output.stdout).expect(\"UTF-8 help output\");",
+        "    assert!(stdout.contains(\"Usage: piraeus\"));",
+        "    assert!(stdout.contains(\"--help\"));",
+        "}"
+      ]
+    }
+  ]
+}

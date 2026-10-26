@@ -142,3 +142,7 @@ Pressing `?` MUST show the available keystrokes and their actions, including how
 :::{req} packaging.binary_only
 The `piraeus` Cargo package MUST provide a binary target named `piraeus` and MUST NOT provide a library target.
 :::
+
+:::{req} cli.argument_parsing
+The `piraeus` executable MUST use `clap` to parse its command-line arguments before starting the terminal UI.
+:::

@@ -329,10 +329,11 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 23,
-      "line_end": 34,
+      "line_start": 29,
+      "line_end": 41,
       "text": [
         "fn main() -> io::Result<()> {",
+        "    Cli::parse();",
         "    let mut app = App::new(Box::new(SystemBackend), discover_hosts());",
         "    let mut terminal = ratatui::try_init()?;",
         "    if let Err(error) = execute!(io::stdout(), EnableMouseCapture) {",
@@ -372,8 +373,8 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 50,
-      "line_end": 56,
+      "line_start": 57,
+      "line_end": 63,
       "text": [
         "                // {impl}`requirements.browser.link`",
         "                Event::Mouse(mouse) if mouse.kind == MouseEventKind::Down(MouseButton::Left) => {",

@@ -13,14 +13,21 @@ use crate::app::App;
 use crate::hosts::discover_hosts;
 use crate::runtime::SystemBackend;
 use crate::ui::{LinkAreas, draw};
+use clap::Parser;
 use crossterm::event::{
     self, DisableMouseCapture, EnableMouseCapture, Event, KeyEventKind, MouseButton, MouseEventKind,
 };
 use crossterm::execute;
 use ratatui::DefaultTerminal;
 
+// {impl}`requirements.cli.argument_parsing`
+#[derive(Parser)]
+#[command(version, about)]
+struct Cli {}
+
 // {impl}`requirements.tui.terminal`
 fn main() -> io::Result<()> {
+    Cli::parse();
     let mut app = App::new(Box::new(SystemBackend), discover_hosts());
     let mut terminal = ratatui::try_init()?;
     if let Err(error) = execute!(io::stdout(), EnableMouseCapture) {

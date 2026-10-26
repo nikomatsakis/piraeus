@@ -5,11 +5,12 @@
   "inputs": [
     {
       "file": "src/main.rs",
-      "line_start": 22,
-      "line_end": 34,
+      "line_start": 28,
+      "line_end": 41,
       "text": [
         "// {impl}`requirements.tui.terminal`",
         "fn main() -> io::Result<()> {",
+        "    Cli::parse();",
         "    let mut app = App::new(Box::new(SystemBackend), discover_hosts());",
         "    let mut terminal = ratatui::try_init()?;",
         "    if let Err(error) = execute!(io::stdout(), EnableMouseCapture) {",
@@ -25,8 +26,8 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 36,
-      "line_end": 64,
+      "line_start": 43,
+      "line_end": 71,
       "text": [
         "fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {",
         "    let mut redraw = true;",
