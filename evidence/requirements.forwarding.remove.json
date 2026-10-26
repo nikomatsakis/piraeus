@@ -51,16 +51,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1047,
-      "line_end": 1047,
+      "line_start": 1057,
+      "line_end": 1057,
       "text": [
         "    // {test}`requirements.forwarding.remove`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1049,
-      "line_end": 1061,
+      "line_start": 1059,
+      "line_end": 1071,
       "text": [
         "    fn selection_and_remove_use_the_visible_row() {",
         "        let (mut app, state) = setup();",

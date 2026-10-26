@@ -28,16 +28,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1122,
-      "line_end": 1122,
+      "line_start": 1132,
+      "line_end": 1132,
       "text": [
         "    // {test}`requirements.browser.open`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1125,
-      "line_end": 1142,
+      "line_start": 1135,
+      "line_end": 1152,
       "text": [
         "    fn browser_uses_actual_local_port_and_exposes_failures() {",
         "        let (mut app, state) = setup();",

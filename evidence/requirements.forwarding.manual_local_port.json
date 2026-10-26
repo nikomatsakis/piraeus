@@ -94,16 +94,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 953,
-      "line_end": 953,
+      "line_start": 963,
+      "line_end": 963,
       "text": [
         "    // {test}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 956,
-      "line_end": 975,
+      "line_start": 966,
+      "line_end": 985,
       "text": [
         "    fn manual_choice_keeps_remote_port_and_rejects_busy_local_port() {",
         "        let (mut app, state) = setup();",
@@ -129,16 +129,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 232,
-      "line_end": 232,
+      "line_start": 298,
+      "line_end": 298,
       "text": [
         "// {impl}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 236,
-      "line_end": 289,
+      "line_start": 302,
+      "line_end": 355,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -198,16 +198,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 388,
-      "line_end": 388,
+      "line_start": 458,
+      "line_end": 458,
       "text": [
         "    // {test}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 391,
-      "line_end": 421,
+      "line_start": 461,
+      "line_end": 491,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",

@@ -154,16 +154,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 996,
-      "line_end": 996,
+      "line_start": 1006,
+      "line_end": 1006,
       "text": [
         "    // {test}`requirements.forwarding.managed_conflict_choices`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 999,
-      "line_end": 1015,
+      "line_start": 1009,
+      "line_end": 1025,
       "text": [
         "    fn managed_conflict_suggests_next_port_and_can_replace() {",
         "        let (mut app, state) = setup();",
@@ -186,16 +186,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 230,
-      "line_end": 230,
+      "line_start": 296,
+      "line_end": 296,
       "text": [
         "// {impl}`requirements.forwarding.managed_conflict_choices`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 236,
-      "line_end": 289,
+      "line_start": 302,
+      "line_end": 355,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",

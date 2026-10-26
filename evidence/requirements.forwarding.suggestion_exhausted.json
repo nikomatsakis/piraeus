@@ -73,16 +73,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1034,
-      "line_end": 1034,
+      "line_start": 1044,
+      "line_end": 1044,
       "text": [
         "    // {test}`requirements.forwarding.suggestion_exhausted`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1036,
-      "line_end": 1044,
+      "line_start": 1046,
+      "line_end": 1054,
       "text": [
         "    fn exhausted_suggestion_leaves_manual_choice() {",
         "        let (mut app, state) = setup();",
@@ -132,8 +132,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 235,
-      "line_end": 235,
+      "line_start": 301,
+      "line_end": 301,
       "text": [
         "// {impl}`requirements.forwarding.suggestion_exhausted`"
       ]

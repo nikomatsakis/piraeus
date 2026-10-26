@@ -66,24 +66,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 997,
-      "line_end": 997,
+      "line_start": 1007,
+      "line_end": 1007,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 997,
-      "line_end": 997,
+      "line_start": 1007,
+      "line_end": 1007,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 999,
-      "line_end": 1015,
+      "line_start": 1009,
+      "line_end": 1025,
       "text": [
         "    fn managed_conflict_suggests_next_port_and_can_replace() {",
         "        let (mut app, state) = setup();",
@@ -106,16 +106,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1018,
-      "line_end": 1018,
+      "line_start": 1028,
+      "line_end": 1028,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1020,
-      "line_end": 1032,
+      "line_start": 1030,
+      "line_end": 1042,
       "text": [
         "    fn unmanaged_conflict_never_offers_replacement() {",
         "        let (mut app, state) = setup();",

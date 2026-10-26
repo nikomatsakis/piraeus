@@ -154,16 +154,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1017,
-      "line_end": 1017,
+      "line_start": 1027,
+      "line_end": 1027,
       "text": [
         "    // {test}`requirements.forwarding.unmanaged_conflict_choices`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1020,
-      "line_end": 1032,
+      "line_start": 1030,
+      "line_end": 1042,
       "text": [
         "    fn unmanaged_conflict_never_offers_replacement() {",
         "        let (mut app, state) = setup();",
@@ -182,16 +182,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 231,
-      "line_end": 231,
+      "line_start": 297,
+      "line_end": 297,
       "text": [
         "// {impl}`requirements.forwarding.unmanaged_conflict_choices`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 236,
-      "line_end": 289,
+      "line_start": 302,
+      "line_end": 355,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -251,16 +251,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 387,
-      "line_end": 387,
+      "line_start": 457,
+      "line_end": 457,
       "text": [
         "    // {test}`requirements.forwarding.unmanaged_conflict_choices`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 391,
-      "line_end": 421,
+      "line_start": 461,
+      "line_end": 491,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",

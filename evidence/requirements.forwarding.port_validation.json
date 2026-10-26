@@ -164,16 +164,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 911,
-      "line_end": 911,
+      "line_start": 921,
+      "line_end": 921,
       "text": [
         "    // {test}`requirements.forwarding.port_validation`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 913,
-      "line_end": 951,
+      "line_start": 923,
+      "line_end": 961,
       "text": [
         "    fn invalid_remote_and_manual_ports_keep_dialog_open() {",
         "        let (mut app, state) = setup();",
@@ -261,16 +261,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 233,
-      "line_end": 233,
+      "line_start": 299,
+      "line_end": 299,
       "text": [
         "// {impl}`requirements.forwarding.port_validation`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 236,
-      "line_end": 289,
+      "line_start": 302,
+      "line_end": 355,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",

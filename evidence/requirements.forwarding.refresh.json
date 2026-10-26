@@ -62,24 +62,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1063,
-      "line_end": 1063,
+      "line_start": 1073,
+      "line_end": 1073,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1063,
-      "line_end": 1063,
+      "line_start": 1073,
+      "line_end": 1073,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1066,
-      "line_end": 1079,
+      "line_start": 1076,
+      "line_end": 1089,
       "text": [
         "    fn refresh_recreates_failed_and_running_rows() {",
         "        let (mut app, state) = setup();",
@@ -99,16 +99,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1082,
-      "line_end": 1082,
+      "line_start": 1092,
+      "line_end": 1092,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1084,
-      "line_end": 1098,
+      "line_start": 1094,
+      "line_end": 1108,
       "text": [
         "    fn live_ssh_fault_is_visible_and_refresh_stops_its_process() {",
         "        let (mut app, state) = setup();",

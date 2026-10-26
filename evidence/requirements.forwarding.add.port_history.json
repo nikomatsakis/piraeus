@@ -135,16 +135,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 889,
-      "line_end": 889,
+      "line_start": 899,
+      "line_end": 899,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 891,
-      "line_end": 909,
+      "line_start": 901,
+      "line_end": 919,
       "text": [
         "    fn recent_remote_ports_survive_removal_and_new_app_instance() {",
         "        let (mut app, state) = setup();",

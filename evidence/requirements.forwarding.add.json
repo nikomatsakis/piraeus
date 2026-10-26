@@ -132,16 +132,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 806,
-      "line_end": 806,
+      "line_start": 816,
+      "line_end": 816,
       "text": [
         "    // {test}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 810,
-      "line_end": 829,
+      "line_start": 820,
+      "line_end": 839,
       "text": [
         "    fn add_dialog_creates_forward_and_waits_for_readiness() {",
         "        let (mut app, state) = setup();",
@@ -167,16 +167,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 831,
-      "line_end": 831,
+      "line_start": 841,
+      "line_end": 841,
       "text": [
         "    // {test}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 836,
-      "line_end": 852,
+      "line_start": 846,
+      "line_end": 862,
       "text": [
         "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
         "        let (mut app, _) = setup();",
@@ -199,16 +199,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 130,
-      "line_end": 130,
+      "line_start": 196,
+      "line_end": 196,
       "text": [
         "// {impl}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 131,
-      "line_end": 137,
+      "line_start": 197,
+      "line_end": 203,
       "text": [
         "fn draw_add_dialog(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    match dialog.stage {",

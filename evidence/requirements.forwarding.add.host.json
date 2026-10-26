@@ -65,16 +65,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 832,
-      "line_end": 832,
+      "line_start": 842,
+      "line_end": 842,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 836,
-      "line_end": 852,
+      "line_start": 846,
+      "line_end": 862,
       "text": [
         "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
         "        let (mut app, _) = setup();",
@@ -97,16 +97,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 854,
-      "line_end": 854,
+      "line_start": 864,
+      "line_end": 864,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 857,
-      "line_end": 868,
+      "line_start": 867,
+      "line_end": 878,
       "text": [
         "    fn typing_custom_host_can_start_with_q() {",
         "        let (mut app, _) = setup();",
@@ -124,16 +124,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 870,
-      "line_end": 870,
+      "line_start": 880,
+      "line_end": 880,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 872,
-      "line_end": 886,
+      "line_start": 882,
+      "line_end": 896,
       "text": [
         "    fn custom_host_works_without_saved_hosts() {",
         "        let state = Rc::new(RefCell::new(FakeState::default()));",
@@ -154,16 +154,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 139,
-      "line_end": 139,
+      "line_start": 205,
+      "line_end": 205,
       "text": [
         "// {impl}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 140,
-      "line_end": 152,
+      "line_start": 206,
+      "line_end": 218,
       "text": [
         "fn draw_host_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let mut items = app.hosts.clone();",
@@ -182,8 +182,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 184,
-      "line_end": 226,
+      "line_start": 250,
+      "line_end": 292,
       "text": [
         "fn draw_picker(",
         "    frame: &mut Frame,",
@@ -232,16 +232,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 384,
-      "line_end": 384,
+      "line_start": 454,
+      "line_end": 454,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 391,
-      "line_end": 421,
+      "line_start": 461,
+      "line_end": 491,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",

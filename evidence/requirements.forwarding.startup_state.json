@@ -63,16 +63,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 808,
-      "line_end": 808,
+      "line_start": 818,
+      "line_end": 818,
       "text": [
         "    // {test}`requirements.forwarding.startup_state`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 810,
-      "line_end": 829,
+      "line_start": 820,
+      "line_end": 839,
       "text": [
         "    fn add_dialog_creates_forward_and_waits_for_readiness() {",
         "        let (mut app, state) = setup();",

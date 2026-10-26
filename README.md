@@ -2,7 +2,7 @@
 
 # Piraeus
 
-`piraeus` is a terminal UI for SSH local port forwards. Its table shows each forward's SSH host, remote port, local port, and status. Forwards started by `piraeus` stop when you quit.
+`piraeus` is a terminal UI for SSH local port forwards. Its table shows each forward's SSH host, remote port, local URL, and status. Forwards started by `piraeus` stop when you quit.
 
 ## Install and run
 
@@ -27,6 +27,8 @@ The host picker reads aliases from `~/.ssh/config`. You can also type another SS
 | `i` | Show details for an error on the selected row |
 | `?` | Show keyboard help |
 | `q` | Quit from the main table and stop managed forwards |
+
+Click a `http://localhost:PORT` URL in the main table to open that forward in the default browser.
 
 Adding a forward has three stages:
 

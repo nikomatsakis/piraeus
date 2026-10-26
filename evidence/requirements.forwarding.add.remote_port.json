@@ -73,16 +73,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 833,
-      "line_end": 833,
+      "line_start": 843,
+      "line_end": 843,
       "text": [
         "    // {test}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 836,
-      "line_end": 852,
+      "line_start": 846,
+      "line_end": 862,
       "text": [
         "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
         "        let (mut app, _) = setup();",
@@ -105,16 +105,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 888,
-      "line_end": 888,
+      "line_start": 898,
+      "line_end": 898,
       "text": [
         "    // {test}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 891,
-      "line_end": 909,
+      "line_start": 901,
+      "line_end": 919,
       "text": [
         "    fn recent_remote_ports_survive_removal_and_new_app_instance() {",
         "        let (mut app, state) = setup();",
@@ -139,16 +139,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 165,
-      "line_end": 165,
+      "line_start": 231,
+      "line_end": 231,
       "text": [
         "// {impl}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 166,
-      "line_end": 182,
+      "line_start": 232,
+      "line_end": 248,
       "text": [
         "fn draw_remote_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let mut items: Vec<String> = app",
@@ -171,8 +171,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 184,
-      "line_end": 226,
+      "line_start": 250,
+      "line_end": 292,
       "text": [
         "fn draw_picker(",
         "    frame: &mut Frame,",
@@ -221,16 +221,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 385,
-      "line_end": 385,
+      "line_start": 455,
+      "line_end": 455,
       "text": [
         "    // {test}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 391,
-      "line_end": 421,
+      "line_start": 461,
+      "line_end": 491,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",

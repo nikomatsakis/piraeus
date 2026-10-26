@@ -108,24 +108,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 954,
-      "line_end": 954,
+      "line_start": 964,
+      "line_end": 964,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 954,
-      "line_end": 954,
+      "line_start": 964,
+      "line_end": 964,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 956,
-      "line_end": 975,
+      "line_start": 966,
+      "line_end": 985,
       "text": [
         "    fn manual_choice_keeps_remote_port_and_rejects_busy_local_port() {",
         "        let (mut app, state) = setup();",
@@ -151,16 +151,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 977,
-      "line_end": 977,
+      "line_start": 987,
+      "line_end": 987,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 979,
-      "line_end": 994,
+      "line_start": 989,
+      "line_end": 1004,
       "text": [
         "    fn manual_choice_cannot_replace_managed_forward() {",
         "        let (mut app, state) = setup();",
@@ -182,8 +182,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 234,
-      "line_end": 234,
+      "line_start": 300,
+      "line_end": 300,
       "text": [
         "// {impl}`requirements.forwarding.manual_conflict`"
       ]

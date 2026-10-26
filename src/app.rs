@@ -662,6 +662,16 @@ impl App {
         }
     }
 
+    // {impl}`requirements.browser.link`
+    pub fn on_url_click(&mut self, index: usize) {
+        if self.dialog.is_some() || index >= self.forwards.len() {
+            return;
+        }
+        self.selected = Some(index);
+        self.show_info = false;
+        self.open_selected();
+    }
+
     fn quit(&mut self) {
         let mut failed = false;
         for index in 0..self.forwards.len() {
@@ -1139,6 +1149,23 @@ mod tests {
                 .unwrap()
                 .contains("no opener")
         );
+    }
+
+    // {test}`requirements.browser.link`
+    #[test]
+    fn clicking_url_opens_the_clicked_forward_and_selects_its_row() {
+        let (mut app, state) = setup();
+        add(&mut app, "8030", Choice::Manual, "8031", 0);
+        add(&mut app, "8040", Choice::Manual, "8041", 1);
+        app.on_url_click(0);
+        assert_eq!(state.borrow().browser_ports, [8031]);
+        assert_eq!(app.selected, Some(0));
+        app.on_url_click(1);
+        assert_eq!(state.borrow().browser_ports, [8031, 8041]);
+        assert_eq!(app.selected, Some(1));
+        app.on_key(key(KeyCode::Char('a')));
+        app.on_url_click(0);
+        assert_eq!(state.borrow().browser_ports, [8031, 8041]);
     }
 
     // {test}`requirements.help.shortcuts`

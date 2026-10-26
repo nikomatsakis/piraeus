@@ -62,8 +62,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 665,
-      "line_end": 675,
+      "line_start": 675,
+      "line_end": 685,
       "text": [
         "    fn quit(&mut self) {",
         "        let mut failed = false;",
@@ -80,16 +80,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 855,
-      "line_end": 855,
+      "line_start": 865,
+      "line_end": 865,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 857,
-      "line_end": 868,
+      "line_start": 867,
+      "line_end": 878,
       "text": [
         "    fn typing_custom_host_can_start_with_q() {",
         "        let (mut app, _) = setup();",
@@ -107,24 +107,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1100,
-      "line_end": 1100,
+      "line_start": 1110,
+      "line_end": 1110,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1100,
-      "line_end": 1100,
+      "line_start": 1110,
+      "line_end": 1110,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1102,
-      "line_end": 1109,
+      "line_start": 1112,
+      "line_end": 1119,
       "text": [
         "    fn quit_stops_every_managed_process() {",
         "        let (mut app, state) = setup();",
@@ -138,16 +138,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1111,
-      "line_end": 1111,
+      "line_start": 1121,
+      "line_end": 1121,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1113,
-      "line_end": 1120,
+      "line_start": 1123,
+      "line_end": 1130,
       "text": [
         "    fn control_c_stops_forwards_even_while_dialog_is_open() {",
         "        let (mut app, state) = setup();",
@@ -161,22 +161,33 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 20,
-      "line_end": 37,
+      "line_start": 28,
+      "line_end": 56,
       "text": [
         "fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {",
         "    let mut redraw = true;",
+        "    let mut links = LinkAreas::default();",
         "    while !app.should_quit {",
         "        if redraw {",
-        "            terminal.draw(|frame| draw(frame, app))?;",
+        "            terminal.draw(|frame| links = draw(frame, app))?;",
         "            redraw = false;",
         "        }",
-        "        if event::poll(Duration::from_millis(100))?",
-        "            && let Event::Key(key) = event::read()?",
-        "            && key.kind == KeyEventKind::Press",
-        "        {",
-        "            app.on_key(key);",
-        "            redraw = true;",
+        "        if event::poll(Duration::from_millis(100))? {",
+        "            match event::read()? {",
+        "                Event::Key(key) if key.kind == KeyEventKind::Press => {",
+        "                    app.on_key(key);",
+        "                    redraw = true;",
+        "                }",
+        "                // {impl}`requirements.browser.link`",
+        "                Event::Mouse(mouse) if mouse.kind == MouseEventKind::Down(MouseButton::Left) => {",
+        "                    if let Some(index) = links.at(mouse.column, mouse.row) {",
+        "                        app.on_url_click(index);",
+        "                        redraw = true;",
+        "                    }",
+        "                }",
+        "                Event::Resize(_, _) => redraw = true,",
+        "                _ => {}",
+        "            }",
         "        }",
         "        redraw |= app.tick();",
         "    }",

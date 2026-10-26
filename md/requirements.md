@@ -123,6 +123,10 @@ Pressing `q` while the main table has focus MUST stop all port forwards managed 
 Pressing `b` MUST open `http://localhost:P` in the system's default browser, where `P` is the actual local port of the selected port forward.
 :::
 
+:::{req} browser.link
+Each row in the main table MUST show `http://localhost:P`, where `P` is that forward's actual local port. Clicking the URL MUST open that forward in the system's default browser.
+:::
+
 :::{req} errors.visible
 When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.
 :::
