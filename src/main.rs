@@ -26,6 +26,8 @@ use ratatui::DefaultTerminal;
 struct Cli {}
 
 // {impl}`requirements.tui.terminal`
+// {impl}`requirements.browser.link`
+// {impl}`requirements.cli.argument_parsing`
 fn main() -> io::Result<()> {
     Cli::parse();
     let mut app = App::new(Box::new(SystemBackend), discover_hosts());
@@ -40,6 +42,9 @@ fn main() -> io::Result<()> {
     result.and(disable_result)
 }
 
+// {impl}`requirements.errors.visible`
+// {impl}`requirements.forwarding.quit`
+// {impl}`requirements.tui.terminal`
 fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {
     let mut redraw = true;
     let mut links = LinkAreas::default();

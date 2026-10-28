@@ -1,12 +1,10 @@
 {
-  "requirement": "Pressing `i` on a row with an error MUST show more diagnostic detail within the TUI without opening a modal dialog.",
   "determination": true,
-  "rationale": "Checked i dispatch and the inline error-detail panel, including SSH diagnostics. The detailed error rendering test passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 307,
-      "line_end": 332,
+      "line_end": 364,
+      "line_start": 339,
       "text": [
         "    fn on_main_key(&mut self, key: KeyEvent) {",
         "        match key.code {",
@@ -38,16 +36,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1133,
-      "line_end": 1133,
+      "line_end": 1215,
+      "line_start": 1215,
       "text": [
         "    // {test}`requirements.errors.info`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1135,
-      "line_end": 1152,
+      "line_end": 1234,
+      "line_start": 1217,
       "text": [
         "    fn browser_uses_actual_local_port_and_exposes_failures() {",
         "        let (mut app, state) = setup();",
@@ -71,16 +69,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 38,
-      "line_end": 38,
+      "line_end": 39,
+      "line_start": 39,
       "text": [
         "// {impl}`requirements.errors.info`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 41,
-      "line_end": 149,
+      "line_end": 150,
+      "line_start": 42,
       "text": [
         "pub fn draw(frame: &mut Frame, app: &App) -> LinkAreas {",
         "    let panel_height = if app.show_help {",
@@ -195,16 +193,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 430,
-      "line_end": 430,
+      "line_end": 451,
+      "line_start": 451,
       "text": [
         "    // {test}`requirements.errors.info`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 432,
-      "line_end": 452,
+      "line_end": 473,
+      "line_start": 453,
       "text": [
         "    fn error_row_and_detail_render_in_table() {",
         "        let mut app = App::new(",
@@ -228,6 +226,24 @@
         "        assert!(detail.contains(\"Permission denied\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_end": 141,
+      "line_start": 141,
+      "text": [
+        "    // {impl}`requirements.errors.info`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 5,
+      "line_start": 5,
+      "text": [
+        "// {cite}`requirements.errors.info`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked i dispatch and the inline error-detail panel, including SSH diagnostics. The detailed error rendering test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Pressing `i` on a row with an error MUST show more diagnostic detail within the TUI without opening a modal dialog."
 }

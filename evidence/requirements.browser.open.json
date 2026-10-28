@@ -1,20 +1,18 @@
 {
-  "requirement": "Pressing `b` MUST open `http://localhost:P` in the system's default browser, where `P` is the actual local port of the selected port forward.",
   "determination": true,
-  "rationale": "Checked b dispatch and the platform default-browser opener using http://localhost at the selected actual local port. The port and opener-failure test passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 319,
-      "line_end": 319,
+      "line_end": 351,
+      "line_start": 351,
       "text": [
         "            // {impl}`requirements.browser.open`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 656,
-      "line_end": 663,
+      "line_end": 715,
+      "line_start": 708,
       "text": [
         "    fn open_selected(&mut self) {",
         "        let Some(index) = self.selected else { return };",
@@ -28,16 +26,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1132,
-      "line_end": 1132,
+      "line_end": 1214,
+      "line_start": 1214,
       "text": [
         "    // {test}`requirements.browser.open`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1135,
-      "line_end": 1152,
+      "line_end": 1234,
+      "line_start": 1217,
       "text": [
         "    fn browser_uses_actual_local_port_and_exposes_failures() {",
         "        let (mut app, state) = setup();",
@@ -61,8 +59,8 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 57,
-      "line_end": 78,
+      "line_end": 81,
+      "line_start": 60,
       "text": [
         "    fn open_browser(&mut self, port: u16) -> Result<(), String> {",
         "        let url = format!(\"http://localhost:{port}\");",
@@ -87,6 +85,56 @@
         "        }",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 34,
+      "line_start": 34,
+      "text": [
+        "    // {impl}`requirements.browser.open`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 706,
+      "line_start": 706,
+      "text": [
+        "    // {impl}`requirements.browser.open`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 806,
+      "line_start": 806,
+      "text": [
+        "        // {test}`requirements.browser.open`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_end": 59,
+      "line_start": 59,
+      "text": [
+        "    // {impl}`requirements.browser.open`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 403,
+      "line_start": 403,
+      "text": [
+        "        // {test}`requirements.browser.open`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 3,
+      "line_start": 3,
+      "text": [
+        "// {cite}`requirements.browser.open`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked b dispatch and the platform default-browser opener using http://localhost at the selected actual local port. The port and opener-failure test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Pressing `b` MUST open `http://localhost:P` in the system's default browser, where `P` is the actual local port of the selected port forward."
 }

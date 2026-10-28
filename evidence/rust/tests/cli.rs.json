@@ -1,0 +1,48 @@
+{
+  "functions": [
+    {
+      "citations": [
+        {
+          "name": "requirements.cli.argument_parsing",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "tests/cli.rs",
+          "rust_item": "fn[help_is_parsed_before_starting_the_tui]",
+          "text": [
+            "// {test}`requirements.cli.argument_parsing`",
+            "#[test]",
+            "fn help_is_parsed_before_starting_the_tui() {",
+            "    let output = Command::new(env!(\"CARGO_BIN_EXE_piraeus\"))",
+            "        .arg(\"--help\")",
+            "        .output()",
+            "        .expect(\"run piraeus --help\");",
+            "",
+            "    assert!(output.status.success());",
+            "    let stdout = String::from_utf8(output.stdout).expect(\"UTF-8 help output\");",
+            "    assert!(stdout.contains(\"Usage: piraeus\"));",
+            "    assert!(stdout.contains(\"--help\"));",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.cli.argument_parsing"
+          ],
+          "requirements": "requirements.cli.argument_parsing",
+          "text": [
+            ":::{req} cli.argument_parsing",
+            "The `piraeus` executable MUST use `clap` to parse its command-line arguments before starting the terminal UI.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[help_is_parsed_before_starting_the_tui] in tests/cli.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.cli.argument_parsing`, which are the applicable cited definitions. The test runs piraeus --help without starting the terminal UI and checks successful clap usage output. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[help_is_parsed_before_starting_the_tui]"
+    }
+  ],
+  "rust_file": "tests/cli.rs"
+}

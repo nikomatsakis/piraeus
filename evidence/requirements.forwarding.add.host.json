@@ -1,20 +1,18 @@
 {
-  "requirement": "The host stage MUST list hosts discovered from the user's SSH configuration and an `Other` entry, with one option visibly selected. `↑` and `↓` MUST move the selection. Typing host-name characters MUST select `Other` and enter a custom host name; the user MUST also be able to select `Other` with the arrow keys. Pressing `Enter` with a discovered host or a nonempty custom host MUST advance to the remote-port stage.",
   "determination": true,
-  "rationale": "Checked visible host choices, arrow navigation, typed Other entry, custom names starting with q, and use when SSH config discovery fails. Model and rendering tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 379,
-      "line_end": 379,
+      "line_end": 413,
+      "line_start": 413,
       "text": [
         "    // {impl}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 380,
-      "line_end": 409,
+      "line_end": 443,
+      "line_start": 414,
       "text": [
         "    fn on_host_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -50,8 +48,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 411,
-      "line_end": 418,
+      "line_end": 453,
+      "line_start": 446,
       "text": [
         "    fn selected_host(&self, dialog: &AddDialog) -> Option<String> {",
         "        if dialog.host_index == self.hosts.len() {",
@@ -65,16 +63,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 842,
-      "line_end": 842,
+      "line_end": 924,
+      "line_start": 924,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 846,
-      "line_end": 862,
+      "line_end": 944,
+      "line_start": 928,
       "text": [
         "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
         "        let (mut app, _) = setup();",
@@ -97,16 +95,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 864,
-      "line_end": 864,
+      "line_end": 946,
+      "line_start": 946,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 867,
-      "line_end": 878,
+      "line_end": 960,
+      "line_start": 949,
       "text": [
         "    fn typing_custom_host_can_start_with_q() {",
         "        let (mut app, _) = setup();",
@@ -124,16 +122,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 880,
-      "line_end": 880,
+      "line_end": 962,
+      "line_start": 962,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 882,
-      "line_end": 896,
+      "line_end": 978,
+      "line_start": 964,
       "text": [
         "    fn custom_host_works_without_saved_hosts() {",
         "        let state = Rc::new(RefCell::new(FakeState::default()));",
@@ -154,16 +152,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 205,
-      "line_end": 205,
+      "line_end": 209,
+      "line_start": 209,
       "text": [
         "// {impl}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 206,
-      "line_end": 218,
+      "line_end": 222,
+      "line_start": 210,
       "text": [
         "fn draw_host_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let mut items = app.hosts.clone();",
@@ -182,8 +180,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 250,
-      "line_end": 292,
+      "line_end": 299,
+      "line_start": 257,
       "text": [
         "fn draw_picker(",
         "    frame: &mut Frame,",
@@ -232,16 +230,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 454,
-      "line_end": 454,
+      "line_end": 475,
+      "line_start": 475,
       "text": [
         "    // {test}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 461,
-      "line_end": 491,
+      "line_end": 512,
+      "line_start": 482,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",
@@ -275,6 +273,80 @@
         "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 123,
+      "line_start": 123,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 139,
+      "line_start": 139,
+      "text": [
+        "// {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 147,
+      "line_start": 147,
+      "text": [
+        "// {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 445,
+      "line_start": 445,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 863,
+      "line_start": 863,
+      "text": [
+        "    // {test}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 873,
+      "line_start": 873,
+      "text": [
+        "    // {test}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 224,
+      "line_start": 224,
+      "text": [
+        "// {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 255,
+      "line_start": 255,
+      "text": [
+        "// {impl}`requirements.forwarding.add.host`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 8,
+      "line_start": 8,
+      "text": [
+        "// {cite}`requirements.forwarding.add.host`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked visible host choices, arrow navigation, typed Other entry, custom names starting with q, and use when SSH config discovery fails. Model and rendering tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The host stage MUST list hosts discovered from the user's SSH configuration and an `Other` entry, with one option visibly selected. `↑` and `↓` MUST move the selection. Typing host-name characters MUST select `Other` and enter a custom host name; the user MUST also be able to select `Other` with the arrow keys. Pressing `Enter` with a discovered host or a nonempty custom host MUST advance to the remote-port stage."
 }

@@ -1,12 +1,10 @@
 {
-  "requirement": "The table MUST show a new or refreshed forward as running only after its SSH process has established the chosen local listener. If startup fails, the row MUST show an error for the attempted host and ports.",
   "determination": true,
-  "rationale": "Checked that startup remains Starting until the owned SSH child is alive and the local listener responds; exit or timeout becomes Error. The readiness transition and error rendering tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 253,
-      "line_end": 281,
+      "line_end": 313,
+      "line_start": 285,
       "text": [
         "    pub fn tick(&mut self) -> bool {",
         "        let mut changed = false;",
@@ -41,10 +39,11 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 587,
-      "line_end": 601,
+      "line_end": 643,
+      "line_start": 628,
       "text": [
         "    // {impl}`requirements.forwarding.startup_state`",
+        "    // {impl}`requirements.errors.visible`",
         "    fn start_forward(&mut self, spec: ForwardSpec) {",
         "        let (phase, error, process) = match self.backend.launch(&spec) {",
         "            Ok(process) => (Phase::Starting, None, Some(process)),",
@@ -63,16 +62,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 818,
-      "line_end": 818,
+      "line_end": 900,
+      "line_start": 900,
       "text": [
         "    // {test}`requirements.forwarding.startup_state`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 820,
-      "line_end": 839,
+      "line_end": 921,
+      "line_start": 902,
       "text": [
         "    fn add_dialog_creates_forward_and_waits_for_readiness() {",
         "        let (mut app, state) = setup();",
@@ -98,16 +97,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 154,
-      "line_end": 154,
+      "line_end": 163,
+      "line_start": 163,
       "text": [
         "    // {impl}`requirements.forwarding.startup_state`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 156,
-      "line_end": 184,
+      "line_end": 193,
+      "line_start": 165,
       "text": [
         "    fn poll(&mut self) -> ProcessState {",
         "        match self.child.try_wait() {",
@@ -139,6 +138,64 @@
         "        }",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 22,
+      "line_start": 22,
+      "text": [
+        "    // {impl}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 284,
+      "line_start": 284,
+      "text": [
+        "    // {impl}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 677,
+      "line_start": 677,
+      "text": [
+        "    // {impl}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 790,
+      "line_start": 790,
+      "text": [
+        "        // {test}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 831,
+      "line_start": 831,
+      "text": [
+        "        // {test}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 397,
+      "line_start": 397,
+      "text": [
+        "        // {test}`requirements.forwarding.startup_state`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 24,
+      "line_start": 24,
+      "text": [
+        "// {cite}`requirements.forwarding.startup_state`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked that startup remains Starting until the owned SSH child is alive and the local listener responds; exit or timeout becomes Error. The readiness transition and error rendering tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The table MUST show a new or refreshed forward as running only after its SSH process has established the chosen local listener. If startup fails, the row MUST show an error for the attempted host and ports."
 }

@@ -1,0 +1,199 @@
+{
+  "functions": [
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.host_discovery",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/hosts.rs",
+          "rust_item": "fn[discover_hosts]",
+          "text": [
+            "// {impl}`requirements.forwarding.host_discovery`",
+            "pub fn discover_hosts() -> Result<Vec<String>, String> {",
+            "    let config = SshConfig::parse_default_file(HOST_DISCOVERY_RULES)",
+            "        .map_err(|error| format!(\"Could not read ~/.ssh/config: {error}\"))?;",
+            "    Ok(literal_hosts(&config))",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.host_discovery"
+          ],
+          "requirements": "requirements.forwarding.host_discovery",
+          "text": [
+            ":::{req} forwarding.host_discovery",
+            "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[discover_hosts] in src/hosts.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.host_discovery`, which are the applicable cited definitions. The function parses the user's default SSH config with ssh2-config and returns only literal selectable host aliases. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[discover_hosts]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.host_discovery",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/hosts.rs",
+          "rust_item": "fn[literal_hosts]",
+          "text": [
+            "// {impl}`requirements.forwarding.host_discovery`",
+            "fn literal_hosts(config: &SshConfig) -> Vec<String> {",
+            "    let mut names = BTreeSet::new();",
+            "    for host in config.get_hosts() {",
+            "        for clause in &host.pattern {",
+            "            let name = &clause.pattern;",
+            "            if !clause.negated",
+            "                && !name.is_empty()",
+            "                && !name.starts_with('-')",
+            "                && !name.contains(['*', '?', '[', ']'])",
+            "            {",
+            "                names.insert(name.clone());",
+            "            }",
+            "        }",
+            "    }",
+            "    names.into_iter().collect()",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.host_discovery"
+          ],
+          "requirements": "requirements.forwarding.host_discovery",
+          "text": [
+            ":::{req} forwarding.host_discovery",
+            "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[literal_hosts] in src/hosts.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.host_discovery`, which are the applicable cited definitions. The helper collects unique, literal, nonnegated Host patterns and excludes wildcard patterns from the picker. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[literal_hosts]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.host_discovery",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/hosts.rs",
+          "rust_item": "mod[tests]/fn[parse_hosts]",
+          "text": [
+            "    // {test}`requirements.forwarding.host_discovery`",
+            "    fn parse_hosts(reader: &mut impl std::io::BufRead) -> Result<Vec<String>, String> {",
+            "        let config = SshConfig::default()",
+            "            .parse(reader, HOST_DISCOVERY_RULES)",
+            "            .map_err(|error| format!(\"Could not parse SSH configuration: {error}\"))?;",
+            "        Ok(literal_hosts(&config))",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.host_discovery"
+          ],
+          "requirements": "requirements.forwarding.host_discovery",
+          "text": [
+            ":::{req} forwarding.host_discovery",
+            "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[parse_hosts] in src/hosts.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.host_discovery`, which are the applicable cited definitions. The test helper parses a supplied SSH-config reader with the production host-discovery rules so literal aliases and filtering can be asserted without reading user configuration. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[parse_hosts]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.host_discovery",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/hosts.rs",
+          "rust_item": "mod[tests]/fn[picks_literal_aliases_only]",
+          "text": [
+            "    // {test}`requirements.forwarding.host_discovery`",
+            "    #[test]",
+            "    fn picks_literal_aliases_only() {",
+            "        let text = b\"Host chronos mnemosyne\\n  HostName example.com\\nHost *.internal !secret\\nHost chronos\\nHost *\\n\";",
+            "        let hosts = parse_hosts(&mut &text[..]).unwrap();",
+            "        assert_eq!(hosts, [\"chronos\", \"mnemosyne\"]);",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.host_discovery"
+          ],
+          "requirements": "requirements.forwarding.host_discovery",
+          "text": [
+            ":::{req} forwarding.host_discovery",
+            "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[picks_literal_aliases_only] in src/hosts.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.host_discovery`, which are the applicable cited definitions. The test supplies literal, wildcard, negated, and repeated Host patterns and checks only two literal aliases remain. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[picks_literal_aliases_only]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.host_discovery",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/hosts.rs",
+          "rust_item": "mod[tests]/fn[match_section_does_not_hide_later_host_declarations]",
+          "text": [
+            "    // {test}`requirements.forwarding.host_discovery`",
+            "    #[test]",
+            "    fn match_section_does_not_hide_later_host_declarations() {",
+            "        let text = b\"Host chronos\\n  HostName chronos.example\\nMatch host chronos\\n  IdentityFile ~/.ssh/example\\nHost mnemosyne\\n  HostName mnemosyne.example\\n\";",
+            "        let hosts = parse_hosts(&mut &text[..]).unwrap();",
+            "        assert_eq!(hosts, [\"chronos\", \"mnemosyne\"]);",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.host_discovery"
+          ],
+          "requirements": "requirements.forwarding.host_discovery",
+          "text": [
+            ":::{req} forwarding.host_discovery",
+            "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[match_section_does_not_hide_later_host_declarations] in src/hosts.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.host_discovery`, which are the applicable cited definitions. The test includes a Match section and checks later Host declarations are still discovered. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[match_section_does_not_hide_later_host_declarations]"
+    }
+  ],
+  "rust_file": "src/hosts.rs"
+}

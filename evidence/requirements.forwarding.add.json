@@ -1,28 +1,26 @@
 {
-  "requirement": "Pressing `a` MUST begin an add-forward flow with separate host, remote-port, and local-port stages, in that order. Completing the local-port stage with valid selections MUST start the forward and add it to the table.",
   "determination": true,
-  "rationale": "Checked the three separate picker stages and their Enter transitions through a keyboard-driven add test; local confirmation creates the table row.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 312,
-      "line_end": 312,
+      "line_end": 344,
+      "line_start": 344,
       "text": [
         "            // {impl}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 354,
-      "line_end": 354,
+      "line_end": 388,
+      "line_start": 388,
       "text": [
         "    // {impl}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 355,
-      "line_end": 377,
+      "line_end": 411,
+      "line_start": 389,
       "text": [
         "    fn on_dialog_key(&mut self, key: KeyEvent) {",
         "        let mut dialog = self.dialog.take().expect(\"dialog exists\");",
@@ -51,8 +49,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -132,16 +130,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 816,
-      "line_end": 816,
+      "line_end": 898,
+      "line_start": 898,
       "text": [
         "    // {test}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 820,
-      "line_end": 839,
+      "line_end": 921,
+      "line_start": 902,
       "text": [
         "    fn add_dialog_creates_forward_and_waits_for_readiness() {",
         "        let (mut app, state) = setup();",
@@ -167,16 +165,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 841,
-      "line_end": 841,
+      "line_end": 923,
+      "line_start": 923,
       "text": [
         "    // {test}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 846,
-      "line_end": 862,
+      "line_end": 944,
+      "line_start": 928,
       "text": [
         "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
         "        let (mut app, _) = setup();",
@@ -199,16 +197,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 196,
-      "line_end": 196,
+      "line_end": 200,
+      "line_start": 200,
       "text": [
         "// {impl}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 197,
-      "line_end": 203,
+      "line_end": 207,
+      "line_start": 201,
       "text": [
         "fn draw_add_dialog(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    match dialog.stage {",
@@ -218,6 +216,64 @@
         "    }",
         "}"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 122,
+      "line_start": 122,
+      "text": [
+        "    // {impl}`requirements.forwarding.add`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 551,
+      "line_start": 551,
+      "text": [
+        "    // {impl}`requirements.forwarding.add`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 847,
+      "line_start": 847,
+      "text": [
+        "    // {test}`requirements.forwarding.add`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 857,
+      "line_start": 857,
+      "text": [
+        "    // {test}`requirements.forwarding.add`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 872,
+      "line_start": 872,
+      "text": [
+        "    // {test}`requirements.forwarding.add`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 419,
+      "line_start": 419,
+      "text": [
+        "    // {test}`requirements.forwarding.add`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 7,
+      "line_start": 7,
+      "text": [
+        "// {cite}`requirements.forwarding.add`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked the three separate picker stages and their Enter transitions through a keyboard-driven add test; local confirmation creates the table row. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Pressing `a` MUST begin an add-forward flow with separate host, remote-port, and local-port stages, in that order. Completing the local-port stage with valid selections MUST start the forward and add it to the table."
 }

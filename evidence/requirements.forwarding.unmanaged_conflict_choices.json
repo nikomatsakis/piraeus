@@ -1,12 +1,10 @@
 {
-  "requirement": "If a process outside the application occupies the preferred local port, the dialog MUST offer the suggested free port and a user-specified alternative. It MUST initially select the suggested free port, MUST NOT offer to replace the other process, and MUST NOT stop it.\n\n```text\n(x) Use suggested alternative local port 8031\n( ) Use alternative local port [       ]\n```",
   "determination": true,
-  "rationale": "Checked that unmanaged conflicts offer only suggested and manual choices, default to suggested, and leave the occupying process untouched. The test passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 190,
-      "line_end": 242,
+      "line_end": 271,
+      "line_start": 219,
       "text": [
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
         "        let conflict = self",
@@ -65,16 +63,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 509,
-      "line_end": 509,
+      "line_end": 549,
+      "line_start": 549,
       "text": [
         "    // {impl}`requirements.forwarding.unmanaged_conflict_choices`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -154,16 +152,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1027,
-      "line_end": 1027,
+      "line_end": 1109,
+      "line_start": 1109,
       "text": [
         "    // {test}`requirements.forwarding.unmanaged_conflict_choices`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1030,
-      "line_end": 1042,
+      "line_end": 1124,
+      "line_start": 1112,
       "text": [
         "    fn unmanaged_conflict_never_offers_replacement() {",
         "        let (mut app, state) = setup();",
@@ -182,16 +180,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 297,
-      "line_end": 297,
+      "line_end": 304,
+      "line_start": 304,
       "text": [
         "// {impl}`requirements.forwarding.unmanaged_conflict_choices`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 302,
-      "line_end": 355,
+      "line_end": 362,
+      "line_start": 309,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -251,16 +249,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 457,
-      "line_end": 457,
+      "line_end": 478,
+      "line_start": 478,
       "text": [
         "    // {test}`requirements.forwarding.unmanaged_conflict_choices`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 461,
-      "line_end": 491,
+      "line_end": 512,
+      "line_start": 482,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",
@@ -294,6 +292,32 @@
         "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 218,
+      "line_start": 218,
+      "text": [
+        "    // {impl}`requirements.forwarding.unmanaged_conflict_choices`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 391,
+      "line_start": 391,
+      "text": [
+        "        // {test}`requirements.forwarding.unmanaged_conflict_choices`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 26,
+      "line_start": 26,
+      "text": [
+        "// {cite}`requirements.forwarding.unmanaged_conflict_choices`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked that unmanaged conflicts offer only suggested and manual choices, default to suggested, and leave the occupying process untouched. The test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "If a process outside the application occupies the preferred local port, the dialog MUST offer the suggested free port and a user-specified alternative. It MUST initially select the suggested free port, MUST NOT offer to replace the other process, and MUST NOT stop it.\n\n```text\n(x) Use suggested alternative local port 8031\n( ) Use alternative local port [       ]\n```"
 }

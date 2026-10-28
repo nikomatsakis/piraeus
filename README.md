@@ -49,13 +49,19 @@ Recent remote ports persist across runs in `~/.config/piraeus/config.toml`, or `
 
 ## Development
 
+Install the Habeas 0.2 CLI for the mdBook preprocessor:
+
+```sh
+cargo install habeas --version 0.2 --force
+```
+
 ```sh
 cargo test --workspace
 mdbook test
 mdbook build
 ```
 
-The mdBook in `md/` records the requirements and their Habeas evidence. `cargo test --workspace` includes that validation.
+The mdBook in `md/` records the requirements and their Habeas evidence, including per-function attestations. `cargo test --workspace` includes that validation.
 
 ## License
 

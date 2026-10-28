@@ -348,13 +348,16 @@ checksum = "e4eba85ea1d0a966a983acd07deee566e67395d2d96b6fb39e62b5a833f1eb0b"
 
 [[package]]
 name = "habeas"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "149c1324a13b198348423f759241105557023ffe67794d34b8323e0e1da5574f"
+checksum = "d855a1997a0bf37b17937595b093d74dbd557e4909211429f2ea8453efd2a61e"
 dependencies = [
+ "clap",
  "mdbook-preprocessor",
+ "proc-macro2",
  "pulldown-cmark",
  "serde_json",
+ "syn 2.0.119",
  "toml_edit",
 ]
 

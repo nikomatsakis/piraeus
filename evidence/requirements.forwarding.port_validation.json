@@ -1,12 +1,10 @@
 {
-  "requirement": "The add-forward dialog MUST accept only whole-number remote and manually entered local ports from 1 through 65535. It MUST explain invalid input inside the dialog and MUST NOT start or replace a forward while the input is invalid.",
   "determination": true,
-  "rationale": "Checked numeric 1–65535 parsing and inline validation before launch or replacement. Invalid remote and manual port tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 421,
-      "line_end": 456,
+      "line_end": 491,
+      "line_start": 456,
       "text": [
         "    fn on_remote_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -48,8 +46,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 470,
-      "line_end": 489,
+      "line_end": 528,
+      "line_start": 509,
       "text": [
         "    fn on_local_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -75,16 +73,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 504,
-      "line_end": 504,
+      "line_end": 544,
+      "line_start": 544,
       "text": [
         "    // {impl}`requirements.forwarding.port_validation`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -164,16 +162,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 921,
-      "line_end": 921,
+      "line_end": 1003,
+      "line_start": 1003,
       "text": [
         "    // {test}`requirements.forwarding.port_validation`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 923,
-      "line_end": 961,
+      "line_end": 1043,
+      "line_start": 1005,
       "text": [
         "    fn invalid_remote_and_manual_ports_keep_dialog_open() {",
         "        let (mut app, state) = setup();",
@@ -218,8 +216,8 @@
     },
     {
       "file": "src/ports.rs",
-      "line_start": 1,
       "line_end": 14,
+      "line_start": 1,
       "text": [
         "// {impl}`requirements.forwarding.port_validation`",
         "pub fn parse_port(input: &str) -> Result<u16, &'static str> {",
@@ -239,16 +237,16 @@
     },
     {
       "file": "src/ports.rs",
-      "line_start": 28,
       "line_end": 28,
+      "line_start": 28,
       "text": [
         "    // {test}`requirements.forwarding.port_validation`"
       ]
     },
     {
       "file": "src/ports.rs",
-      "line_start": 30,
       "line_end": 36,
+      "line_start": 30,
       "text": [
         "    fn validates_port_range() {",
         "        assert_eq!(parse_port(\"8030\"), Ok(8030));",
@@ -261,16 +259,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 299,
-      "line_end": 299,
+      "line_end": 306,
+      "line_start": 306,
       "text": [
         "// {impl}`requirements.forwarding.port_validation`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 302,
-      "line_end": 355,
+      "line_end": 362,
+      "line_start": 309,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -327,6 +325,32 @@
         "    );",
         "}"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 494,
+      "line_start": 494,
+      "text": [
+        "    // {impl}`requirements.forwarding.port_validation`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 508,
+      "line_start": 508,
+      "text": [
+        "    // {impl}`requirements.forwarding.port_validation`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 18,
+      "line_start": 18,
+      "text": [
+        "// {cite}`requirements.forwarding.port_validation`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked numeric 1–65535 parsing and inline validation before launch or replacement. Invalid remote and manual port tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The add-forward dialog MUST accept only whole-number remote and manually entered local ports from 1 through 65535. It MUST explain invalid input inside the dialog and MUST NOT start or replace a forward while the input is invalid."
 }

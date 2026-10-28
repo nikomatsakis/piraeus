@@ -18,15 +18,24 @@ pub enum ProcessState {
 }
 
 pub trait ManagedProcess {
+    // {impl}`requirements.errors.visible`
+    // {impl}`requirements.forwarding.startup_state`
     fn poll(&mut self) -> ProcessState;
+    // {impl}`requirements.forwarding.ssh`
     fn stop(&mut self) -> Result<(), String>;
 }
 
 pub trait Backend {
+    // {impl}`requirements.forwarding.detect_conflict`
     fn port_free(&self, port: u16) -> bool;
+    // {impl}`requirements.forwarding.ssh`
     fn launch(&mut self, spec: &ForwardSpec) -> Result<Box<dyn ManagedProcess>, String>;
+    // {impl}`requirements.browser.link`
+    // {impl}`requirements.browser.open`
     fn open_browser(&mut self, port: u16) -> Result<(), String>;
+    // {impl}`requirements.forwarding.add.port_history`
     fn load_recent_ports(&self) -> Result<Vec<u16>, String>;
+    // {impl}`requirements.forwarding.add.port_history`
     fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String>;
 }
 
@@ -45,6 +54,8 @@ pub struct Forward {
 }
 
 impl Forward {
+    // {impl}`requirements.errors.visible`
+    // {impl}`requirements.tui.table`
     pub fn status(&self) -> String {
         if let Some(error) = &self.error {
             format!(
@@ -60,6 +71,7 @@ impl Forward {
         }
     }
 
+    // {impl}`requirements.errors.visible`
     pub fn is_error(&self) -> bool {
         self.error.is_some()
     }
@@ -107,6 +119,8 @@ pub struct AddDialog {
 }
 
 impl Default for AddDialog {
+    // {impl}`requirements.forwarding.add`
+    // {impl}`requirements.forwarding.add.host`
     fn default() -> Self {
         Self {
             stage: AddStage::Host,
@@ -122,14 +136,20 @@ impl Default for AddDialog {
     }
 }
 
+// {impl}`requirements.forwarding.add.host`
+// {impl}`requirements.forwarding.add.local_port`
+// {impl}`requirements.forwarding.add.remote_port`
+// {impl}`requirements.tui.selection`
 fn wrap_index(current: usize, count: usize, direction: isize) -> usize {
     (current as isize + direction).rem_euclid(count as isize) as usize
 }
 
+// {impl}`requirements.forwarding.add.host`
 fn is_host_char(ch: char) -> bool {
     !ch.is_control() && !ch.is_whitespace() && ch != '?'
 }
 
+// {impl}`requirements.forwarding.add.remote_port`
 fn distinct_ports(ports: Vec<u16>) -> Vec<u16> {
     let mut distinct = Vec::new();
     for port in ports {
@@ -155,6 +175,9 @@ pub struct App {
 }
 
 impl App {
+    // {impl}`requirements.forwarding.add.port_history`
+    // {impl}`requirements.forwarding.host_discovery`
+    // {impl}`requirements.tui.table`
     pub fn new(backend: Box<dyn Backend>, hosts: Result<Vec<String>, String>) -> Self {
         let (hosts, host_error) = match hosts {
             Ok(hosts) => (hosts, None),
@@ -182,11 +205,17 @@ impl App {
         }
     }
 
+    // {impl}`requirements.tui.selection`
     pub fn selected_forward(&self) -> Option<&Forward> {
         self.selected.and_then(|index| self.forwards.get(index))
     }
 
     // {impl}`requirements.forwarding.detect_conflict`
+    // {impl}`requirements.forwarding.default_local_port`
+    // {impl}`requirements.forwarding.managed_conflict_choices`
+    // {impl}`requirements.forwarding.manual_local_port`
+    // {impl}`requirements.forwarding.suggestion_exhausted`
+    // {impl}`requirements.forwarding.unmanaged_conflict_choices`
     pub fn port_choices(&self, preferred: u16) -> PortChoices {
         let conflict = self
             .forwards
@@ -241,6 +270,8 @@ impl App {
         }
     }
 
+    // {impl}`requirements.forwarding.detect_conflict`
+    // {impl}`requirements.forwarding.manual_conflict`
     fn port_is_free(&self, port: u16) -> bool {
         !self
             .forwards
@@ -250,6 +281,7 @@ impl App {
     }
 
     // {impl}`requirements.errors.visible`
+    // {impl}`requirements.forwarding.startup_state`
     pub fn tick(&mut self) -> bool {
         let mut changed = false;
         for forward in &mut self.forwards {
@@ -331,6 +363,7 @@ impl App {
         }
     }
 
+    // {impl}`requirements.tui.selection`
     fn select_next(&mut self) {
         if self.forwards.is_empty() {
             self.selected = None;
@@ -341,6 +374,7 @@ impl App {
         self.show_info = false;
     }
 
+    // {impl}`requirements.tui.selection`
     fn select_previous(&mut self) {
         if self.forwards.is_empty() {
             self.selected = None;
@@ -408,6 +442,7 @@ impl App {
         }
     }
 
+    // {impl}`requirements.forwarding.add.host`
     fn selected_host(&self, dialog: &AddDialog) -> Option<String> {
         if dialog.host_index == self.hosts.len() {
             let host = dialog.custom_host_input.trim();
@@ -455,6 +490,8 @@ impl App {
         }
     }
 
+    // {impl}`requirements.forwarding.add.remote_port`
+    // {impl}`requirements.forwarding.port_validation`
     fn selected_remote_port(&self, dialog: &AddDialog) -> Result<u16, &'static str> {
         if dialog.remote_index == self.recent_remote_ports.len() {
             parse_port(&dialog.remote_input)
@@ -467,6 +504,8 @@ impl App {
     }
 
     // {impl}`requirements.forwarding.add.local_port`
+    // {impl}`requirements.forwarding.manual_local_port`
+    // {impl}`requirements.forwarding.port_validation`
     fn on_local_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {
         match key.code {
             KeyCode::Up | KeyCode::Left => self.move_local_choice(dialog, -1),
@@ -488,6 +527,7 @@ impl App {
         }
     }
 
+    // {impl}`requirements.forwarding.add.local_port`
     fn move_local_choice(&self, dialog: &mut AddDialog, direction: isize) {
         let Some(remote_port) = dialog.chosen_remote_port else {
             return;
@@ -508,6 +548,7 @@ impl App {
     // {impl}`requirements.forwarding.managed_conflict_choices`
     // {impl}`requirements.forwarding.unmanaged_conflict_choices`
     // {impl}`requirements.forwarding.suggestion_exhausted`
+    // {impl}`requirements.forwarding.add`
     fn confirm_add(&mut self, mut dialog: AddDialog) {
         let Some(host) = self.selected_host(&dialog) else {
             dialog.error = Some("Enter a custom SSH host name.".into());
@@ -585,6 +626,7 @@ impl App {
 
     // {impl}`requirements.forwarding.ssh`
     // {impl}`requirements.forwarding.startup_state`
+    // {impl}`requirements.errors.visible`
     fn start_forward(&mut self, spec: ForwardSpec) {
         let (phase, error, process) = match self.backend.launch(&spec) {
             Ok(process) => (Phase::Starting, None, Some(process)),
@@ -600,6 +642,7 @@ impl App {
         self.show_info = false;
     }
 
+    // {impl}`requirements.forwarding.ssh`
     fn stop_forward(&mut self, index: usize) -> Result<(), String> {
         if let Some(mut process) = self.forwards[index].process.take()
             && let Err(error) = process.stop()
@@ -610,6 +653,9 @@ impl App {
         Ok(())
     }
 
+    // {impl}`requirements.errors.visible`
+    // {impl}`requirements.forwarding.remove`
+    // {impl}`requirements.tui.selection`
     fn remove_selected(&mut self) {
         let Some(index) = self.selected else { return };
         if let Err(error) = self.stop_forward(index) {
@@ -626,6 +672,9 @@ impl App {
         self.show_info = false;
     }
 
+    // {impl}`requirements.errors.visible`
+    // {impl}`requirements.forwarding.refresh`
+    // {impl}`requirements.forwarding.startup_state`
     fn refresh(&mut self) {
         let mut stopped = Vec::with_capacity(self.forwards.len());
         for index in 0..self.forwards.len() {
@@ -653,6 +702,9 @@ impl App {
         }
     }
 
+    // {impl}`requirements.browser.link`
+    // {impl}`requirements.browser.open`
+    // {impl}`requirements.errors.visible`
     fn open_selected(&mut self) {
         let Some(index) = self.selected else { return };
         let port = self.forwards[index].spec.local_port;
@@ -663,6 +715,8 @@ impl App {
     }
 
     // {impl}`requirements.browser.link`
+    // {impl}`requirements.errors.visible`
+    // {impl}`requirements.tui.selection`
     pub fn on_url_click(&mut self, index: usize) {
         if self.dialog.is_some() || index >= self.forwards.len() {
             return;
@@ -672,6 +726,8 @@ impl App {
         self.open_selected();
     }
 
+    // {impl}`requirements.errors.visible`
+    // {impl}`requirements.forwarding.quit`
     fn quit(&mut self) {
         let mut failed = false;
         for index in 0..self.forwards.len() {
@@ -686,6 +742,7 @@ impl App {
 }
 
 impl Drop for App {
+    // {impl}`requirements.forwarding.ssh`
     fn drop(&mut self) {
         for forward in &mut self.forwards {
             if let Some(process) = forward.process.as_mut() {
@@ -722,10 +779,15 @@ mod tests {
     }
 
     impl Backend for FakeBackend {
+        // {test}`requirements.forwarding.detect_conflict`
+        // {test}`requirements.forwarding.manual_conflict`
         fn port_free(&self, port: u16) -> bool {
             !self.0.borrow().busy.contains(&port)
         }
 
+        // {test}`requirements.errors.visible`
+        // {test}`requirements.forwarding.ssh`
+        // {test}`requirements.forwarding.startup_state`
         fn launch(&mut self, spec: &ForwardSpec) -> Result<Box<dyn ManagedProcess>, String> {
             let mut state = self.0.borrow_mut();
             if let Some(error) = &state.launch_error {
@@ -740,6 +802,9 @@ mod tests {
             }))
         }
 
+        // {test}`requirements.browser.link`
+        // {test}`requirements.browser.open`
+        // {test}`requirements.errors.visible`
         fn open_browser(&mut self, port: u16) -> Result<(), String> {
             let mut state = self.0.borrow_mut();
             if let Some(error) = &state.browser_error {
@@ -749,10 +814,12 @@ mod tests {
             Ok(())
         }
 
+        // {test}`requirements.forwarding.add.port_history`
         fn load_recent_ports(&self) -> Result<Vec<u16>, String> {
             Ok(self.0.borrow().recent_ports.clone())
         }
 
+        // {test}`requirements.forwarding.add.port_history`
         fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String> {
             self.0.borrow_mut().recent_ports = ports.to_vec();
             Ok(())
@@ -760,10 +827,15 @@ mod tests {
     }
 
     impl ManagedProcess for FakeProcess {
+        // {test}`requirements.errors.visible`
+        // {test}`requirements.forwarding.startup_state`
         fn poll(&mut self) -> ProcessState {
             self.state.borrow().processes[self.id].clone()
         }
 
+        // {test}`requirements.forwarding.quit`
+        // {test}`requirements.forwarding.refresh`
+        // {test}`requirements.forwarding.remove`
         fn stop(&mut self) -> Result<(), String> {
             let mut state = self.state.borrow_mut();
             state.stops.push(self.id);
@@ -772,6 +844,7 @@ mod tests {
         }
     }
 
+    // {test}`requirements.forwarding.add`
     fn setup() -> (App, Rc<RefCell<FakeState>>) {
         let state = Rc::new(RefCell::new(FakeState::default()));
         let app = App::new(
@@ -781,16 +854,25 @@ mod tests {
         (app, state)
     }
 
+    // {test}`requirements.forwarding.add`
+    // {test}`requirements.tui.selection`
     fn key(code: KeyCode) -> KeyEvent {
         KeyEvent::new(code, KeyModifiers::NONE)
     }
 
+    // {test}`requirements.forwarding.add.host`
+    // {test}`requirements.forwarding.add.local_port`
+    // {test}`requirements.forwarding.add.remote_port`
     fn type_text(app: &mut App, text: &str) {
         for ch in text.chars() {
             app.on_key(key(KeyCode::Char(ch)));
         }
     }
 
+    // {test}`requirements.forwarding.add`
+    // {test}`requirements.forwarding.add.host`
+    // {test}`requirements.forwarding.add.local_port`
+    // {test}`requirements.forwarding.add.remote_port`
     fn add(app: &mut App, remote: &str, choice: Choice, manual: &str, host_index: usize) {
         app.on_key(key(KeyCode::Char('a')));
         for _ in 0..host_index {
@@ -1153,6 +1235,7 @@ mod tests {
 
     // {test}`requirements.browser.link`
     #[test]
+    // {test}`requirements.tui.selection`
     fn clicking_url_opens_the_clicked_forward_and_selects_its_row() {
         let (mut app, state) = setup();
         add(&mut app, "8030", Choice::Manual, "8031", 0);

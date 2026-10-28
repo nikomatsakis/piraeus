@@ -1,14 +1,17 @@
 {
-  "requirement": "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by an application-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
   "determination": true,
-  "rationale": "Checked managed/unmanaged/free classification and ascending free-port search. Order and conflict-option tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 189,
-      "line_end": 242,
+      "line_end": 271,
+      "line_start": 213,
       "text": [
         "    // {impl}`requirements.forwarding.detect_conflict`",
+        "    // {impl}`requirements.forwarding.default_local_port`",
+        "    // {impl}`requirements.forwarding.managed_conflict_choices`",
+        "    // {impl}`requirements.forwarding.manual_local_port`",
+        "    // {impl}`requirements.forwarding.suggestion_exhausted`",
+        "    // {impl}`requirements.forwarding.unmanaged_conflict_choices`",
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
         "        let conflict = self",
         "            .forwards",
@@ -66,24 +69,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1007,
-      "line_end": 1007,
+      "line_end": 1089,
+      "line_start": 1089,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1007,
-      "line_end": 1007,
+      "line_end": 1089,
+      "line_start": 1089,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1009,
-      "line_end": 1025,
+      "line_end": 1107,
+      "line_start": 1091,
       "text": [
         "    fn managed_conflict_suggests_next_port_and_can_replace() {",
         "        let (mut app, state) = setup();",
@@ -106,16 +109,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1028,
-      "line_end": 1028,
+      "line_end": 1110,
+      "line_start": 1110,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1030,
-      "line_end": 1042,
+      "line_end": 1124,
+      "line_start": 1112,
       "text": [
         "    fn unmanaged_conflict_never_offers_replacement() {",
         "        let (mut app, state) = setup();",
@@ -134,16 +137,16 @@
     },
     {
       "file": "src/ports.rs",
-      "line_start": 16,
       "line_end": 16,
+      "line_start": 16,
       "text": [
         "// {impl}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/ports.rs",
-      "line_start": 18,
       "line_end": 22,
+      "line_start": 18,
       "text": [
         "pub fn first_free_after(preferred: u16, mut is_free: impl FnMut(u16) -> bool) -> Option<u16> {",
         "    ((u32::from(preferred) + 1)..=u32::from(u16::MAX))",
@@ -154,16 +157,16 @@
     },
     {
       "file": "src/ports.rs",
-      "line_start": 38,
       "line_end": 38,
+      "line_start": 38,
       "text": [
         "    // {test}`requirements.forwarding.detect_conflict`"
       ]
     },
     {
       "file": "src/ports.rs",
-      "line_start": 40,
       "line_end": 48,
+      "line_start": 40,
       "text": [
         "    fn suggestion_checks_ports_in_order() {",
         "        let mut checked = Vec::new();",
@@ -175,6 +178,56 @@
         "        assert_eq!(checked, [8031, 8032]);",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 29,
+      "line_start": 29,
+      "text": [
+        "    // {impl}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 273,
+      "line_start": 273,
+      "text": [
+        "    // {impl}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 782,
+      "line_start": 782,
+      "text": [
+        "        // {test}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_end": 14,
+      "line_start": 14,
+      "text": [
+        "    // {impl}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 390,
+      "line_start": 390,
+      "text": [
+        "        // {test}`requirements.forwarding.detect_conflict`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 13,
+      "line_start": 13,
+      "text": [
+        "// {cite}`requirements.forwarding.detect_conflict`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked managed/unmanaged/free classification and ascending free-port search. Order and conflict-option tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by an application-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`)."
 }

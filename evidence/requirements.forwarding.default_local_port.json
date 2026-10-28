@@ -1,12 +1,10 @@
 {
-  "requirement": "When the entered remote port is free on localhost, the add-forward dialog MUST initially select that same port as the local port and MUST also offer a user-specified alternative.\n\n```text\n(x) Use local port 8030\n( ) Use alternative local port [       ]\n```",
   "determination": true,
-  "rationale": "Checked the free-port radio options and default selection in the local-port stage, plus rendered choices and add-forward test.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 190,
-      "line_end": 242,
+      "line_end": 271,
+      "line_start": 219,
       "text": [
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
         "        let conflict = self",
@@ -65,24 +63,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 506,
-      "line_end": 506,
+      "line_end": 546,
+      "line_start": 546,
       "text": [
         "    // {impl}`requirements.forwarding.default_local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 817,
-      "line_end": 817,
+      "line_end": 899,
+      "line_start": 899,
       "text": [
         "    // {test}`requirements.forwarding.default_local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 820,
-      "line_end": 839,
+      "line_end": 921,
+      "line_start": 902,
       "text": [
         "    fn add_dialog_creates_forward_and_waits_for_readiness() {",
         "        let (mut app, state) = setup();",
@@ -108,16 +106,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 295,
-      "line_end": 295,
+      "line_end": 302,
+      "line_start": 302,
       "text": [
         "// {impl}`requirements.forwarding.default_local_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 302,
-      "line_end": 355,
+      "line_end": 362,
+      "line_start": 309,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -177,8 +175,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 461,
-      "line_end": 491,
+      "line_end": 512,
+      "line_start": 482,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",
@@ -212,6 +210,24 @@
         "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 214,
+      "line_start": 214,
+      "text": [
+        "    // {impl}`requirements.forwarding.default_local_port`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 12,
+      "line_start": 12,
+      "text": [
+        "// {cite}`requirements.forwarding.default_local_port`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked the free-port radio options and default selection in the local-port stage, plus rendered choices and add-forward test. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "When the entered remote port is free on localhost, the add-forward dialog MUST initially select that same port as the local port and MUST also offer a user-specified alternative.\n\n```text\n(x) Use local port 8030\n( ) Use alternative local port [       ]\n```"
 }

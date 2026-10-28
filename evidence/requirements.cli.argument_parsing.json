@@ -1,12 +1,10 @@
 {
-  "requirement": "The `piraeus` executable MUST use `clap` to parse its command-line arguments before starting the terminal UI.",
   "determination": true,
-  "rationale": "The binary depends on clap, derives its command-line parser, and parses arguments before creating the app or terminal. The integration test confirms --help exits successfully without starting the TUI.",
   "inputs": [
     {
       "file": "Cargo.toml",
-      "line_start": 18,
       "line_end": 19,
+      "line_start": 18,
       "text": [
         "[dependencies]",
         "clap = { version = \"4.6.7\", features = [\"derive\"] }"
@@ -14,8 +12,8 @@
     },
     {
       "file": "src/main.rs",
+      "line_end": 34,
       "line_start": 23,
-      "line_end": 32,
       "text": [
         "// {impl}`requirements.cli.argument_parsing`",
         "#[derive(Parser)]",
@@ -23,6 +21,8 @@
         "struct Cli {}",
         "",
         "// {impl}`requirements.tui.terminal`",
+        "// {impl}`requirements.browser.link`",
+        "// {impl}`requirements.cli.argument_parsing`",
         "fn main() -> io::Result<()> {",
         "    Cli::parse();",
         "    let mut app = App::new(Box::new(SystemBackend), discover_hosts());",
@@ -31,8 +31,8 @@
     },
     {
       "file": "tests/cli.rs",
-      "line_start": 3,
       "line_end": 15,
+      "line_start": 3,
       "text": [
         "// {test}`requirements.cli.argument_parsing`",
         "#[test]",
@@ -48,6 +48,16 @@
         "    assert!(stdout.contains(\"--help\"));",
         "}"
       ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 4,
+      "line_start": 4,
+      "text": [
+        "// {cite}`requirements.cli.argument_parsing`"
+      ]
     }
-  ]
+  ],
+  "rationale": "The binary depends on clap, derives its command-line parser, and parses arguments before creating the app or terminal. The integration test confirms --help exits successfully without starting the TUI. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The `piraeus` executable MUST use `clap` to parse its command-line arguments before starting the terminal UI."
 }
