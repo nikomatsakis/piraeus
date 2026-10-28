@@ -11,6 +11,7 @@ use crate::history;
 pub struct SystemBackend;
 
 impl Backend for SystemBackend {
+    // {impl}`requirements.forwarding.detect_conflict`
     fn port_free(&self, port: u16) -> bool {
         TcpListener::bind((Ipv4Addr::LOCALHOST, port)).is_ok()
     }
@@ -54,6 +55,8 @@ impl Backend for SystemBackend {
         }))
     }
 
+    // {impl}`requirements.browser.link`
+    // {impl}`requirements.browser.open`
     fn open_browser(&mut self, port: u16) -> Result<(), String> {
         let url = format!("http://localhost:{port}");
         #[cfg(target_os = "macos")]
@@ -88,6 +91,8 @@ impl Backend for SystemBackend {
     }
 }
 
+// {impl}`requirements.forwarding.ssh`
+// {impl}`requirements.forwarding.ssh_config`
 fn ssh_command(spec: &ForwardSpec) -> Command {
     let mut command = Command::new("ssh");
     command
@@ -121,6 +126,7 @@ struct SshProcess {
 }
 
 impl SshProcess {
+    // {impl}`requirements.errors.visible`
     fn drain_stderr(&mut self) -> Option<String> {
         let mut fault = None;
         while let Ok(line) = self.stderr.try_recv() {
@@ -132,6 +138,8 @@ impl SshProcess {
         fault
     }
 
+    // {impl}`requirements.errors.info`
+    // {impl}`requirements.errors.visible`
     fn diagnostics(&mut self, prefix: &str) -> String {
         if let Ok(line) = self.stderr.recv_timeout(Duration::from_millis(50)) {
             self.stderr_lines.push(line);
@@ -145,6 +153,7 @@ impl SshProcess {
     }
 }
 
+// {impl}`requirements.errors.visible`
 fn is_failure_line(line: &str) -> bool {
     let lower = line.to_ascii_lowercase();
     lower.contains("failed") || lower.contains("refused") || lower.contains("error")
@@ -183,6 +192,7 @@ impl ManagedProcess for SshProcess {
         }
     }
 
+    // {impl}`requirements.forwarding.ssh`
     fn stop(&mut self) -> Result<(), String> {
         match self.child.try_wait() {
             Ok(Some(_)) => Ok(()),

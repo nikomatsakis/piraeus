@@ -12,6 +12,7 @@ pub fn discover_hosts() -> Result<Vec<String>, String> {
     Ok(literal_hosts(&config))
 }
 
+// {impl}`requirements.forwarding.host_discovery`
 fn literal_hosts(config: &SshConfig) -> Vec<String> {
     let mut names = BTreeSet::new();
     for host in config.get_hosts() {
@@ -33,6 +34,7 @@ fn literal_hosts(config: &SshConfig) -> Vec<String> {
 mod tests {
     use super::*;
 
+    // {test}`requirements.forwarding.host_discovery`
     fn parse_hosts(reader: &mut impl std::io::BufRead) -> Result<Vec<String>, String> {
         let config = SshConfig::default()
             .parse(reader, HOST_DISCOVERY_RULES)

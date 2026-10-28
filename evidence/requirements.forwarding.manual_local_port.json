@@ -1,20 +1,18 @@
 {
-  "requirement": "In every add-forward case, the dialog MUST offer a radio choice that lets the user enter an alternative **local** port explicitly. The entered remote port MUST remain unchanged when the user chooses an alternative local port.",
   "determination": true,
-  "rationale": "Checked the editable manual radio choice and that confirmation preserves the remote port while using the entered local port. Model and UI tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 507,
-      "line_end": 507,
+      "line_end": 547,
+      "line_start": 547,
       "text": [
         "    // {impl}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -94,16 +92,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 963,
-      "line_end": 963,
+      "line_end": 1045,
+      "line_start": 1045,
       "text": [
         "    // {test}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 966,
-      "line_end": 985,
+      "line_end": 1067,
+      "line_start": 1048,
       "text": [
         "    fn manual_choice_keeps_remote_port_and_rejects_busy_local_port() {",
         "        let (mut app, state) = setup();",
@@ -129,16 +127,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 298,
-      "line_end": 298,
+      "line_end": 305,
+      "line_start": 305,
       "text": [
         "// {impl}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 302,
-      "line_end": 355,
+      "line_end": 362,
+      "line_start": 309,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -198,16 +196,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 458,
-      "line_end": 458,
+      "line_end": 479,
+      "line_start": 479,
       "text": [
         "    // {test}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 461,
-      "line_end": 491,
+      "line_end": 512,
+      "line_start": 482,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",
@@ -241,6 +239,32 @@
         "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 216,
+      "line_start": 216,
+      "text": [
+        "    // {impl}`requirements.forwarding.manual_local_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 507,
+      "line_start": 507,
+      "text": [
+        "    // {impl}`requirements.forwarding.manual_local_port`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 17,
+      "line_start": 17,
+      "text": [
+        "// {cite}`requirements.forwarding.manual_local_port`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked the editable manual radio choice and that confirmation preserves the remote port while using the entered local port. Model and UI tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "In every add-forward case, the dialog MUST offer a radio choice that lets the user enter an alternative **local** port explicitly. The entered remote port MUST remain unchanged when the user chooses an alternative local port."
 }

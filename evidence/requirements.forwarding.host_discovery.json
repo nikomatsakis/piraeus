@@ -1,12 +1,10 @@
 {
-  "requirement": "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none.",
   "determination": true,
-  "rationale": "Checked that host discovery allows unknown SSH directives such as Match while ssh2-config extracts literal, nonnegated Host aliases. Tests cover Match followed by another Host as well as wildcard and negated clauses.",
   "inputs": [
     {
       "file": "src/hosts.rs",
-      "line_start": 5,
       "line_end": 6,
+      "line_start": 5,
       "text": [
         "const HOST_DISCOVERY_RULES: ParseRule =",
         "    ParseRule::ALLOW_UNKNOWN_FIELDS.union(ParseRule::ALLOW_UNSUPPORTED_FIELDS);"
@@ -14,8 +12,8 @@
     },
     {
       "file": "src/hosts.rs",
-      "line_start": 8,
       "line_end": 13,
+      "line_start": 8,
       "text": [
         "// {impl}`requirements.forwarding.host_discovery`",
         "pub fn discover_hosts() -> Result<Vec<String>, String> {",
@@ -27,8 +25,8 @@
     },
     {
       "file": "src/hosts.rs",
-      "line_start": 15,
-      "line_end": 30,
+      "line_end": 31,
+      "line_start": 16,
       "text": [
         "fn literal_hosts(config: &SshConfig) -> Vec<String> {",
         "    let mut names = BTreeSet::new();",
@@ -50,8 +48,8 @@
     },
     {
       "file": "src/hosts.rs",
-      "line_start": 43,
-      "line_end": 57,
+      "line_end": 59,
+      "line_start": 45,
       "text": [
         "    // {test}`requirements.forwarding.host_discovery`",
         "    #[test]",
@@ -69,6 +67,40 @@
         "        assert_eq!(hosts, [\"chronos\", \"mnemosyne\"]);",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 179,
+      "line_start": 179,
+      "text": [
+        "    // {impl}`requirements.forwarding.host_discovery`"
+      ]
+    },
+    {
+      "file": "src/hosts.rs",
+      "line_end": 15,
+      "line_start": 15,
+      "text": [
+        "// {impl}`requirements.forwarding.host_discovery`"
+      ]
+    },
+    {
+      "file": "src/hosts.rs",
+      "line_end": 37,
+      "line_start": 37,
+      "text": [
+        "    // {test}`requirements.forwarding.host_discovery`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 14,
+      "line_start": 14,
+      "text": [
+        "// {cite}`requirements.forwarding.host_discovery`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked that host discovery allows unknown SSH directives such as Match while ssh2-config extracts literal, nonnegated Host aliases. Tests cover Match followed by another Host as well as wildcard and negated clauses. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The host picker MUST use `ssh2-config` to read `Host` declarations in the user's `~/.ssh/config` and find selectable host names. It MUST use the parsed configuration only to collect literal names; wildcard patterns and negated patterns MUST NOT appear as selectable hosts. For example, `Host chronos mnemosyne` contributes two names, while `Host *` contributes none."
 }

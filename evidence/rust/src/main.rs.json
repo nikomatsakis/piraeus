@@ -1,0 +1,188 @@
+{
+  "functions": [
+    {
+      "citations": [
+        {
+          "name": "requirements.browser.link",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.cli.argument_parsing",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.tui.terminal",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/main.rs",
+          "rust_item": "fn[main]",
+          "text": [
+            "// {impl}`requirements.tui.terminal`",
+            "// {impl}`requirements.browser.link`",
+            "// {impl}`requirements.cli.argument_parsing`",
+            "fn main() -> io::Result<()> {",
+            "    Cli::parse();",
+            "    let mut app = App::new(Box::new(SystemBackend), discover_hosts());",
+            "    let mut terminal = ratatui::try_init()?;",
+            "    if let Err(error) = execute!(io::stdout(), EnableMouseCapture) {",
+            "        ratatui::restore();",
+            "        return Err(error);",
+            "    }",
+            "    let result = run(&mut terminal, &mut app);",
+            "    let disable_result = execute!(io::stdout(), DisableMouseCapture);",
+            "    ratatui::restore();",
+            "    result.and(disable_result)",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.browser.link"
+          ],
+          "requirements": "requirements.browser.link",
+          "text": [
+            ":::{req} browser.link",
+            "Each row in the main table MUST show `http://localhost:P`, where `P` is that forward's actual local port. Clicking the URL MUST open that forward in the system's default browser.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.cli.argument_parsing"
+          ],
+          "requirements": "requirements.cli.argument_parsing",
+          "text": [
+            ":::{req} cli.argument_parsing",
+            "The `piraeus` executable MUST use `clap` to parse its command-line arguments before starting the terminal UI.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.tui.terminal"
+          ],
+          "requirements": "requirements.tui.terminal",
+          "text": [
+            ":::{req} tui.terminal",
+            "The application MUST run as an interactive text user interface in a terminal.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[main] in src/main.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.browser.link`, `requirements.cli.argument_parsing`, `requirements.tui.terminal`, which are the applicable cited definitions. The entry point parses CLI arguments before terminal setup, enables mouse capture for URL clicks, runs the interactive app, and restores the terminal and mouse state on exit. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[main]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.browser.link",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.errors.visible",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.forwarding.quit",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.tui.terminal",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/main.rs",
+          "rust_item": "fn[run]",
+          "text": [
+            "// {impl}`requirements.errors.visible`",
+            "// {impl}`requirements.forwarding.quit`",
+            "// {impl}`requirements.tui.terminal`",
+            "fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {",
+            "    let mut redraw = true;",
+            "    let mut links = LinkAreas::default();",
+            "    while !app.should_quit {",
+            "        if redraw {",
+            "            terminal.draw(|frame| links = draw(frame, app))?;",
+            "            redraw = false;",
+            "        }",
+            "        if event::poll(Duration::from_millis(100))? {",
+            "            match event::read()? {",
+            "                Event::Key(key) if key.kind == KeyEventKind::Press => {",
+            "                    app.on_key(key);",
+            "                    redraw = true;",
+            "                }",
+            "                // {impl}`requirements.browser.link`",
+            "                Event::Mouse(mouse) if mouse.kind == MouseEventKind::Down(MouseButton::Left) => {",
+            "                    if let Some(index) = links.at(mouse.column, mouse.row) {",
+            "                        app.on_url_click(index);",
+            "                        redraw = true;",
+            "                    }",
+            "                }",
+            "                Event::Resize(_, _) => redraw = true,",
+            "                _ => {}",
+            "            }",
+            "        }",
+            "        redraw |= app.tick();",
+            "    }",
+            "    Ok(())",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.browser.link"
+          ],
+          "requirements": "requirements.browser.link",
+          "text": [
+            ":::{req} browser.link",
+            "Each row in the main table MUST show `http://localhost:P`, where `P` is that forward's actual local port. Clicking the URL MUST open that forward in the system's default browser.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.errors.visible"
+          ],
+          "requirements": "requirements.errors.visible",
+          "text": [
+            ":::{req} errors.visible",
+            "When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.quit"
+          ],
+          "requirements": "requirements.forwarding.quit",
+          "text": [
+            ":::{req} forwarding.quit",
+            "Pressing `q` while the main table has focus MUST stop all port forwards managed by the application and then exit the TUI.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.tui.terminal"
+          ],
+          "requirements": "requirements.tui.terminal",
+          "text": [
+            ":::{req} tui.terminal",
+            "The application MUST run as an interactive text user interface in a terminal.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[run] in src/main.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.browser.link`, `requirements.errors.visible`, `requirements.forwarding.quit`, `requirements.tui.terminal`, which are the applicable cited definitions. The event loop draws the terminal UI, dispatches key presses and URL clicks to the correct forward, redraws after resize, polls for visible errors, and exits on quit. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[run]"
+    }
+  ],
+  "rust_file": "src/main.rs"
+}

@@ -1,14 +1,14 @@
 {
-  "requirement": "The application MUST run as an interactive text user interface in a terminal.",
   "determination": true,
-  "rationale": "Checked the Ratatui terminal setup, event loop, and table renderer. The binary launched in a PTY and quit cleanly with q; the UI rendering test passed.",
   "inputs": [
     {
       "file": "src/main.rs",
+      "line_end": 43,
       "line_start": 28,
-      "line_end": 41,
       "text": [
         "// {impl}`requirements.tui.terminal`",
+        "// {impl}`requirements.browser.link`",
+        "// {impl}`requirements.cli.argument_parsing`",
         "fn main() -> io::Result<()> {",
         "    Cli::parse();",
         "    let mut app = App::new(Box::new(SystemBackend), discover_hosts());",
@@ -26,8 +26,8 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 43,
-      "line_end": 71,
+      "line_end": 76,
+      "line_start": 48,
       "text": [
         "fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {",
         "    let mut redraw = true;",
@@ -62,8 +62,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 41,
-      "line_end": 149,
+      "line_end": 150,
+      "line_start": 42,
       "text": [
         "pub fn draw(frame: &mut Frame, app: &App) -> LinkAreas {",
         "    let panel_height = if app.show_help {",
@@ -115,7 +115,7 @@
         "        )",
         "        .block(Block::bordered().title(\"Managed forwards\"))",
         "        .row_highlight_style(Style::default().bg(Color::DarkGray))",
-        "        .highlight_symbol(\"\u25b6 \")",
+        "        .highlight_symbol(\"▶ \")",
         "        .highlight_spacing(HighlightSpacing::Always)",
         "        .column_spacing(TABLE_SPACING)",
         "        .flex(Flex::Start);",
@@ -166,7 +166,7 @@
         "            frame.render_widget(Clear, area);",
         "            frame.render_widget(",
         "                Paragraph::new(help_text())",
-        "                    .block(Block::bordered().title(\"Keyboard help \u2014 press ? to return\"))",
+        "                    .block(Block::bordered().title(\"Keyboard help — press ? to return\"))",
         "                    .wrap(Wrap { trim: false }),",
         "                area,",
         "            );",
@@ -178,16 +178,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 427,
-      "line_end": 427,
+      "line_end": 448,
+      "line_start": 448,
       "text": [
         "    // {test}`requirements.tui.terminal`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 432,
-      "line_end": 452,
+      "line_end": 473,
+      "line_start": 453,
       "text": [
         "    fn error_row_and_detail_render_in_table() {",
         "        let mut app = App::new(",
@@ -211,6 +211,32 @@
         "        assert!(detail.contains(\"Permission denied\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/main.rs",
+      "line_end": 47,
+      "line_start": 47,
+      "text": [
+        "// {impl}`requirements.tui.terminal`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 364,
+      "line_start": 364,
+      "text": [
+        "// {impl}`requirements.tui.terminal`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 31,
+      "line_start": 31,
+      "text": [
+        "// {cite}`requirements.tui.terminal`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked the Ratatui terminal setup, event loop, and table renderer. The binary launched in a PTY and quit cleanly with q; the UI rendering test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The application MUST run as an interactive text user interface in a terminal."
 }

@@ -1,0 +1,82 @@
+{
+  "functions": [
+    {
+      "citations": [
+        {
+          "name": "requirements.packaging.binary_only",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "tests/package_targets.rs",
+          "rust_item": "fn[cargo_package_has_binary_and_no_library_target]",
+          "text": [
+            "// {test}`requirements.packaging.binary_only`",
+            "#[test]",
+            "fn cargo_package_has_binary_and_no_library_target() {",
+            "    let manifest = Path::new(env!(\"CARGO_MANIFEST_DIR\")).join(\"Cargo.toml\");",
+            "    let output = Command::new(\"cargo\")",
+            "        .args([",
+            "            \"metadata\",",
+            "            \"--no-deps\",",
+            "            \"--format-version\",",
+            "            \"1\",",
+            "            \"--locked\",",
+            "            \"--offline\",",
+            "            \"--manifest-path\",",
+            "        ])",
+            "        .arg(manifest)",
+            "        .output()",
+            "        .expect(\"run cargo metadata\");",
+            "    assert!(",
+            "        output.status.success(),",
+            "        \"cargo metadata failed: {}\",",
+            "        String::from_utf8_lossy(&output.stderr)",
+            "    );",
+            "",
+            "    let metadata: serde_json::Value =",
+            "        serde_json::from_slice(&output.stdout).expect(\"parse cargo metadata\");",
+            "    let package = metadata[\"packages\"]",
+            "        .as_array()",
+            "        .expect(\"packages\")",
+            "        .iter()",
+            "        .find(|package| package[\"name\"].as_str() == Some(\"piraeus\"))",
+            "        .expect(\"piraeus package\");",
+            "    let targets = package[\"targets\"].as_array().expect(\"package targets\");",
+            "",
+            "    let mut has_binary = false;",
+            "    for target in targets {",
+            "        let name = target[\"name\"].as_str().expect(\"target name\");",
+            "        for kind in target[\"kind\"].as_array().expect(\"target kinds\") {",
+            "            let kind = kind.as_str().expect(\"target kind\");",
+            "            has_binary |= name == \"piraeus\" && kind == \"bin\";",
+            "            assert!(",
+            "                !kind.ends_with(\"lib\") && kind != \"proc-macro\",",
+            "                \"unexpected library target {name}: {kind}\"",
+            "            );",
+            "        }",
+            "    }",
+            "    assert!(has_binary, \"missing piraeus binary target\");",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.packaging.binary_only"
+          ],
+          "requirements": "requirements.packaging.binary_only",
+          "text": [
+            ":::{req} packaging.binary_only",
+            "The `piraeus` Cargo package MUST provide a binary target named `piraeus` and MUST NOT provide a library target.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[cargo_package_has_binary_and_no_library_target] in tests/package_targets.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.packaging.binary_only`, which are the applicable cited definitions. The test reads Cargo metadata and asserts the piraeus binary target exists while no library or proc-macro target is present. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[cargo_package_has_binary_and_no_library_target]"
+    }
+  ],
+  "rust_file": "tests/package_targets.rs"
+}

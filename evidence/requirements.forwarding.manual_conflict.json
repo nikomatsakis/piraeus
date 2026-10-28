@@ -1,12 +1,10 @@
 {
-  "requirement": "If a manually entered local port is already occupied, the add-forward dialog MUST show that conflict and require the user to choose a free port before confirming. It MUST NOT stop the occupying process.",
   "determination": true,
-  "rationale": "Checked manual-port availability against managed processes and OS occupancy; busy manual choices stay in the dialog and do not stop another process. Both conflict tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 244,
-      "line_end": 250,
+      "line_end": 281,
+      "line_start": 275,
       "text": [
         "    fn port_is_free(&self, port: u16) -> bool {",
         "        !self",
@@ -19,16 +17,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 505,
-      "line_end": 505,
+      "line_end": 545,
+      "line_start": 545,
       "text": [
         "    // {impl}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -108,24 +106,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 964,
-      "line_end": 964,
+      "line_end": 1046,
+      "line_start": 1046,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 964,
-      "line_end": 964,
+      "line_end": 1046,
+      "line_start": 1046,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 966,
-      "line_end": 985,
+      "line_end": 1067,
+      "line_start": 1048,
       "text": [
         "    fn manual_choice_keeps_remote_port_and_rejects_busy_local_port() {",
         "        let (mut app, state) = setup();",
@@ -151,16 +149,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 987,
-      "line_end": 987,
+      "line_end": 1069,
+      "line_start": 1069,
       "text": [
         "    // {test}`requirements.forwarding.manual_conflict`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 989,
-      "line_end": 1004,
+      "line_end": 1086,
+      "line_start": 1071,
       "text": [
         "    fn manual_choice_cannot_replace_managed_forward() {",
         "        let (mut app, state) = setup();",
@@ -182,11 +180,37 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 300,
-      "line_end": 300,
+      "line_end": 307,
+      "line_start": 307,
       "text": [
         "// {impl}`requirements.forwarding.manual_conflict`"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 274,
+      "line_start": 274,
+      "text": [
+        "    // {impl}`requirements.forwarding.manual_conflict`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 783,
+      "line_start": 783,
+      "text": [
+        "        // {test}`requirements.forwarding.manual_conflict`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 16,
+      "line_start": 16,
+      "text": [
+        "// {cite}`requirements.forwarding.manual_conflict`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked manual-port availability against managed processes and OS occupancy; busy manual choices stay in the dialog and do not stop another process. Both conflict tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "If a manually entered local port is already occupied, the add-forward dialog MUST show that conflict and require the user to choose a free port before confirming. It MUST NOT stop the occupying process."
 }

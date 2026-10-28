@@ -1,12 +1,10 @@
 {
-  "requirement": "The suggested-port search MUST stop at port 65535. If it finds no free higher port, the add-forward dialog MUST explain that no suggested port is available and MUST still allow manual port entry.",
   "determination": true,
-  "rationale": "Checked that the search ends at 65535 and the dialog keeps the manual choice when no suggestion exists. Boundary tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 190,
-      "line_end": 242,
+      "line_end": 271,
+      "line_start": 219,
       "text": [
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
         "        let conflict = self",
@@ -65,24 +63,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 510,
-      "line_end": 510,
+      "line_end": 550,
+      "line_start": 550,
       "text": [
         "    // {impl}`requirements.forwarding.suggestion_exhausted`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1044,
-      "line_end": 1044,
+      "line_end": 1126,
+      "line_start": 1126,
       "text": [
         "    // {test}`requirements.forwarding.suggestion_exhausted`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1046,
-      "line_end": 1054,
+      "line_end": 1136,
+      "line_start": 1128,
       "text": [
         "    fn exhausted_suggestion_leaves_manual_choice() {",
         "        let (mut app, state) = setup();",
@@ -97,8 +95,8 @@
     },
     {
       "file": "src/ports.rs",
-      "line_start": 17,
       "line_end": 22,
+      "line_start": 17,
       "text": [
         "// {impl}`requirements.forwarding.suggestion_exhausted`",
         "pub fn first_free_after(preferred: u16, mut is_free: impl FnMut(u16) -> bool) -> Option<u16> {",
@@ -110,16 +108,16 @@
     },
     {
       "file": "src/ports.rs",
-      "line_start": 50,
       "line_end": 50,
+      "line_start": 50,
       "text": [
         "    // {test}`requirements.forwarding.suggestion_exhausted`"
       ]
     },
     {
       "file": "src/ports.rs",
-      "line_start": 52,
       "line_end": 58,
+      "line_start": 52,
       "text": [
         "    fn suggestion_stops_at_max_port() {",
         "        assert_eq!(",
@@ -132,11 +130,29 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 301,
-      "line_end": 301,
+      "line_end": 308,
+      "line_start": 308,
       "text": [
         "// {impl}`requirements.forwarding.suggestion_exhausted`"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 217,
+      "line_start": 217,
+      "text": [
+        "    // {impl}`requirements.forwarding.suggestion_exhausted`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 25,
+      "line_start": 25,
+      "text": [
+        "// {cite}`requirements.forwarding.suggestion_exhausted`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked that the search ends at 65535 and the dialog keeps the manual choice when no suggestion exists. Boundary tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The suggested-port search MUST stop at port 65535. If it finds no free higher port, the add-forward dialog MUST explain that no suggested port is available and MUST still allow manual port entry."
 }

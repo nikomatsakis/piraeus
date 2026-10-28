@@ -1,20 +1,18 @@
 {
-  "requirement": "Pressing `r` MUST stop the SSH processes for all listed port forwards that are running and attempt to recreate every listed port forward, including those currently in an error state.",
   "determination": true,
-  "rationale": "Checked r dispatch, stop-then-relaunch for every row including failed rows, and both refresh tests.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 323,
-      "line_end": 323,
+      "line_end": 355,
+      "line_start": 355,
       "text": [
         "            // {impl}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 603,
-      "line_end": 611,
+      "line_end": 654,
+      "line_start": 646,
       "text": [
         "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
         "        if let Some(mut process) = self.forwards[index].process.take()",
@@ -29,8 +27,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 629,
-      "line_end": 654,
+      "line_end": 703,
+      "line_start": 678,
       "text": [
         "    fn refresh(&mut self) {",
         "        let mut stopped = Vec::with_capacity(self.forwards.len());",
@@ -62,24 +60,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1073,
-      "line_end": 1073,
+      "line_end": 1155,
+      "line_start": 1155,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1073,
-      "line_end": 1073,
+      "line_end": 1155,
+      "line_start": 1155,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1076,
-      "line_end": 1089,
+      "line_end": 1171,
+      "line_start": 1158,
       "text": [
         "    fn refresh_recreates_failed_and_running_rows() {",
         "        let (mut app, state) = setup();",
@@ -99,16 +97,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1092,
-      "line_end": 1092,
+      "line_end": 1174,
+      "line_start": 1174,
       "text": [
         "    // {test}`requirements.forwarding.refresh`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1094,
-      "line_end": 1108,
+      "line_end": 1190,
+      "line_start": 1176,
       "text": [
         "    fn live_ssh_fault_is_visible_and_refresh_stops_its_process() {",
         "        let (mut app, state) = setup();",
@@ -126,6 +124,32 @@
         "        assert_eq!(state.borrow().launches.len(), 2);",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 676,
+      "line_start": 676,
+      "text": [
+        "    // {impl}`requirements.forwarding.refresh`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 837,
+      "line_start": 837,
+      "text": [
+        "        // {test}`requirements.forwarding.refresh`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 20,
+      "line_start": 20,
+      "text": [
+        "// {cite}`requirements.forwarding.refresh`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked r dispatch, stop-then-relaunch for every row including failed rows, and both refresh tests. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Pressing `r` MUST stop the SSH processes for all listed port forwards that are running and attempt to recreate every listed port forward, including those currently in an error state."
 }

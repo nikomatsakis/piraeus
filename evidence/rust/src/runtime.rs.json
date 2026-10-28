@@ -1,0 +1,696 @@
+{
+  "functions": [
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.detect_conflict",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SystemBackend/Backend]/fn[port_free]",
+          "text": [
+            "    // {impl}`requirements.forwarding.detect_conflict`",
+            "    fn port_free(&self, port: u16) -> bool {",
+            "        TcpListener::bind((Ipv4Addr::LOCALHOST, port)).is_ok()",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.detect_conflict"
+          ],
+          "requirements": "requirements.forwarding.detect_conflict",
+          "text": [
+            ":::{req} forwarding.detect_conflict",
+            "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by an application-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[port_free] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.detect_conflict`, which are the applicable cited definitions. The implementation probes localhost with TcpListener to classify preferred and suggested local ports as free or occupied. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SystemBackend/Backend]/fn[port_free]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.ssh",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.forwarding.ssh_config",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SystemBackend/Backend]/fn[launch]",
+          "text": [
+            "    // {impl}`requirements.forwarding.ssh`",
+            "    // {impl}`requirements.forwarding.ssh_config`",
+            "    fn launch(&mut self, spec: &ForwardSpec) -> Result<Box<dyn ManagedProcess>, String> {",
+            "        let mut child = ssh_command(spec)",
+            "            .stdin(Stdio::null())",
+            "            .stdout(Stdio::null())",
+            "            .stderr(Stdio::piped())",
+            "            .spawn()",
+            "            .map_err(|error| format!(\"Could not start SSH: {error}\"))?;",
+            "        let stderr = child",
+            "            .stderr",
+            "            .take()",
+            "            .ok_or(\"Could not capture SSH diagnostics.\")?;",
+            "        let (sender, receiver) = mpsc::channel();",
+            "        thread::spawn(move || {",
+            "            for line in BufReader::new(stderr).lines() {",
+            "                match line {",
+            "                    Ok(line) => {",
+            "                        if sender.send(line).is_err() {",
+            "                            break;",
+            "                        }",
+            "                    }",
+            "                    Err(error) => {",
+            "                        let _ = sender.send(format!(\"Could not read SSH diagnostics: {error}\"));",
+            "                        break;",
+            "                    }",
+            "                }",
+            "            }",
+            "        });",
+            "        Ok(Box::new(SshProcess {",
+            "            child,",
+            "            local_port: spec.local_port,",
+            "            stderr: receiver,",
+            "            stderr_lines: Vec::new(),",
+            "            started: Instant::now(),",
+            "            running: false,",
+            "        }))",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.ssh"
+          ],
+          "requirements": "requirements.forwarding.ssh",
+          "text": [
+            ":::{req} forwarding.ssh",
+            "The application MUST create local port forwards through SSH, connecting a port on localhost to the same service port on the selected remote SSH host. It MUST track the SSH processes it starts so that subsequent actions affect only port forwards it manages.",
+            "",
+            "For example, a forward for `chronos` remote port `3000` using local port `3001` makes the remote service available at `localhost:3001`.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.ssh_config"
+          ],
+          "requirements": "requirements.forwarding.ssh_config",
+          "text": [
+            ":::{req} forwarding.ssh_config",
+            "The application MUST delegate interpretation of SSH configuration settings to OpenSSH commands: `ssh` when connecting and `ssh -G <host>` when it needs the effective configuration for a supplied host name. Apart from discovering names in `Host` declarations, it MUST NOT use the parsed configuration to determine connection settings.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[launch] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.ssh`, `requirements.forwarding.ssh_config`, which are the applicable cited definitions. The implementation starts OpenSSH with a ForwardSpec, captures diagnostics, and returns the owned process handle for tracked forwarding. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SystemBackend/Backend]/fn[launch]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.browser.link",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.browser.open",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SystemBackend/Backend]/fn[open_browser]",
+          "text": [
+            "    // {impl}`requirements.browser.link`",
+            "    // {impl}`requirements.browser.open`",
+            "    fn open_browser(&mut self, port: u16) -> Result<(), String> {",
+            "        let url = format!(\"http://localhost:{port}\");",
+            "        #[cfg(target_os = \"macos\")]",
+            "        let mut command = Command::new(\"open\");",
+            "        #[cfg(target_os = \"linux\")]",
+            "        let mut command = Command::new(\"xdg-open\");",
+            "        #[cfg(target_os = \"windows\")]",
+            "        let mut command = {",
+            "            let mut command = Command::new(\"cmd\");",
+            "            command.args([\"/C\", \"start\", \"\"]);",
+            "            command",
+            "        };",
+            "        let status = command",
+            "            .arg(url)",
+            "            .status()",
+            "            .map_err(|error| format!(\"Could not launch the default browser: {error}\"))?;",
+            "        if status.success() {",
+            "            Ok(())",
+            "        } else {",
+            "            Err(format!(\"Browser opener exited with {status}\"))",
+            "        }",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.browser.link"
+          ],
+          "requirements": "requirements.browser.link",
+          "text": [
+            ":::{req} browser.link",
+            "Each row in the main table MUST show `http://localhost:P`, where `P` is that forward's actual local port. Clicking the URL MUST open that forward in the system's default browser.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.browser.open"
+          ],
+          "requirements": "requirements.browser.open",
+          "text": [
+            ":::{req} browser.open",
+            "Pressing `b` MUST open `http://localhost:P` in the system's default browser, where `P` is the actual local port of the selected port forward.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[open_browser] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.browser.link`, `requirements.browser.open`, which are the applicable cited definitions. The implementation opens the forward’s actual local-port URL with the platform’s default browser for keyboard and click actions, reporting opener failures. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SystemBackend/Backend]/fn[open_browser]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.add.port_history",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SystemBackend/Backend]/fn[load_recent_ports]",
+          "text": [
+            "    // {impl}`requirements.forwarding.add.port_history`",
+            "    fn load_recent_ports(&self) -> Result<Vec<u16>, String> {",
+            "        history::load_and_migrate_recent_ports()",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.port_history"
+          ],
+          "requirements": "requirements.forwarding.add.port_history",
+          "text": [
+            ":::{req} forwarding.add.port_history",
+            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[load_recent_ports] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend delegates startup history loading and legacy migration to the history module. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SystemBackend/Backend]/fn[load_recent_ports]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.add.port_history",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SystemBackend/Backend]/fn[save_recent_ports]",
+          "text": [
+            "    // {impl}`requirements.forwarding.add.port_history`",
+            "    fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String> {",
+            "        history::save_recent_ports(&history::config_path()?, ports)",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.port_history"
+          ],
+          "requirements": "requirements.forwarding.add.port_history",
+          "text": [
+            ":::{req} forwarding.add.port_history",
+            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[save_recent_ports] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend resolves the selected config path and persists confirmed remote-port history. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SystemBackend/Backend]/fn[save_recent_ports]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.ssh",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.forwarding.ssh_config",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "fn[ssh_command]",
+          "text": [
+            "// {impl}`requirements.forwarding.ssh`",
+            "// {impl}`requirements.forwarding.ssh_config`",
+            "fn ssh_command(spec: &ForwardSpec) -> Command {",
+            "    let mut command = Command::new(\"ssh\");",
+            "    command",
+            "        .args([",
+            "            \"-N\",",
+            "            \"-T\",",
+            "            \"-o\",",
+            "            \"BatchMode=yes\",",
+            "            \"-o\",",
+            "            \"ExitOnForwardFailure=yes\",",
+            "            \"-o\",",
+            "            \"ConnectTimeout=10\",",
+            "            \"-L\",",
+            "        ])",
+            "        .arg(format!(",
+            "            \"127.0.0.1:{}:localhost:{}\",",
+            "            spec.local_port, spec.remote_port",
+            "        ))",
+            "        .arg(\"--\")",
+            "        .arg(&spec.host);",
+            "    command",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.ssh"
+          ],
+          "requirements": "requirements.forwarding.ssh",
+          "text": [
+            ":::{req} forwarding.ssh",
+            "The application MUST create local port forwards through SSH, connecting a port on localhost to the same service port on the selected remote SSH host. It MUST track the SSH processes it starts so that subsequent actions affect only port forwards it manages.",
+            "",
+            "For example, a forward for `chronos` remote port `3000` using local port `3001` makes the remote service available at `localhost:3001`.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.ssh_config"
+          ],
+          "requirements": "requirements.forwarding.ssh_config",
+          "text": [
+            ":::{req} forwarding.ssh_config",
+            "The application MUST delegate interpretation of SSH configuration settings to OpenSSH commands: `ssh` when connecting and `ssh -G <host>` when it needs the effective configuration for a supplied host name. Apart from discovering names in `Host` declarations, it MUST NOT use the parsed configuration to determine connection settings.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[ssh_command] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.ssh`, `requirements.forwarding.ssh_config`, which are the applicable cited definitions. The command builder passes the selected host to OpenSSH and binds the chosen local port to the remote service port without parsing connection settings itself. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[ssh_command]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.errors.visible",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SshProcess]/fn[drain_stderr]",
+          "text": [
+            "    // {impl}`requirements.errors.visible`",
+            "    fn drain_stderr(&mut self) -> Option<String> {",
+            "        let mut fault = None;",
+            "        while let Ok(line) = self.stderr.try_recv() {",
+            "            if is_failure_line(&line) {",
+            "                fault = Some(line.clone());",
+            "            }",
+            "            self.stderr_lines.push(line);",
+            "        }",
+            "        fault",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.errors.visible"
+          ],
+          "requirements": "requirements.errors.visible",
+          "text": [
+            ":::{req} errors.visible",
+            "When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SshProcess]/fn[drain_stderr] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.errors.visible`, which are the applicable cited definitions. The method reads available SSH diagnostics, records them, and picks failure lines for display as row errors. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SshProcess]/fn[drain_stderr]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.errors.info",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.errors.visible",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SshProcess]/fn[diagnostics]",
+          "text": [
+            "    // {impl}`requirements.errors.info`",
+            "    // {impl}`requirements.errors.visible`",
+            "    fn diagnostics(&mut self, prefix: &str) -> String {",
+            "        if let Ok(line) = self.stderr.recv_timeout(Duration::from_millis(50)) {",
+            "            self.stderr_lines.push(line);",
+            "        }",
+            "        self.drain_stderr();",
+            "        if self.stderr_lines.is_empty() {",
+            "            prefix.to_owned()",
+            "        } else {",
+            "            format!(\"{prefix}\\n{}\", self.stderr_lines.join(\"\\n\"))",
+            "        }",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.errors.info"
+          ],
+          "requirements": "requirements.errors.info",
+          "text": [
+            ":::{req} errors.info",
+            "Pressing `i` on a row with an error MUST show more diagnostic detail within the TUI without opening a modal dialog.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.errors.visible"
+          ],
+          "requirements": "requirements.errors.visible",
+          "text": [
+            ":::{req} errors.visible",
+            "When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SshProcess]/fn[diagnostics] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.errors.info`, `requirements.errors.visible`, which are the applicable cited definitions. The method gathers any last SSH diagnostic line and returns full detail with a prefix for failed-process and info display. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SshProcess]/fn[diagnostics]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.errors.visible",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "fn[is_failure_line]",
+          "text": [
+            "// {impl}`requirements.errors.visible`",
+            "fn is_failure_line(line: &str) -> bool {",
+            "    let lower = line.to_ascii_lowercase();",
+            "    lower.contains(\"failed\") || lower.contains(\"refused\") || lower.contains(\"error\")",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.errors.visible"
+          ],
+          "requirements": "requirements.errors.visible",
+          "text": [
+            ":::{req} errors.visible",
+            "When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[is_failure_line] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.errors.visible`, which are the applicable cited definitions. The predicate recognizes failed, refused, and error diagnostics from SSH so runtime faults can be shown in the table. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[is_failure_line]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.errors.visible",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.forwarding.startup_state",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SshProcess/ManagedProcess]/fn[poll]",
+          "text": [
+            "    // {impl}`requirements.forwarding.startup_state`",
+            "    // {impl}`requirements.errors.visible`",
+            "    fn poll(&mut self) -> ProcessState {",
+            "        match self.child.try_wait() {",
+            "            Ok(Some(status)) => {",
+            "                ProcessState::Exited(self.diagnostics(&format!(\"SSH exited with {status}.\")))",
+            "            }",
+            "            Err(error) => ProcessState::Exited(format!(\"Could not check SSH process: {error}\")),",
+            "            Ok(None) => {",
+            "                if let Some(error) = self.drain_stderr() {",
+            "                    return ProcessState::Fault(error);",
+            "                }",
+            "                if self.running {",
+            "                    return ProcessState::Running;",
+            "                }",
+            "                let address = SocketAddr::from((Ipv4Addr::LOCALHOST, self.local_port));",
+            "                if TcpStream::connect_timeout(&address, Duration::from_millis(20)).is_ok() {",
+            "                    self.running = true;",
+            "                    ProcessState::Running",
+            "                } else if self.started.elapsed() > Duration::from_secs(15) {",
+            "                    let _ = self.child.kill();",
+            "                    let _ = self.child.wait();",
+            "                    ProcessState::Exited(",
+            "                        self.diagnostics(\"SSH did not open the local port in time.\"),",
+            "                    )",
+            "                } else {",
+            "                    ProcessState::Starting",
+            "                }",
+            "            }",
+            "        }",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.errors.visible"
+          ],
+          "requirements": "requirements.errors.visible",
+          "text": [
+            ":::{req} errors.visible",
+            "When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.startup_state"
+          ],
+          "requirements": "requirements.forwarding.startup_state",
+          "text": [
+            ":::{req} forwarding.startup_state",
+            "The table MUST show a new or refreshed forward as running only after its SSH process has established the chosen local listener. If startup fails, the row MUST show an error for the attempted host and ports.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SshProcess/ManagedProcess]/fn[poll] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.errors.visible`, `requirements.forwarding.startup_state`, which are the applicable cited definitions. The method checks exit and stderr failures, waits for a successful local listener before Running, and times out failed startup with diagnostics. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SshProcess/ManagedProcess]/fn[poll]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.ssh",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "impl[SshProcess/ManagedProcess]/fn[stop]",
+          "text": [
+            "    // {impl}`requirements.forwarding.ssh`",
+            "    fn stop(&mut self) -> Result<(), String> {",
+            "        match self.child.try_wait() {",
+            "            Ok(Some(_)) => Ok(()),",
+            "            Ok(None) => {",
+            "                self.child",
+            "                    .kill()",
+            "                    .map_err(|error| format!(\"Could not stop SSH: {error}\"))?;",
+            "                self.child",
+            "                    .wait()",
+            "                    .map_err(|error| format!(\"Could not reap SSH: {error}\"))?;",
+            "                Ok(())",
+            "            }",
+            "            Err(error) => Err(format!(\"Could not check SSH process: {error}\")),",
+            "        }",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.ssh"
+          ],
+          "requirements": "requirements.forwarding.ssh",
+          "text": [
+            ":::{req} forwarding.ssh",
+            "The application MUST create local port forwards through SSH, connecting a port on localhost to the same service port on the selected remote SSH host. It MUST track the SSH processes it starts so that subsequent actions affect only port forwards it manages.",
+            "",
+            "For example, a forward for `chronos` remote port `3000` using local port `3001` makes the remote service available at `localhost:3001`.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed impl[SshProcess/ManagedProcess]/fn[stop] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.ssh`, which are the applicable cited definitions. The method kills and reaps only its owned SSH child if still running and returns a stop error when that fails. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "impl[SshProcess/ManagedProcess]/fn[stop]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.ssh",
+          "role": "test"
+        },
+        {
+          "name": "requirements.forwarding.ssh_config",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "mod[tests]/fn[ssh_receives_alias_and_forward_as_arguments]",
+          "text": [
+            "    // {test}`requirements.forwarding.ssh`",
+            "    // {test}`requirements.forwarding.ssh_config`",
+            "    #[test]",
+            "    fn ssh_receives_alias_and_forward_as_arguments() {",
+            "        let command = ssh_command(&ForwardSpec {",
+            "            host: \"chronos\".into(),",
+            "            remote_port: 8030,",
+            "            local_port: 8031,",
+            "        });",
+            "        let args: Vec<_> = command",
+            "            .get_args()",
+            "            .map(|arg| arg.to_string_lossy())",
+            "            .collect();",
+            "        assert!(args.iter().any(|arg| arg == \"ExitOnForwardFailure=yes\"));",
+            "        assert!(",
+            "            args.iter()",
+            "                .any(|arg| arg == \"127.0.0.1:8031:localhost:8030\")",
+            "        );",
+            "        assert_eq!(args[args.len() - 2], \"--\");",
+            "        assert_eq!(args[args.len() - 1], \"chronos\");",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.ssh"
+          ],
+          "requirements": "requirements.forwarding.ssh",
+          "text": [
+            ":::{req} forwarding.ssh",
+            "The application MUST create local port forwards through SSH, connecting a port on localhost to the same service port on the selected remote SSH host. It MUST track the SSH processes it starts so that subsequent actions affect only port forwards it manages.",
+            "",
+            "For example, a forward for `chronos` remote port `3000` using local port `3001` makes the remote service available at `localhost:3001`.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.ssh_config"
+          ],
+          "requirements": "requirements.forwarding.ssh_config",
+          "text": [
+            ":::{req} forwarding.ssh_config",
+            "The application MUST delegate interpretation of SSH configuration settings to OpenSSH commands: `ssh` when connecting and `ssh -G <host>` when it needs the effective configuration for a supplied host name. Apart from discovering names in `Host` declarations, it MUST NOT use the parsed configuration to determine connection settings.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[ssh_receives_alias_and_forward_as_arguments] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.ssh`, `requirements.forwarding.ssh_config`, which are the applicable cited definitions. The test checks OpenSSH receives the selected host alias, exit-on-failure option, and chosen local-to-remote forwarding argument. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[ssh_receives_alias_and_forward_as_arguments]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.errors.visible",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/runtime.rs",
+          "rust_item": "mod[tests]/fn[recognizes_live_ssh_failure_diagnostics]",
+          "text": [
+            "    // {test}`requirements.errors.visible`",
+            "    #[test]",
+            "    fn recognizes_live_ssh_failure_diagnostics() {",
+            "        assert!(is_failure_line(",
+            "            \"channel 3: open failed: connect failed: Connection refused\"",
+            "        ));",
+            "        assert!(!is_failure_line(\"Warning: Permanently added host key\"));",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.errors.visible"
+          ],
+          "requirements": "requirements.errors.visible",
+          "text": [
+            ":::{req} errors.visible",
+            "When an action on a port forward fails, or its SSH process stops unexpectedly, the affected table row MUST show a brief error and be highlighted in red. Failures MUST NOT interrupt the user with a modal dialog.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[recognizes_live_ssh_failure_diagnostics] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.errors.visible`, which are the applicable cited definitions. The test distinguishes a failed connection diagnostic from a harmless host-key warning. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[recognizes_live_ssh_failure_diagnostics]"
+    }
+  ],
+  "rust_file": "src/runtime.rs"
+}

@@ -24,6 +24,7 @@ pub struct LinkAreas {
 }
 
 impl LinkAreas {
+    // {impl}`requirements.browser.link`
     pub fn at(&self, column: u16, row: u16) -> Option<usize> {
         self.links
             .iter()
@@ -148,6 +149,7 @@ pub fn draw(frame: &mut Frame, app: &App) -> LinkAreas {
     links
 }
 
+// {impl}`requirements.browser.link`
 fn local_url(port: u16) -> String {
     format!("http://localhost:{port}")
 }
@@ -180,6 +182,8 @@ fn link_areas(table_area: Rect, app: &App, offset: usize) -> LinkAreas {
     LinkAreas { links }
 }
 
+// {impl}`requirements.browser.link`
+// {impl}`requirements.help.shortcuts`
 fn help_text() -> &'static str {
     "↑/↓ or j/k  Select row\n\
      a  Add forward       b  Open selected local port in browser\n\
@@ -217,6 +221,7 @@ fn draw_host_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {
     );
 }
 
+// {impl}`requirements.forwarding.add.host`
 fn selected_host_label<'a>(app: &'a App, dialog: &'a AddDialog) -> &'a str {
     if dialog.host_index == app.hosts.len() {
         dialog.custom_host_input.as_str()
@@ -247,6 +252,8 @@ fn draw_remote_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {
     );
 }
 
+// {impl}`requirements.forwarding.add.host`
+// {impl}`requirements.forwarding.add.remote_port`
 fn draw_picker(
     frame: &mut Frame,
     title: &str,
@@ -354,6 +361,7 @@ fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {
     );
 }
 
+// {impl}`requirements.tui.terminal`
 fn centered(area: Rect, desired_width: u16, desired_height: u16) -> Rect {
     let width = desired_width.min(area.width.saturating_sub(2));
     let height = desired_height.min(area.height.saturating_sub(2));
@@ -379,31 +387,44 @@ mod tests {
     }
 
     impl Backend for FailingBackend {
+        // {test}`requirements.forwarding.detect_conflict`
+        // {test}`requirements.forwarding.unmanaged_conflict_choices`
         fn port_free(&self, port: u16) -> bool {
             self.busy != Some(port)
         }
 
+        // {test}`requirements.errors.visible`
+        // {test}`requirements.forwarding.startup_state`
         fn launch(&mut self, _: &ForwardSpec) -> Result<Box<dyn ManagedProcess>, String> {
             Err("SSH connection failed\nPermission denied".into())
         }
 
+        // {test}`requirements.browser.link`
+        // {test}`requirements.browser.open`
         fn open_browser(&mut self, _: u16) -> Result<(), String> {
             Ok(())
         }
 
+        // {test}`requirements.forwarding.add.remote_port`
         fn load_recent_ports(&self) -> Result<Vec<u16>, String> {
             Ok(Vec::new())
         }
 
+        // {test}`requirements.forwarding.add.port_history`
         fn save_recent_ports(&mut self, _: &[u16]) -> Result<(), String> {
             Ok(())
         }
     }
 
+    // {test}`requirements.forwarding.add`
+    // {test}`requirements.help.shortcuts`
     fn key(code: KeyCode) -> KeyEvent {
         KeyEvent::new(code, KeyModifiers::NONE)
     }
 
+    // {test}`requirements.errors.visible`
+    // {test}`requirements.help.shortcuts`
+    // {test}`requirements.tui.table`
     fn rendered(app: &App) -> (String, bool) {
         let mut terminal = Terminal::new(TestBackend::new(100, 28)).unwrap();
         terminal

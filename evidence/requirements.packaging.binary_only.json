@@ -1,12 +1,10 @@
 {
-  "requirement": "The `piraeus` Cargo package MUST provide a binary target named `piraeus` and MUST NOT provide a library target.",
   "determination": true,
-  "rationale": "Checked Cargo metadata in the checkout and packaged copy: each reports a piraeus binary target and no library target. The manifest disables automatic library discovery, names the binary explicitly, and the package-target regression test passed.",
   "inputs": [
     {
       "file": "src/main.rs",
-      "line_start": 1,
       "line_end": 7,
+      "line_start": 1,
       "text": [
         "// {impl}`requirements.packaging.binary_only`",
         "mod app;",
@@ -19,8 +17,8 @@
     },
     {
       "file": "tests/package_targets.rs",
-      "line_start": 4,
       "line_end": 50,
+      "line_start": 4,
       "text": [
         "// {test}`requirements.packaging.binary_only`",
         "#[test]",
@@ -70,6 +68,16 @@
         "    assert!(has_binary, \"missing piraeus binary target\");",
         "}"
       ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 28,
+      "line_start": 28,
+      "text": [
+        "// {cite}`requirements.packaging.binary_only`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked Cargo metadata in the checkout and packaged copy: each reports a piraeus binary target and no library target. The manifest disables automatic library discovery, names the binary explicitly, and the package-target regression test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The `piraeus` Cargo package MUST provide a binary target named `piraeus` and MUST NOT provide a library target."
 }

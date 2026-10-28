@@ -1,20 +1,18 @@
 {
-  "requirement": "Pressing `q` while the main table has focus MUST stop all port forwards managed by the application and then exit the TUI.",
   "determination": true,
-  "rationale": "Checked q dispatch on the main table and stopping of managed processes; typing q in a custom host does not quit. The quit and custom-host tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 284,
-      "line_end": 284,
+      "line_end": 316,
+      "line_start": 316,
       "text": [
         "        // {impl}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 307,
-      "line_end": 332,
+      "line_end": 364,
+      "line_start": 339,
       "text": [
         "    fn on_main_key(&mut self, key: KeyEvent) {",
         "        match key.code {",
@@ -46,8 +44,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 603,
-      "line_end": 611,
+      "line_end": 654,
+      "line_start": 646,
       "text": [
         "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
         "        if let Some(mut process) = self.forwards[index].process.take()",
@@ -62,8 +60,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 675,
-      "line_end": 685,
+      "line_end": 741,
+      "line_start": 731,
       "text": [
         "    fn quit(&mut self) {",
         "        let mut failed = false;",
@@ -80,16 +78,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 865,
-      "line_end": 865,
+      "line_end": 947,
+      "line_start": 947,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 867,
-      "line_end": 878,
+      "line_end": 960,
+      "line_start": 949,
       "text": [
         "    fn typing_custom_host_can_start_with_q() {",
         "        let (mut app, _) = setup();",
@@ -107,24 +105,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1110,
-      "line_end": 1110,
+      "line_end": 1192,
+      "line_start": 1192,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1110,
-      "line_end": 1110,
+      "line_end": 1192,
+      "line_start": 1192,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1112,
-      "line_end": 1119,
+      "line_end": 1201,
+      "line_start": 1194,
       "text": [
         "    fn quit_stops_every_managed_process() {",
         "        let (mut app, state) = setup();",
@@ -138,16 +136,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1121,
-      "line_end": 1121,
+      "line_end": 1203,
+      "line_start": 1203,
       "text": [
         "    // {test}`requirements.forwarding.quit`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1123,
-      "line_end": 1130,
+      "line_end": 1212,
+      "line_start": 1205,
       "text": [
         "    fn control_c_stops_forwards_even_while_dialog_is_open() {",
         "        let (mut app, state) = setup();",
@@ -161,8 +159,8 @@
     },
     {
       "file": "src/main.rs",
-      "line_start": 43,
-      "line_end": 71,
+      "line_end": 76,
+      "line_start": 48,
       "text": [
         "fn run(terminal: &mut DefaultTerminal, app: &mut App) -> io::Result<()> {",
         "    let mut redraw = true;",
@@ -194,6 +192,40 @@
         "    Ok(())",
         "}"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 730,
+      "line_start": 730,
+      "text": [
+        "    // {impl}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 836,
+      "line_start": 836,
+      "text": [
+        "        // {test}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "src/main.rs",
+      "line_end": 46,
+      "line_start": 46,
+      "text": [
+        "// {impl}`requirements.forwarding.quit`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 19,
+      "line_start": 19,
+      "text": [
+        "// {cite}`requirements.forwarding.quit`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked q dispatch on the main table and stopping of managed processes; typing q in a custom host does not quit. The quit and custom-host tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Pressing `q` while the main table has focus MUST stop all port forwards managed by the application and then exit the TUI."
 }

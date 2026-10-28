@@ -1,20 +1,18 @@
 {
-  "requirement": "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
   "determination": true,
-  "rationale": "Checked recent-port list, arrow selection, direct numeric entry, and transition to local choices. A second App instance reloads the ordered history in the model test.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 420,
-      "line_end": 420,
+      "line_end": 455,
+      "line_start": 455,
       "text": [
         "    // {impl}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 421,
-      "line_end": 456,
+      "line_end": 491,
+      "line_start": 456,
       "text": [
         "    fn on_remote_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -56,8 +54,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 458,
-      "line_end": 467,
+      "line_end": 504,
+      "line_start": 495,
       "text": [
         "    fn selected_remote_port(&self, dialog: &AddDialog) -> Result<u16, &'static str> {",
         "        if dialog.remote_index == self.recent_remote_ports.len() {",
@@ -73,16 +71,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 843,
-      "line_end": 843,
+      "line_end": 925,
+      "line_start": 925,
       "text": [
         "    // {test}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 846,
-      "line_end": 862,
+      "line_end": 944,
+      "line_start": 928,
       "text": [
         "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
         "        let (mut app, _) = setup();",
@@ -105,16 +103,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 898,
-      "line_end": 898,
+      "line_end": 980,
+      "line_start": 980,
       "text": [
         "    // {test}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 901,
-      "line_end": 919,
+      "line_end": 1001,
+      "line_start": 983,
       "text": [
         "    fn recent_remote_ports_survive_removal_and_new_app_instance() {",
         "        let (mut app, state) = setup();",
@@ -139,16 +137,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 231,
-      "line_end": 231,
+      "line_end": 236,
+      "line_start": 236,
       "text": [
         "// {impl}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 232,
-      "line_end": 248,
+      "line_end": 253,
+      "line_start": 237,
       "text": [
         "fn draw_remote_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let mut items: Vec<String> = app",
@@ -171,8 +169,8 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 250,
-      "line_end": 292,
+      "line_end": 299,
+      "line_start": 257,
       "text": [
         "fn draw_picker(",
         "    frame: &mut Frame,",
@@ -221,16 +219,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 455,
-      "line_end": 455,
+      "line_end": 476,
+      "line_start": 476,
       "text": [
         "    // {test}`requirements.forwarding.add.remote_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 461,
-      "line_end": 491,
+      "line_end": 512,
+      "line_start": 482,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",
@@ -264,6 +262,72 @@
         "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 141,
+      "line_start": 141,
+      "text": [
+        "// {impl}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 152,
+      "line_start": 152,
+      "text": [
+        "// {impl}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 493,
+      "line_start": 493,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 865,
+      "line_start": 865,
+      "text": [
+        "    // {test}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 875,
+      "line_start": 875,
+      "text": [
+        "    // {test}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 256,
+      "line_start": 256,
+      "text": [
+        "// {impl}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 408,
+      "line_start": 408,
+      "text": [
+        "        // {test}`requirements.forwarding.add.remote_port`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 11,
+      "line_start": 11,
+      "text": [
+        "// {cite}`requirements.forwarding.add.remote_port`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked recent-port list, arrow selection, direct numeric entry, and transition to local choices. A second App instance reloads the ordered history in the model test. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage."
 }

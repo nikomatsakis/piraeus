@@ -1,0 +1,220 @@
+{
+  "functions": [
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.port_validation",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/ports.rs",
+          "rust_item": "fn[parse_port]",
+          "text": [
+            "// {impl}`requirements.forwarding.port_validation`",
+            "pub fn parse_port(input: &str) -> Result<u16, &'static str> {",
+            "    let text = input.trim();",
+            "    if text.is_empty() || !text.bytes().all(|byte| byte.is_ascii_digit()) {",
+            "        return Err(\"Enter a whole-number port from 1 through 65535.\");",
+            "    }",
+            "    let port = text",
+            "        .parse::<u16>()",
+            "        .map_err(|_| \"Port must be from 1 through 65535.\")?;",
+            "    if port == 0 {",
+            "        return Err(\"Port must be from 1 through 65535.\");",
+            "    }",
+            "    Ok(port)",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.port_validation"
+          ],
+          "requirements": "requirements.forwarding.port_validation",
+          "text": [
+            ":::{req} forwarding.port_validation",
+            "The add-forward dialog MUST accept only whole-number remote and manually entered local ports from 1 through 65535. It MUST explain invalid input inside the dialog and MUST NOT start or replace a forward while the input is invalid.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[parse_port] in src/ports.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.port_validation`, which are the applicable cited definitions. The parser accepts only trimmed whole-number ports in 1..=65535 and returns an explanation for empty, malformed, zero, or overflowing input. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[parse_port]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.detect_conflict",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.forwarding.suggestion_exhausted",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/ports.rs",
+          "rust_item": "fn[first_free_after]",
+          "text": [
+            "// {impl}`requirements.forwarding.detect_conflict`",
+            "// {impl}`requirements.forwarding.suggestion_exhausted`",
+            "pub fn first_free_after(preferred: u16, mut is_free: impl FnMut(u16) -> bool) -> Option<u16> {",
+            "    ((u32::from(preferred) + 1)..=u32::from(u16::MAX))",
+            "        .map(|port| port as u16)",
+            "        .find(|&port| is_free(port))",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.detect_conflict"
+          ],
+          "requirements": "requirements.forwarding.detect_conflict",
+          "text": [
+            ":::{req} forwarding.detect_conflict",
+            "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by an application-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.suggestion_exhausted"
+          ],
+          "requirements": "requirements.forwarding.suggestion_exhausted",
+          "text": [
+            ":::{req} forwarding.suggestion_exhausted",
+            "The suggested-port search MUST stop at port 65535. If it finds no free higher port, the add-forward dialog MUST explain that no suggested port is available and MUST still allow manual port entry.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed fn[first_free_after] in src/ports.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.detect_conflict`, `requirements.forwarding.suggestion_exhausted`, which are the applicable cited definitions. The search probes successive higher ports, returns the first free one, and stops at 65535 without wrapping. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "fn[first_free_after]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.port_validation",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/ports.rs",
+          "rust_item": "mod[tests]/fn[validates_port_range]",
+          "text": [
+            "    // {test}`requirements.forwarding.port_validation`",
+            "    #[test]",
+            "    fn validates_port_range() {",
+            "        assert_eq!(parse_port(\"8030\"), Ok(8030));",
+            "        assert_eq!(parse_port(\" 65535 \"), Ok(65535));",
+            "        for invalid in [\"\", \"abc\", \"1.5\", \"0\", \"65536\", \"-1\"] {",
+            "            assert!(parse_port(invalid).is_err(), \"{invalid}\");",
+            "        }",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.port_validation"
+          ],
+          "requirements": "requirements.forwarding.port_validation",
+          "text": [
+            ":::{req} forwarding.port_validation",
+            "The add-forward dialog MUST accept only whole-number remote and manually entered local ports from 1 through 65535. It MUST explain invalid input inside the dialog and MUST NOT start or replace a forward while the input is invalid.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[validates_port_range] in src/ports.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.port_validation`, which are the applicable cited definitions. The test checks ordinary and maximum valid values and rejects empty, fractional, nonnumeric, zero, negative, and overflowing ports. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[validates_port_range]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.detect_conflict",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/ports.rs",
+          "rust_item": "mod[tests]/fn[suggestion_checks_ports_in_order]",
+          "text": [
+            "    // {test}`requirements.forwarding.detect_conflict`",
+            "    #[test]",
+            "    fn suggestion_checks_ports_in_order() {",
+            "        let mut checked = Vec::new();",
+            "        let suggestion = first_free_after(8030, |port| {",
+            "            checked.push(port);",
+            "            port == 8032",
+            "        });",
+            "        assert_eq!(suggestion, Some(8032));",
+            "        assert_eq!(checked, [8031, 8032]);",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.detect_conflict"
+          ],
+          "requirements": "requirements.forwarding.detect_conflict",
+          "text": [
+            ":::{req} forwarding.detect_conflict",
+            "Before presenting local-port choices, the application MUST determine whether the preferred local port is free, occupied by an application-managed forward, or occupied by another process. On a conflict, it MUST suggest the first free local port found by incrementing the preferred port repeatedly (for example, checking `8031`, then `8032` after a conflict on `8030`).",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[suggestion_checks_ports_in_order] in src/ports.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.detect_conflict`, which are the applicable cited definitions. The test records each probed port and checks search stops at the first available higher port. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[suggestion_checks_ports_in_order]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.suggestion_exhausted",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/ports.rs",
+          "rust_item": "mod[tests]/fn[suggestion_stops_at_max_port]",
+          "text": [
+            "    // {test}`requirements.forwarding.suggestion_exhausted`",
+            "    #[test]",
+            "    fn suggestion_stops_at_max_port() {",
+            "        assert_eq!(",
+            "            first_free_after(65535, |_| panic!(\"should not probe\")),",
+            "            None",
+            "        );",
+            "        assert_eq!(first_free_after(65534, |_| false), None);",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.suggestion_exhausted"
+          ],
+          "requirements": "requirements.forwarding.suggestion_exhausted",
+          "text": [
+            ":::{req} forwarding.suggestion_exhausted",
+            "The suggested-port search MUST stop at port 65535. If it finds no free higher port, the add-forward dialog MUST explain that no suggested port is available and MUST still allow manual port entry.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed mod[tests]/fn[suggestion_stops_at_max_port] in src/ports.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.suggestion_exhausted`, which are the applicable cited definitions. The test checks no probe occurs after 65535 and no result is returned when every higher port is busy. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rust_item": "mod[tests]/fn[suggestion_stops_at_max_port]"
+    }
+  ],
+  "rust_file": "src/ports.rs"
+}

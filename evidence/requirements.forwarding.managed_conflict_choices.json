@@ -1,12 +1,10 @@
 {
-  "requirement": "If an application-managed forward occupies the preferred local port, the dialog MUST offer three mutually exclusive choices: replace that forward on the preferred port, use the suggested free port, or enter an alternative local port. It MUST initially select the suggested free port. If the user chooses replacement, the application MUST stop the existing managed SSH process before starting the new forward and MUST update the table so the replaced forward is no longer shown as running.\n\n```text\n( ) Use local port 8030, replacing existing forward\n(x) Use suggested alternative local port 8031\n( ) Use alternative local port [       ]\n```",
   "determination": true,
-  "rationale": "Checked three managed-conflict radio choices, suggested default, and explicit replacement stopping the old owned process. The replacement test passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 190,
-      "line_end": 242,
+      "line_end": 271,
+      "line_start": 219,
       "text": [
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
         "        let conflict = self",
@@ -65,16 +63,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 508,
-      "line_end": 508,
+      "line_end": 548,
+      "line_start": 548,
       "text": [
         "    // {impl}`requirements.forwarding.managed_conflict_choices`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -154,16 +152,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1006,
-      "line_end": 1006,
+      "line_end": 1088,
+      "line_start": 1088,
       "text": [
         "    // {test}`requirements.forwarding.managed_conflict_choices`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1009,
-      "line_end": 1025,
+      "line_end": 1107,
+      "line_start": 1091,
       "text": [
         "    fn managed_conflict_suggests_next_port_and_can_replace() {",
         "        let (mut app, state) = setup();",
@@ -186,16 +184,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 296,
-      "line_end": 296,
+      "line_end": 303,
+      "line_start": 303,
       "text": [
         "// {impl}`requirements.forwarding.managed_conflict_choices`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 302,
-      "line_end": 355,
+      "line_end": 362,
+      "line_start": 309,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -252,6 +250,24 @@
         "    );",
         "}"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 215,
+      "line_start": 215,
+      "text": [
+        "    // {impl}`requirements.forwarding.managed_conflict_choices`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 15,
+      "line_start": 15,
+      "text": [
+        "// {cite}`requirements.forwarding.managed_conflict_choices`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked three managed-conflict radio choices, suggested default, and explicit replacement stopping the old owned process. The replacement test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "If an application-managed forward occupies the preferred local port, the dialog MUST offer three mutually exclusive choices: replace that forward on the preferred port, use the suggested free port, or enter an alternative local port. It MUST initially select the suggested free port. If the user chooses replacement, the application MUST stop the existing managed SSH process before starting the new forward and MUST update the table so the replaced forward is no longer shown as running.\n\n```text\n( ) Use local port 8030, replacing existing forward\n(x) Use suggested alternative local port 8031\n( ) Use alternative local port [       ]\n```"
 }

@@ -1,12 +1,10 @@
 {
-  "requirement": "Pressing `?` MUST show the available keystrokes and their actions, including how to select a row and the `a`, `b`, `x`, `q`, `r`, and `i` commands.",
   "determination": true,
-  "rationale": "Checked ? dispatch and help text for the main commands and all three add stages; help rendering and toggle tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 283,
-      "line_end": 305,
+      "line_end": 337,
+      "line_start": 315,
       "text": [
         "    pub fn on_key(&mut self, key: KeyEvent) {",
         "        // {impl}`requirements.forwarding.quit`",
@@ -35,16 +33,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1171,
-      "line_end": 1171,
+      "line_end": 1254,
+      "line_start": 1254,
       "text": [
         "    // {test}`requirements.help.shortcuts`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1173,
-      "line_end": 1180,
+      "line_end": 1263,
+      "line_start": 1256,
       "text": [
         "    fn help_toggle_works_while_add_dialog_is_open() {",
         "        let (mut app, _) = setup();",
@@ -58,16 +56,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 39,
-      "line_end": 39,
+      "line_end": 40,
+      "line_start": 40,
       "text": [
         "// {impl}`requirements.help.shortcuts`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 183,
-      "line_end": 194,
+      "line_end": 198,
+      "line_start": 187,
       "text": [
         "fn help_text() -> &'static str {",
         "    \"↑/↓ or j/k  Select row\\n\\",
@@ -85,16 +83,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 459,
-      "line_end": 459,
+      "line_end": 480,
+      "line_start": 480,
       "text": [
         "    // {test}`requirements.help.shortcuts`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 461,
-      "line_end": 491,
+      "line_end": 512,
+      "line_start": 482,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",
@@ -128,6 +126,40 @@
         "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 186,
+      "line_start": 186,
+      "text": [
+        "// {impl}`requirements.help.shortcuts`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 420,
+      "line_start": 420,
+      "text": [
+        "    // {test}`requirements.help.shortcuts`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 426,
+      "line_start": 426,
+      "text": [
+        "    // {test}`requirements.help.shortcuts`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 27,
+      "line_start": 27,
+      "text": [
+        "// {cite}`requirements.help.shortcuts`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked ? dispatch and help text for the main commands and all three add stages; help rendering and toggle tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Pressing `?` MUST show the available keystrokes and their actions, including how to select a row and the `a`, `b`, `x`, `q`, `r`, and `i` commands."
 }

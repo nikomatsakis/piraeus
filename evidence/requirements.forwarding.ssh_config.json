@@ -1,12 +1,10 @@
 {
-  "requirement": "The application MUST delegate interpretation of SSH configuration settings to OpenSSH commands: `ssh` when connecting and `ssh -G <host>` when it needs the effective configuration for a supplied host name. Apart from discovering names in `Host` declarations, it MUST NOT use the parsed configuration to determine connection settings.",
   "determination": true,
-  "rationale": "Checked that ssh2-config is used only for alias collection and that the SSH command passes the selected alias to OpenSSH without interpreting configuration values. The command test passed.",
   "inputs": [
     {
       "file": "src/hosts.rs",
-      "line_start": 5,
       "line_end": 13,
+      "line_start": 5,
       "text": [
         "const HOST_DISCOVERY_RULES: ParseRule =",
         "    ParseRule::ALLOW_UNKNOWN_FIELDS.union(ParseRule::ALLOW_UNSUPPORTED_FIELDS);",
@@ -21,16 +19,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 19,
-      "line_end": 19,
+      "line_end": 20,
+      "line_start": 20,
       "text": [
         "    // {impl}`requirements.forwarding.ssh_config`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 91,
-      "line_end": 112,
+      "line_end": 117,
+      "line_start": 96,
       "text": [
         "fn ssh_command(spec: &ForwardSpec) -> Command {",
         "    let mut command = Command::new(\"ssh\");",
@@ -58,16 +56,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 208,
-      "line_end": 208,
+      "line_end": 218,
+      "line_start": 218,
       "text": [
         "    // {test}`requirements.forwarding.ssh_config`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 210,
-      "line_end": 227,
+      "line_end": 237,
+      "line_start": 220,
       "text": [
         "    fn ssh_receives_alias_and_forward_as_arguments() {",
         "        let command = ssh_command(&ForwardSpec {",
@@ -88,6 +86,24 @@
         "        assert_eq!(args[args.len() - 1], \"chronos\");",
         "    }"
       ]
+    },
+    {
+      "file": "src/runtime.rs",
+      "line_end": 95,
+      "line_start": 95,
+      "text": [
+        "// {impl}`requirements.forwarding.ssh_config`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 23,
+      "line_start": 23,
+      "text": [
+        "// {cite}`requirements.forwarding.ssh_config`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked that ssh2-config is used only for alias collection and that the SSH command passes the selected alias to OpenSSH without interpreting configuration values. The command test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The application MUST delegate interpretation of SSH configuration settings to OpenSSH commands: `ssh` when connecting and `ssh -G <host>` when it needs the effective configuration for a supplied host name. Apart from discovering names in `Host` declarations, it MUST NOT use the parsed configuration to determine connection settings."
 }

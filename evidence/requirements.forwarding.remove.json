@@ -1,20 +1,18 @@
 {
-  "requirement": "Pressing `x` MUST stop the selected managed port forward, if it is running, and remove its row from the table.",
   "determination": true,
-  "rationale": "Checked x dispatch, owned-process stop, row removal, and selection adjustment. The selected-row removal test passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 321,
-      "line_end": 321,
+      "line_end": 353,
+      "line_start": 353,
       "text": [
         "            // {impl}`requirements.forwarding.remove`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 603,
-      "line_end": 611,
+      "line_end": 654,
+      "line_start": 646,
       "text": [
         "    fn stop_forward(&mut self, index: usize) -> Result<(), String> {",
         "        if let Some(mut process) = self.forwards[index].process.take()",
@@ -29,8 +27,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 613,
-      "line_end": 627,
+      "line_end": 673,
+      "line_start": 659,
       "text": [
         "    fn remove_selected(&mut self) {",
         "        let Some(index) = self.selected else { return };",
@@ -51,16 +49,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 1057,
-      "line_end": 1057,
+      "line_end": 1139,
+      "line_start": 1139,
       "text": [
         "    // {test}`requirements.forwarding.remove`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 1059,
-      "line_end": 1071,
+      "line_end": 1153,
+      "line_start": 1141,
       "text": [
         "    fn selection_and_remove_use_the_visible_row() {",
         "        let (mut app, state) = setup();",
@@ -76,6 +74,32 @@
         "        assert_eq!(app.selected, Some(0));",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 657,
+      "line_start": 657,
+      "text": [
+        "    // {impl}`requirements.forwarding.remove`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 838,
+      "line_start": 838,
+      "text": [
+        "        // {test}`requirements.forwarding.remove`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 21,
+      "line_start": 21,
+      "text": [
+        "// {cite}`requirements.forwarding.remove`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked x dispatch, owned-process stop, row removal, and selection adjustment. The selected-row removal test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "Pressing `x` MUST stop the selected managed port forward, if it is running, and remove its row from the table."
 }

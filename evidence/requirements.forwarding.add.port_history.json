@@ -1,12 +1,10 @@
 {
-  "requirement": "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
   "determination": true,
-  "rationale": "Confirmed App saves distinct recent ports before returning to the table and reloads them at startup. XDG_CONFIG_HOME selects its absolute directory, otherwise HOME/.config is used. When the target is absent, migration checks the prior Piraeus home file, the selected XDG pfm file, and the pfm home file; unit tests cover all three imports, persistence, and precedence of the target file.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 133,
-      "line_end": 141,
+      "line_end": 161,
+      "line_start": 153,
       "text": [
         "fn distinct_ports(ports: Vec<u16>) -> Vec<u16> {",
         "    let mut distinct = Vec::new();",
@@ -21,8 +19,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 158,
-      "line_end": 183,
+      "line_end": 206,
+      "line_start": 181,
       "text": [
         "    pub fn new(backend: Box<dyn Backend>, hosts: Result<Vec<String>, String>) -> Self {",
         "        let (hosts, host_error) = match hosts {",
@@ -54,8 +52,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -135,16 +133,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 899,
-      "line_end": 899,
+      "line_end": 981,
+      "line_start": 981,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 901,
-      "line_end": 919,
+      "line_end": 1001,
+      "line_start": 983,
       "text": [
         "    fn recent_remote_ports_survive_removal_and_new_app_instance() {",
         "        let (mut app, state) = setup();",
@@ -169,8 +167,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 9,
       "line_end": 13,
+      "line_start": 9,
       "text": [
         "#[derive(Default, Deserialize, Serialize)]",
         "struct PiraeusConfig {",
@@ -181,16 +179,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 15,
       "line_end": 15,
+      "line_start": 15,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_start": 16,
       "line_end": 20,
+      "line_start": 16,
       "text": [
         "pub fn config_path() -> Result<PathBuf, String> {",
         "    let home = env::var_os(\"HOME\").map(PathBuf::from);",
@@ -201,16 +199,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 22,
       "line_end": 22,
+      "line_start": 22,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_start": 23,
       "line_end": 30,
+      "line_start": 23,
       "text": [
         "pub fn load_and_migrate_recent_ports() -> Result<Vec<u16>, String> {",
         "    let home = env::var_os(\"HOME\").map(PathBuf::from);",
@@ -224,8 +222,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 32,
-      "line_end": 39,
+      "line_end": 40,
+      "line_start": 33,
       "text": [
         "fn choose_config_path(",
         "    home: Option<&Path>,",
@@ -239,8 +237,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 41,
-      "line_end": 54,
+      "line_end": 56,
+      "line_start": 43,
       "text": [
         "fn choose_config_directory(",
         "    home: Option<&Path>,",
@@ -260,8 +258,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 56,
-      "line_end": 66,
+      "line_end": 69,
+      "line_start": 59,
       "text": [
         "fn legacy_config_paths(home: Option<&Path>, config_directory: &Path) -> Vec<PathBuf> {",
         "    let mut paths = Vec::new();",
@@ -278,8 +276,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 68,
-      "line_end": 80,
+      "line_end": 84,
+      "line_start": 72,
       "text": [
         "fn load_or_import(new_path: &Path, legacy_paths: &[PathBuf]) -> Result<Vec<u16>, String> {",
         "    if path_exists(new_path)? {",
@@ -298,8 +296,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 82,
-      "line_end": 85,
+      "line_end": 90,
+      "line_start": 87,
       "text": [
         "fn path_exists(path: &Path) -> Result<bool, String> {",
         "    path.try_exists()",
@@ -309,16 +307,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 87,
-      "line_end": 87,
+      "line_end": 92,
+      "line_start": 92,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_start": 88,
-      "line_end": 97,
+      "line_end": 102,
+      "line_start": 93,
       "text": [
         "pub fn load_recent_ports(path: &Path) -> Result<Vec<u16>, String> {",
         "    let text = match fs::read_to_string(path) {",
@@ -334,16 +332,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 99,
-      "line_end": 99,
+      "line_end": 104,
+      "line_start": 104,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_start": 100,
-      "line_end": 110,
+      "line_end": 115,
+      "line_start": 105,
       "text": [
         "pub fn save_recent_ports(path: &Path, ports: &[u16]) -> Result<(), String> {",
         "    let text = toml::to_string_pretty(&PiraeusConfig {",
@@ -360,16 +358,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 118,
-      "line_end": 118,
+      "line_end": 123,
+      "line_start": 123,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_start": 120,
-      "line_end": 150,
+      "line_end": 155,
+      "line_start": 125,
       "text": [
         "    fn chooses_xdg_config_home_when_it_is_absolute() {",
         "        let home = Path::new(\"/example/home\");",
@@ -406,16 +404,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 152,
-      "line_end": 152,
+      "line_end": 157,
+      "line_start": 157,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_start": 154,
-      "line_end": 167,
+      "line_end": 172,
+      "line_start": 159,
       "text": [
         "    fn saved_ports_survive_a_reload() {",
         "        let directory = temporary_directory();",
@@ -435,16 +433,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_start": 169,
-      "line_end": 169,
+      "line_end": 174,
+      "line_start": 174,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_start": 171,
-      "line_end": 216,
+      "line_end": 221,
+      "line_start": 176,
       "text": [
         "    fn imports_legacy_history_from_home_or_xdg() {",
         "        let directory = temporary_directory();",
@@ -496,16 +494,16 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 80,
-      "line_end": 80,
+      "line_end": 83,
+      "line_start": 83,
       "text": [
         "    // {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 81,
-      "line_end": 83,
+      "line_end": 86,
+      "line_start": 84,
       "text": [
         "    fn load_recent_ports(&self) -> Result<Vec<u16>, String> {",
         "        history::load_and_migrate_recent_ports()",
@@ -514,21 +512,127 @@
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 85,
-      "line_end": 85,
+      "line_end": 88,
+      "line_start": 88,
       "text": [
         "    // {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/runtime.rs",
-      "line_start": 86,
-      "line_end": 88,
+      "line_end": 91,
+      "line_start": 89,
       "text": [
         "    fn save_recent_ports(&mut self, ports: &[u16]) -> Result<(), String> {",
         "        history::save_recent_ports(&history::config_path()?, ports)",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 36,
+      "line_start": 36,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 38,
+      "line_start": 38,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 178,
+      "line_start": 178,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 817,
+      "line_start": 817,
+      "text": [
+        "        // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 822,
+      "line_start": 822,
+      "text": [
+        "        // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_end": 32,
+      "line_start": 32,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_end": 42,
+      "line_start": 42,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_end": 58,
+      "line_start": 58,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_end": 71,
+      "line_start": 71,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_end": 86,
+      "line_start": 86,
+      "text": [
+        "// {impl}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/history.rs",
+      "line_end": 223,
+      "line_start": 223,
+      "text": [
+        "    // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "src/ui.rs",
+      "line_end": 413,
+      "line_start": 413,
+      "text": [
+        "        // {test}`requirements.forwarding.add.port_history`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 10,
+      "line_start": 10,
+      "text": [
+        "// {cite}`requirements.forwarding.add.port_history`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Confirmed App saves distinct recent ports before returning to the table and reloads them at startup. XDG_CONFIG_HOME selects its absolute directory, otherwise HOME/.config is used. When the target is absent, migration checks the prior Piraeus home file, the selected XDG pfm file, and the pfm home file; unit tests cover all three imports, persistence, and precedence of the target file. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices."
 }

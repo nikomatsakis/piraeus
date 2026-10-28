@@ -1,20 +1,18 @@
 {
-  "requirement": "The local-port stage MUST show the applicable radio-style local-port choices with one visibly selected. `↑` and `↓` MUST move the selection. Typing digits MUST select the manual local-port choice and enter an alternative local port without a focus change. Pressing `Enter` with a valid choice MUST complete the add-forward flow.",
   "determination": true,
-  "rationale": "Checked conflict-dependent radio choices, arrow selection, direct manual numeric entry, and Enter confirmation. Model and rendering tests passed.",
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_start": 469,
-      "line_end": 469,
+      "line_end": 506,
+      "line_start": 506,
       "text": [
         "    // {impl}`requirements.forwarding.add.local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 470,
-      "line_end": 489,
+      "line_end": 528,
+      "line_start": 509,
       "text": [
         "    fn on_local_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -40,8 +38,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 491,
-      "line_end": 502,
+      "line_end": 542,
+      "line_start": 531,
       "text": [
         "    fn move_local_choice(&self, dialog: &mut AddDialog, direction: isize) {",
         "        let Some(remote_port) = dialog.chosen_remote_port else {",
@@ -59,8 +57,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 511,
-      "line_end": 584,
+      "line_end": 625,
+      "line_start": 552,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -140,16 +138,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_start": 844,
-      "line_end": 844,
+      "line_end": 926,
+      "line_start": 926,
       "text": [
         "    // {test}`requirements.forwarding.add.local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_start": 846,
-      "line_end": 862,
+      "line_end": 944,
+      "line_start": 928,
       "text": [
         "    fn keyboard_can_choose_host_enter_port_and_select_radio_option() {",
         "        let (mut app, _) = setup();",
@@ -172,16 +170,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 294,
-      "line_end": 294,
+      "line_end": 301,
+      "line_start": 301,
       "text": [
         "// {impl}`requirements.forwarding.add.local_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 302,
-      "line_end": 355,
+      "line_end": 362,
+      "line_start": 309,
       "text": [
         "fn draw_local_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {",
         "    let area = centered(frame.area(), 76, 16);",
@@ -241,16 +239,16 @@
     },
     {
       "file": "src/ui.rs",
-      "line_start": 456,
-      "line_end": 456,
+      "line_end": 477,
+      "line_start": 477,
       "text": [
         "    // {test}`requirements.forwarding.add.local_port`"
       ]
     },
     {
       "file": "src/ui.rs",
-      "line_start": 461,
-      "line_end": 491,
+      "line_end": 512,
+      "line_start": 482,
       "text": [
         "    fn three_picker_stages_render_choices_and_help() {",
         "        let mut app = App::new(",
@@ -284,6 +282,48 @@
         "        assert!(help.contains(\"Quit and stop all managed forwards\"));",
         "    }"
       ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 140,
+      "line_start": 140,
+      "text": [
+        "// {impl}`requirements.forwarding.add.local_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 530,
+      "line_start": 530,
+      "text": [
+        "    // {impl}`requirements.forwarding.add.local_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 864,
+      "line_start": 864,
+      "text": [
+        "    // {test}`requirements.forwarding.add.local_port`"
+      ]
+    },
+    {
+      "file": "src/app.rs",
+      "line_end": 874,
+      "line_start": 874,
+      "text": [
+        "    // {test}`requirements.forwarding.add.local_port`"
+      ]
+    },
+    {
+      "file": "tests/habeas.rs",
+      "line_end": 9,
+      "line_start": 9,
+      "text": [
+        "// {cite}`requirements.forwarding.add.local_port`"
+      ]
     }
-  ]
+  ],
+  "rationale": "Checked conflict-dependent radio choices, arrow selection, direct manual numeric entry, and Enter confirmation. Model and rendering tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "requirement": "The local-port stage MUST show the applicable radio-style local-port choices with one visibly selected. `↑` and `↓` MUST move the selection. Typing digits MUST select the manual local-port choice and enter an alternative local port without a focus change. Pressing `Enter` with a valid choice MUST complete the add-forward flow."
 }

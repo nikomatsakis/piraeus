@@ -29,6 +29,7 @@ pub fn load_and_migrate_recent_ports() -> Result<Vec<u16>, String> {
     load_or_import(&new_path, &legacy_paths)
 }
 
+// {impl}`requirements.forwarding.add.port_history`
 fn choose_config_path(
     home: Option<&Path>,
     xdg_config_home: Option<&OsStr>,
@@ -38,6 +39,7 @@ fn choose_config_path(
         .join("config.toml"))
 }
 
+// {impl}`requirements.forwarding.add.port_history`
 fn choose_config_directory(
     home: Option<&Path>,
     xdg_config_home: Option<&OsStr>,
@@ -53,6 +55,7 @@ fn choose_config_directory(
     })
 }
 
+// {impl}`requirements.forwarding.add.port_history`
 fn legacy_config_paths(home: Option<&Path>, config_directory: &Path) -> Vec<PathBuf> {
     let mut paths = Vec::new();
     if let Some(home) = home {
@@ -65,6 +68,7 @@ fn legacy_config_paths(home: Option<&Path>, config_directory: &Path) -> Vec<Path
     paths
 }
 
+// {impl}`requirements.forwarding.add.port_history`
 fn load_or_import(new_path: &Path, legacy_paths: &[PathBuf]) -> Result<Vec<u16>, String> {
     if path_exists(new_path)? {
         return load_recent_ports(new_path);
@@ -79,6 +83,7 @@ fn load_or_import(new_path: &Path, legacy_paths: &[PathBuf]) -> Result<Vec<u16>,
     Ok(Vec::new())
 }
 
+// {impl}`requirements.forwarding.add.port_history`
 fn path_exists(path: &Path) -> Result<bool, String> {
     path.try_exists()
         .map_err(|error| format!("Could not inspect {}: {error}", path.display()))
@@ -215,6 +220,7 @@ mod tests {
         fs::remove_dir_all(&directory).unwrap();
     }
 
+    // {test}`requirements.forwarding.add.port_history`
     fn temporary_directory() -> PathBuf {
         let suffix = SystemTime::now()
             .duration_since(UNIX_EPOCH)
