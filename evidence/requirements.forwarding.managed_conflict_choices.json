@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 271,
-      "line_start": 219,
+      "line_end": 269,
+      "line_start": 217,
       "text": [
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
         "        let conflict = self",
@@ -63,8 +63,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 548,
-      "line_start": 548,
+      "line_end": 546,
+      "line_start": 546,
       "text": [
         "    // {impl}`requirements.forwarding.managed_conflict_choices`"
       ]
@@ -72,7 +72,7 @@
     {
       "file": "src/app.rs",
       "line_end": 625,
-      "line_start": 552,
+      "line_start": 550,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -139,9 +139,11 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.remote_port`",
         "        // {impl}`requirements.forwarding.add.port_history`",
         "        self.recent_remote_ports.retain(|port| *port != remote_port);",
         "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
         "        self.message = None;",
         "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
         "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -253,8 +255,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 215,
-      "line_start": 215,
+      "line_end": 213,
+      "line_start": 213,
       "text": [
         "    // {impl}`requirements.forwarding.managed_conflict_choices`"
       ]
@@ -268,6 +270,6 @@
       ]
     }
   ],
-  "rationale": "Checked three managed-conflict radio choices, suggested default, and explicit replacement stopping the old owned process. The replacement test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "rationale": "Checked three managed-conflict radio choices, suggested default, and explicit replacement stopping the old owned process. The replacement test passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references. Rechecked the shared confirm_add function after the history change: its local-port and conflict branches are unchanged, while confirmed history now truncates to 22. The previously cited tests and new recent-port tests passed.",
   "requirement": "If an application-managed forward occupies the preferred local port, the dialog MUST offer three mutually exclusive choices: replace that forward on the preferred port, use the suggested free port, or enter an alternative local port. It MUST initially select the suggested free port. If the user chooses replacement, the application MUST stop the existing managed SSH process before starting the new forward and MUST update the table so the replaced forward is no longer shown as running.\n\n```text\n( ) Use local port 8030, replacing existing forward\n(x) Use suggested alternative local port 8031\n( ) Use alternative local port [       ]\n```"
 }

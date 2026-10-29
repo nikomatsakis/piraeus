@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 491,
-      "line_start": 456,
+      "line_end": 489,
+      "line_start": 454,
       "text": [
         "    fn on_remote_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -46,8 +46,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 528,
-      "line_start": 509,
+      "line_end": 526,
+      "line_start": 507,
       "text": [
         "    fn on_local_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -73,8 +73,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 544,
-      "line_start": 544,
+      "line_end": 542,
+      "line_start": 542,
       "text": [
         "    // {impl}`requirements.forwarding.port_validation`"
       ]
@@ -82,7 +82,7 @@
     {
       "file": "src/app.rs",
       "line_end": 625,
-      "line_start": 552,
+      "line_start": 550,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -149,9 +149,11 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.remote_port`",
         "        // {impl}`requirements.forwarding.add.port_history`",
         "        self.recent_remote_ports.retain(|port| *port != remote_port);",
         "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
         "        self.message = None;",
         "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
         "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -328,16 +330,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 494,
-      "line_start": 494,
+      "line_end": 492,
+      "line_start": 492,
       "text": [
         "    // {impl}`requirements.forwarding.port_validation`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 508,
-      "line_start": 508,
+      "line_end": 506,
+      "line_start": 506,
       "text": [
         "    // {impl}`requirements.forwarding.port_validation`"
       ]
@@ -351,6 +353,6 @@
       ]
     }
   ],
-  "rationale": "Checked numeric 1–65535 parsing and inline validation before launch or replacement. Invalid remote and manual port tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "rationale": "Checked numeric 1–65535 parsing and inline validation before launch or replacement. Invalid remote and manual port tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references. Rechecked the shared confirm_add function after the history change: its local-port and conflict branches are unchanged, while confirmed history now truncates to 22. The previously cited tests and new recent-port tests passed.",
   "requirement": "The add-forward dialog MUST accept only whole-number remote and manually entered local ports from 1 through 65535. It MUST explain invalid input inside the dialog and MUST NOT start or replace a forward while the input is invalid."
 }

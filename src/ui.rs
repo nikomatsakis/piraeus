@@ -236,7 +236,7 @@ fn selected_host_label<'a>(app: &'a App, dialog: &'a AddDialog) -> &'a str {
 // {impl}`requirements.forwarding.add.remote_port`
 fn draw_remote_picker(frame: &mut Frame, app: &App, dialog: &AddDialog) {
     let mut items: Vec<String> = app
-        .recent_remote_ports
+        .displayed_recent_ports()
         .iter()
         .map(|port| port.to_string())
         .collect();
@@ -578,5 +578,23 @@ mod tests {
         assert_eq!(links.links[0].1, 3);
         assert_eq!(links.links[1].1, 4);
         assert_eq!(links.at(links.links[1].0.x, links.links[1].0.y), Some(4));
+    }
+
+    // {test}`requirements.forwarding.add.remote_port`
+    #[test]
+    fn recent_port_picker_displays_numeric_order() {
+        let mut app = App::new(
+            Box::new(FailingBackend { busy: None }),
+            Ok(vec!["chronos".into()]),
+        );
+        app.recent_remote_ports = vec![9000, 80, 3000];
+        app.on_key(key(KeyCode::Char('a')));
+        app.on_key(key(KeyCode::Enter));
+        let (remote, _) = rendered(&app);
+        let low = remote.find("▶ 80").unwrap();
+        let middle = remote.find("3000").unwrap();
+        let high = remote.find("9000").unwrap();
+        let other = remote.find("Other [").unwrap();
+        assert!(low < middle && middle < high && high < other);
     }
 }

@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 313,
-      "line_start": 283,
+      "line_end": 311,
+      "line_start": 281,
       "text": [
         "    // {impl}`requirements.errors.visible`",
         "    // {impl}`requirements.forwarding.startup_state`",
@@ -337,24 +337,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 21,
-      "line_start": 21,
+      "line_end": 22,
+      "line_start": 22,
       "text": [
         "    // {impl}`requirements.errors.visible`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 57,
-      "line_start": 57,
+      "line_end": 58,
+      "line_start": 58,
       "text": [
         "    // {impl}`requirements.errors.visible`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 74,
-      "line_start": 74,
+      "line_end": 75,
+      "line_start": 75,
       "text": [
         "    // {impl}`requirements.errors.visible`"
       ]

@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 337,
-      "line_start": 315,
+      "line_end": 335,
+      "line_start": 313,
       "text": [
         "    pub fn on_key(&mut self, key: KeyEvent) {",
         "        // {impl}`requirements.forwarding.quit`",

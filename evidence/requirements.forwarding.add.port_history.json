@@ -3,24 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 161,
-      "line_start": 153,
-      "text": [
-        "fn distinct_ports(ports: Vec<u16>) -> Vec<u16> {",
-        "    let mut distinct = Vec::new();",
-        "    for port in ports {",
-        "        if port != 0 && !distinct.contains(&port) {",
-        "            distinct.push(port);",
-        "        }",
-        "    }",
-        "    distinct",
-        "}"
-      ]
-    },
-    {
-      "file": "src/app.rs",
-      "line_end": 206,
-      "line_start": 181,
+      "line_end": 204,
+      "line_start": 172,
       "text": [
         "    pub fn new(backend: Box<dyn Backend>, hosts: Result<Vec<String>, String>) -> Self {",
         "        let (hosts, host_error) = match hosts {",
@@ -28,7 +12,7 @@
         "            Err(error) => (Vec::new(), Some(error)),",
         "        };",
         "        let (recent_remote_ports, message) = match backend.load_recent_ports() {",
-        "            Ok(ports) => (distinct_ports(ports), None),",
+        "            Ok(ports) => (history::normalize_recent_ports(ports), None),",
         "            Err(error) => (",
         "                Vec::new(),",
         "                Some(format!(\"Could not load recent ports: {error}\")),",
@@ -47,13 +31,20 @@
         "            should_quit: false,",
         "            message,",
         "        }",
+        "    }",
+        "",
+        "    // {impl}`requirements.forwarding.add.remote_port`",
+        "    pub fn displayed_recent_ports(&self) -> Vec<u16> {",
+        "        let mut ports = self.recent_remote_ports.clone();",
+        "        ports.sort_unstable();",
+        "        ports",
         "    }"
       ]
     },
     {
       "file": "src/app.rs",
       "line_end": 625,
-      "line_start": 552,
+      "line_start": 550,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -120,9 +111,11 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.remote_port`",
         "        // {impl}`requirements.forwarding.add.port_history`",
         "        self.recent_remote_ports.retain(|port| *port != remote_port);",
         "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
         "        self.message = None;",
         "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
         "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -150,6 +143,7 @@
         "        add(&mut app, \"9000\", Choice::Preferred, \"\", 0);",
         "        app.on_key(key(KeyCode::Char('x')));",
         "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
+        "        assert_eq!(app.displayed_recent_ports(), [8030, 9000]);",
         "        drop(app);",
         "",
         "        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec![\"chronos\".into()]));",
@@ -157,7 +151,6 @@
         "        app.on_key(key(KeyCode::Enter));",
         "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);",
         "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
-        "        app.on_key(key(KeyCode::Down));",
         "        app.on_key(key(KeyCode::Enter));",
         "        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(8030));",
         "        app.on_key(key(KeyCode::Enter));",
@@ -167,28 +160,43 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 13,
-      "line_start": 9,
+      "line_end": 30,
+      "line_start": 11,
       "text": [
         "#[derive(Default, Deserialize, Serialize)]",
         "struct PiraeusConfig {",
         "    #[serde(default)]",
         "    recent_remote_ports: Vec<u16>,",
+        "}",
+        "",
+        "// {impl}`requirements.forwarding.add.remote_port`",
+        "// {impl}`requirements.forwarding.add.port_history`",
+        "pub fn normalize_recent_ports(ports: impl IntoIterator<Item = u16>) -> Vec<u16> {",
+        "    let mut distinct = Vec::new();",
+        "    for port in ports {",
+        "        if port != 0 && !distinct.contains(&port) {",
+        "            distinct.push(port);",
+        "            if distinct.len() == RECENT_PORTS_LIMIT {",
+        "                break;",
+        "            }",
+        "        }",
+        "    }",
+        "    distinct",
         "}"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 15,
-      "line_start": 15,
+      "line_end": 32,
+      "line_start": 32,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 20,
-      "line_start": 16,
+      "line_end": 37,
+      "line_start": 33,
       "text": [
         "pub fn config_path() -> Result<PathBuf, String> {",
         "    let home = env::var_os(\"HOME\").map(PathBuf::from);",
@@ -199,16 +207,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 22,
-      "line_start": 22,
+      "line_end": 39,
+      "line_start": 39,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 30,
-      "line_start": 23,
+      "line_end": 47,
+      "line_start": 40,
       "text": [
         "pub fn load_and_migrate_recent_ports() -> Result<Vec<u16>, String> {",
         "    let home = env::var_os(\"HOME\").map(PathBuf::from);",
@@ -222,8 +230,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 40,
-      "line_start": 33,
+      "line_end": 57,
+      "line_start": 50,
       "text": [
         "fn choose_config_path(",
         "    home: Option<&Path>,",
@@ -237,8 +245,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 56,
-      "line_start": 43,
+      "line_end": 73,
+      "line_start": 60,
       "text": [
         "fn choose_config_directory(",
         "    home: Option<&Path>,",
@@ -258,8 +266,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 69,
-      "line_start": 59,
+      "line_end": 86,
+      "line_start": 76,
       "text": [
         "fn legacy_config_paths(home: Option<&Path>, config_directory: &Path) -> Vec<PathBuf> {",
         "    let mut paths = Vec::new();",
@@ -276,8 +284,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 84,
-      "line_start": 72,
+      "line_end": 101,
+      "line_start": 89,
       "text": [
         "fn load_or_import(new_path: &Path, legacy_paths: &[PathBuf]) -> Result<Vec<u16>, String> {",
         "    if path_exists(new_path)? {",
@@ -296,8 +304,8 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 90,
-      "line_start": 87,
+      "line_end": 107,
+      "line_start": 104,
       "text": [
         "fn path_exists(path: &Path) -> Result<bool, String> {",
         "    path.try_exists()",
@@ -307,16 +315,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 92,
-      "line_start": 92,
+      "line_end": 109,
+      "line_start": 109,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 102,
-      "line_start": 93,
+      "line_end": 119,
+      "line_start": 110,
       "text": [
         "pub fn load_recent_ports(path: &Path) -> Result<Vec<u16>, String> {",
         "    let text = match fs::read_to_string(path) {",
@@ -326,26 +334,26 @@
         "    };",
         "    let config: PiraeusConfig = toml::from_str(&text)",
         "        .map_err(|error| format!(\"Could not parse {}: {error}\", path.display()))?;",
-        "    Ok(config.recent_remote_ports)",
+        "    Ok(normalize_recent_ports(config.recent_remote_ports))",
         "}"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 104,
-      "line_start": 104,
+      "line_end": 121,
+      "line_start": 121,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 115,
-      "line_start": 105,
+      "line_end": 132,
+      "line_start": 122,
       "text": [
         "pub fn save_recent_ports(path: &Path, ports: &[u16]) -> Result<(), String> {",
         "    let text = toml::to_string_pretty(&PiraeusConfig {",
-        "        recent_remote_ports: ports.to_vec(),",
+        "        recent_remote_ports: normalize_recent_ports(ports.iter().copied()),",
         "    })",
         "    .map_err(|error| format!(\"Could not encode recent ports: {error}\"))?;",
         "    if let Some(parent) = path.parent() {",
@@ -358,16 +366,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 123,
-      "line_start": 123,
+      "line_end": 140,
+      "line_start": 140,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 155,
-      "line_start": 125,
+      "line_end": 172,
+      "line_start": 142,
       "text": [
         "    fn chooses_xdg_config_home_when_it_is_absolute() {",
         "        let home = Path::new(\"/example/home\");",
@@ -404,16 +412,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 157,
-      "line_start": 157,
+      "line_end": 174,
+      "line_start": 174,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 172,
-      "line_start": 159,
+      "line_end": 189,
+      "line_start": 176,
       "text": [
         "    fn saved_ports_survive_a_reload() {",
         "        let directory = temporary_directory();",
@@ -433,16 +441,16 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 174,
-      "line_start": 174,
+      "line_end": 191,
+      "line_start": 191,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 221,
-      "line_start": 176,
+      "line_end": 238,
+      "line_start": 193,
       "text": [
         "    fn imports_legacy_history_from_home_or_xdg() {",
         "        let directory = temporary_directory();",
@@ -530,24 +538,24 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 36,
-      "line_start": 36,
+      "line_end": 37,
+      "line_start": 37,
       "text": [
         "    // {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 38,
-      "line_start": 38,
+      "line_end": 39,
+      "line_start": 39,
       "text": [
         "    // {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 178,
-      "line_start": 178,
+      "line_end": 169,
+      "line_start": 169,
       "text": [
         "    // {impl}`requirements.forwarding.add.port_history`"
       ]
@@ -570,48 +578,48 @@
     },
     {
       "file": "src/history.rs",
-      "line_end": 32,
-      "line_start": 32,
+      "line_end": 49,
+      "line_start": 49,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 42,
-      "line_start": 42,
+      "line_end": 59,
+      "line_start": 59,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 58,
-      "line_start": 58,
+      "line_end": 75,
+      "line_start": 75,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 71,
-      "line_start": 71,
+      "line_end": 88,
+      "line_start": 88,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 86,
-      "line_start": 86,
+      "line_end": 103,
+      "line_start": 103,
       "text": [
         "// {impl}`requirements.forwarding.add.port_history`"
       ]
     },
     {
       "file": "src/history.rs",
-      "line_end": 223,
-      "line_start": 223,
+      "line_end": 240,
+      "line_start": 240,
       "text": [
         "    // {test}`requirements.forwarding.add.port_history`"
       ]
@@ -631,8 +639,105 @@
       "text": [
         "// {cite}`requirements.forwarding.add.port_history`"
       ]
+    },
+    {
+      "rust_file": "src/history.rs",
+      "rust_item": "fn[normalize_recent_ports]",
+      "text": [
+        "// {impl}`requirements.forwarding.add.remote_port`",
+        "// {impl}`requirements.forwarding.add.port_history`",
+        "pub fn normalize_recent_ports(ports: impl IntoIterator<Item = u16>) -> Vec<u16> {",
+        "    let mut distinct = Vec::new();",
+        "    for port in ports {",
+        "        if port != 0 && !distinct.contains(&port) {",
+        "            distinct.push(port);",
+        "            if distinct.len() == RECENT_PORTS_LIMIT {",
+        "                break;",
+        "            }",
+        "        }",
+        "    }",
+        "    distinct",
+        "}"
+      ]
+    },
+    {
+      "rust_file": "src/history.rs",
+      "rust_item": "mod[tests]/fn[saved_and_imported_history_keep_22_recent_distinct_ports]",
+      "text": [
+        "    // {test}`requirements.forwarding.add.port_history`",
+        "    #[test]",
+        "    fn saved_and_imported_history_keep_22_recent_distinct_ports() {",
+        "        let directory = temporary_directory();",
+        "        let path = directory.join(\"piraeus\").join(\"config.toml\");",
+        "        let mut ports: Vec<u16> = (8000..8025).rev().collect();",
+        "        ports.insert(1, 8024);",
+        "        ports.insert(2, 0);",
+        "        let expected: Vec<u16> = (8003..8025).rev().collect();",
+        "",
+        "        save_recent_ports(&path, &ports).unwrap();",
+        "        let saved: PiraeusConfig = toml::from_str(&fs::read_to_string(&path).unwrap()).unwrap();",
+        "        assert_eq!(saved.recent_remote_ports, expected);",
+        "",
+        "        let legacy_path = directory.join(\".piraeus.toml\");",
+        "        let legacy_text = toml::to_string_pretty(&PiraeusConfig {",
+        "            recent_remote_ports: ports,",
+        "        })",
+        "        .unwrap();",
+        "        fs::write(&legacy_path, legacy_text).unwrap();",
+        "        assert_eq!(load_recent_ports(&legacy_path).unwrap(), expected);",
+        "        let imported_path = directory.join(\"imported\").join(\"config.toml\");",
+        "        assert_eq!(",
+        "            load_or_import(&imported_path, &[legacy_path]).unwrap(),",
+        "            expected",
+        "        );",
+        "        let imported: PiraeusConfig =",
+        "            toml::from_str(&fs::read_to_string(&imported_path).unwrap()).unwrap();",
+        "        assert_eq!(imported.recent_remote_ports, expected);",
+        "        fs::remove_dir_all(directory).unwrap();",
+        "    }"
+      ]
+    },
+    {
+      "rust_file": "src/app.rs",
+      "rust_item": "mod[tests]/fn[recent_ports_keep_22_most_recent_and_numeric_selection]",
+      "text": [
+        "    // {test}`requirements.forwarding.add.port_history`",
+        "    // {test}`requirements.forwarding.add.remote_port`",
+        "    #[test]",
+        "    fn recent_ports_keep_22_most_recent_and_numeric_selection() {",
+        "        let mut saved: Vec<u16> = (8000..8025).rev().collect();",
+        "        saved.insert(1, 8024);",
+        "        saved.insert(2, 0);",
+        "        let state = Rc::new(RefCell::new(FakeState {",
+        "            recent_ports: saved,",
+        "            ..FakeState::default()",
+        "        }));",
+        "        let mut app = App::new(",
+        "            Box::new(FakeBackend(state.clone())),",
+        "            Ok(vec![\"chronos\".into()]),",
+        "        );",
+        "        let expected: Vec<u16> = (8003..8025).rev().collect();",
+        "        assert_eq!(app.recent_remote_ports, expected);",
+        "        assert_eq!(",
+        "            app.displayed_recent_ports(),",
+        "            (8003..8025).collect::<Vec<u16>>()",
+        "        );",
+        "",
+        "        add(&mut app, \"7000\", Choice::Preferred, \"\", 0);",
+        "        let expected_saved: Vec<u16> = std::iter::once(7000).chain((8004..8025).rev()).collect();",
+        "        assert_eq!(state.borrow().recent_ports, expected_saved);",
+        "        drop(app);",
+        "",
+        "        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec![\"chronos\".into()]));",
+        "        assert_eq!(app.recent_remote_ports, expected_saved);",
+        "        app.on_key(key(KeyCode::Char('a')));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        app.on_key(key(KeyCode::Enter));",
+        "        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(7000));",
+        "    }"
+      ]
     }
   ],
-  "rationale": "Confirmed App saves distinct recent ports before returning to the table and reloads them at startup. XDG_CONFIG_HOME selects its absolute directory, otherwise HOME/.config is used. When the target is absent, migration checks the prior Piraeus home file, the selected XDG pfm file, and the pfm home file; unit tests cover all three imports, persistence, and precedence of the target file. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
-  "requirement": "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices."
+  "rationale": "Review pending: reassess the changed input, all applicable definitions and citations, and the behavior they jointly specify. Rechecked the added implementation citations on App::new, confirm_add, and normalize_recent_ports: the revised port-history and remote-port texts jointly require recency-based retention and numeric picker presentation.",
+  "requirement": "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices."
 }

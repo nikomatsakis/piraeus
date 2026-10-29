@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 281,
-      "line_start": 275,
+      "line_end": 279,
+      "line_start": 273,
       "text": [
         "    fn port_is_free(&self, port: u16) -> bool {",
         "        !self",
@@ -17,8 +17,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 545,
-      "line_start": 545,
+      "line_end": 543,
+      "line_start": 543,
       "text": [
         "    // {impl}`requirements.forwarding.manual_conflict`"
       ]
@@ -26,7 +26,7 @@
     {
       "file": "src/app.rs",
       "line_end": 625,
-      "line_start": 552,
+      "line_start": 550,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -93,9 +93,11 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.remote_port`",
         "        // {impl}`requirements.forwarding.add.port_history`",
         "        self.recent_remote_ports.retain(|port| *port != remote_port);",
         "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
         "        self.message = None;",
         "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
         "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -188,8 +190,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 274,
-      "line_start": 274,
+      "line_end": 272,
+      "line_start": 272,
       "text": [
         "    // {impl}`requirements.forwarding.manual_conflict`"
       ]
@@ -211,6 +213,6 @@
       ]
     }
   ],
-  "rationale": "Checked manual-port availability against managed processes and OS occupancy; busy manual choices stay in the dialog and do not stop another process. Both conflict tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "rationale": "Checked manual-port availability against managed processes and OS occupancy; busy manual choices stay in the dialog and do not stop another process. Both conflict tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references. Rechecked the shared confirm_add function after the history change: its local-port and conflict branches are unchanged, while confirmed history now truncates to 22. The previously cited tests and new recent-port tests passed.",
   "requirement": "If a manually entered local port is already occupied, the add-forward dialog MUST show that conflict and require the user to choose a free port before confirming. It MUST NOT stop the occupying process."
 }

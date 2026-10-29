@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 364,
-      "line_start": 339,
+      "line_end": 362,
+      "line_start": 337,
       "text": [
         "    fn on_main_key(&mut self, key: KeyEvent) {",
         "        match key.code {",

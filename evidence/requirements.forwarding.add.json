@@ -3,24 +3,24 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 344,
-      "line_start": 344,
+      "line_end": 342,
+      "line_start": 342,
       "text": [
         "            // {impl}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 388,
-      "line_start": 388,
+      "line_end": 386,
+      "line_start": 386,
       "text": [
         "    // {impl}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 411,
-      "line_start": 389,
+      "line_end": 409,
+      "line_start": 387,
       "text": [
         "    fn on_dialog_key(&mut self, key: KeyEvent) {",
         "        let mut dialog = self.dialog.take().expect(\"dialog exists\");",
@@ -50,7 +50,7 @@
     {
       "file": "src/app.rs",
       "line_end": 625,
-      "line_start": 552,
+      "line_start": 550,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -117,9 +117,11 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.remote_port`",
         "        // {impl}`requirements.forwarding.add.port_history`",
         "        self.recent_remote_ports.retain(|port| *port != remote_port);",
         "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
         "        self.message = None;",
         "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
         "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -219,16 +221,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 122,
-      "line_start": 122,
+      "line_end": 123,
+      "line_start": 123,
       "text": [
         "    // {impl}`requirements.forwarding.add`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 551,
-      "line_start": 551,
+      "line_end": 549,
+      "line_start": 549,
       "text": [
         "    // {impl}`requirements.forwarding.add`"
       ]
@@ -274,6 +276,6 @@
       ]
     }
   ],
-  "rationale": "Checked the three separate picker stages and their Enter transitions through a keyboard-driven add test; local confirmation creates the table row. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "rationale": "Checked the three separate picker stages and their Enter transitions through a keyboard-driven add test; local confirmation creates the table row. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references. Rechecked the shared confirm_add function after the history change: its local-port and conflict branches are unchanged, while confirmed history now truncates to 22. The previously cited tests and new recent-port tests passed.",
   "requirement": "Pressing `a` MUST begin an add-forward flow with separate host, remote-port, and local-port stages, in that order. Completing the local-port stage with valid selections MUST start the forward and add it to the table."
 }

@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 547,
-      "line_start": 547,
+      "line_end": 545,
+      "line_start": 545,
       "text": [
         "    // {impl}`requirements.forwarding.manual_local_port`"
       ]
@@ -12,7 +12,7 @@
     {
       "file": "src/app.rs",
       "line_end": 625,
-      "line_start": 552,
+      "line_start": 550,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -79,9 +79,11 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.remote_port`",
         "        // {impl}`requirements.forwarding.add.port_history`",
         "        self.recent_remote_ports.retain(|port| *port != remote_port);",
         "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
         "        self.message = None;",
         "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
         "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -242,16 +244,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 216,
-      "line_start": 216,
+      "line_end": 214,
+      "line_start": 214,
       "text": [
         "    // {impl}`requirements.forwarding.manual_local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 507,
-      "line_start": 507,
+      "line_end": 505,
+      "line_start": 505,
       "text": [
         "    // {impl}`requirements.forwarding.manual_local_port`"
       ]
@@ -265,6 +267,6 @@
       ]
     }
   ],
-  "rationale": "Checked the editable manual radio choice and that confirmation preserves the remote port while using the entered local port. Model and UI tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "rationale": "Checked the editable manual radio choice and that confirmation preserves the remote port while using the entered local port. Model and UI tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references. Rechecked the shared confirm_add function after the history change: its local-port and conflict branches are unchanged, while confirmed history now truncates to 22. The previously cited tests and new recent-port tests passed.",
   "requirement": "In every add-forward case, the dialog MUST offer a radio choice that lets the user enter an alternative **local** port explicitly. The entered remote port MUST remain unchanged when the user chooses an alternative local port."
 }
