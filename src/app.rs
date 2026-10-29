@@ -1,5 +1,6 @@
 use crossterm::event::{KeyCode, KeyEvent, KeyModifiers};
 
+use crate::history::{self, RECENT_PORTS_LIMIT};
 use crate::ports::{first_free_after, parse_port};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -149,17 +150,6 @@ fn is_host_char(ch: char) -> bool {
     !ch.is_control() && !ch.is_whitespace() && ch != '?'
 }
 
-// {impl}`requirements.forwarding.add.remote_port`
-fn distinct_ports(ports: Vec<u16>) -> Vec<u16> {
-    let mut distinct = Vec::new();
-    for port in ports {
-        if port != 0 && !distinct.contains(&port) {
-            distinct.push(port);
-        }
-    }
-    distinct
-}
-
 pub struct App {
     backend: Box<dyn Backend>,
     pub hosts: Vec<String>,
@@ -175,6 +165,7 @@ pub struct App {
 }
 
 impl App {
+    // {impl}`requirements.forwarding.add.remote_port`
     // {impl}`requirements.forwarding.add.port_history`
     // {impl}`requirements.forwarding.host_discovery`
     // {impl}`requirements.tui.table`
@@ -184,7 +175,7 @@ impl App {
             Err(error) => (Vec::new(), Some(error)),
         };
         let (recent_remote_ports, message) = match backend.load_recent_ports() {
-            Ok(ports) => (distinct_ports(ports), None),
+            Ok(ports) => (history::normalize_recent_ports(ports), None),
             Err(error) => (
                 Vec::new(),
                 Some(format!("Could not load recent ports: {error}")),
@@ -203,6 +194,13 @@ impl App {
             should_quit: false,
             message,
         }
+    }
+
+    // {impl}`requirements.forwarding.add.remote_port`
+    pub fn displayed_recent_ports(&self) -> Vec<u16> {
+        let mut ports = self.recent_remote_ports.clone();
+        ports.sort_unstable();
+        ports
     }
 
     // {impl}`requirements.tui.selection`
@@ -496,7 +494,7 @@ impl App {
         if dialog.remote_index == self.recent_remote_ports.len() {
             parse_port(&dialog.remote_input)
         } else {
-            self.recent_remote_ports
+            self.displayed_recent_ports()
                 .get(dialog.remote_index)
                 .copied()
                 .ok_or("Select a recent port or enter another port.")
@@ -614,9 +612,11 @@ impl App {
             remote_port,
             local_port,
         });
+        // {impl}`requirements.forwarding.add.remote_port`
         // {impl}`requirements.forwarding.add.port_history`
         self.recent_remote_ports.retain(|port| *port != remote_port);
         self.recent_remote_ports.insert(0, remote_port);
+        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);
         self.message = None;
         if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {
             self.message = Some(format!("Could not save recent ports: {error}"));
@@ -986,6 +986,7 @@ mod tests {
         add(&mut app, "9000", Choice::Preferred, "", 0);
         app.on_key(key(KeyCode::Char('x')));
         assert_eq!(app.recent_remote_ports, [9000, 8030]);
+        assert_eq!(app.displayed_recent_ports(), [8030, 9000]);
         drop(app);
 
         let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec!["chronos".into()]));
@@ -993,7 +994,6 @@ mod tests {
         app.on_key(key(KeyCode::Enter));
         assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);
         assert_eq!(app.recent_remote_ports, [9000, 8030]);
-        app.on_key(key(KeyCode::Down));
         app.on_key(key(KeyCode::Enter));
         assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(8030));
         app.on_key(key(KeyCode::Enter));
@@ -1260,5 +1260,40 @@ mod tests {
         assert!(app.show_help);
         app.on_key(key(KeyCode::Char('?')));
         assert!(!app.show_help);
+    }
+
+    // {test}`requirements.forwarding.add.port_history`
+    // {test}`requirements.forwarding.add.remote_port`
+    #[test]
+    fn recent_ports_keep_22_most_recent_and_numeric_selection() {
+        let mut saved: Vec<u16> = (8000..8025).rev().collect();
+        saved.insert(1, 8024);
+        saved.insert(2, 0);
+        let state = Rc::new(RefCell::new(FakeState {
+            recent_ports: saved,
+            ..FakeState::default()
+        }));
+        let mut app = App::new(
+            Box::new(FakeBackend(state.clone())),
+            Ok(vec!["chronos".into()]),
+        );
+        let expected: Vec<u16> = (8003..8025).rev().collect();
+        assert_eq!(app.recent_remote_ports, expected);
+        assert_eq!(
+            app.displayed_recent_ports(),
+            (8003..8025).collect::<Vec<u16>>()
+        );
+
+        add(&mut app, "7000", Choice::Preferred, "", 0);
+        let expected_saved: Vec<u16> = std::iter::once(7000).chain((8004..8025).rev()).collect();
+        assert_eq!(state.borrow().recent_ports, expected_saved);
+        drop(app);
+
+        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec!["chronos".into()]));
+        assert_eq!(app.recent_remote_ports, expected_saved);
+        app.on_key(key(KeyCode::Char('a')));
+        app.on_key(key(KeyCode::Enter));
+        app.on_key(key(KeyCode::Enter));
+        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(7000));
     }
 }

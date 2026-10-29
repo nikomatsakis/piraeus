@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 351,
-      "line_start": 351,
+      "line_end": 349,
+      "line_start": 349,
       "text": [
         "            // {impl}`requirements.browser.open`"
       ]
@@ -88,8 +88,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 34,
-      "line_start": 34,
+      "line_end": 35,
+      "line_start": 35,
       "text": [
         "    // {impl}`requirements.browser.open`"
       ]

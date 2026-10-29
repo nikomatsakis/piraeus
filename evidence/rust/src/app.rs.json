@@ -220,12 +220,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed trait[Backend]/fn[load_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend contract loads persisted remote-port history before the picker is shown. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed trait[Backend]/fn[load_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend contract loads persisted remote-port history before the picker is shown. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "trait[Backend]/fn[load_recent_ports]"
     },
     {
@@ -252,12 +252,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed trait[Backend]/fn[save_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend contract persists remote-port history after a confirmed selection. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed trait[Backend]/fn[save_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend contract persists remote-port history after a confirmed selection. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "trait[Backend]/fn[save_recent_ports]"
     },
     {
@@ -485,7 +485,7 @@
           "requirements": "requirements.forwarding.add.remote_port",
           "text": [
             ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
             ":::"
           ]
         },
@@ -501,7 +501,7 @@
           ]
         }
       ],
-      "rationale": "Reviewed fn[wrap_index] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, `requirements.tui.selection`, which are the applicable cited definitions. The helper wraps keyboard selection through table rows and the host, remote-port, and local-port picker options without changing their values. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[wrap_index] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, `requirements.tui.selection`, which are the applicable cited definitions. The helper wraps keyboard selection through table rows and the host, remote-port, and local-port picker options without changing their values. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[wrap_index]"
     },
     {
@@ -541,47 +541,11 @@
     {
       "citations": [
         {
-          "name": "requirements.forwarding.add.remote_port",
+          "name": "requirements.forwarding.add.port_history",
           "role": "impl"
-        }
-      ],
-      "determination": true,
-      "inputs": [
-        {
-          "rust_file": "src/app.rs",
-          "rust_item": "fn[distinct_ports]",
-          "text": [
-            "// {impl}`requirements.forwarding.add.remote_port`",
-            "fn distinct_ports(ports: Vec<u16>) -> Vec<u16> {",
-            "    let mut distinct = Vec::new();",
-            "    for port in ports {",
-            "        if port != 0 && !distinct.contains(&port) {",
-            "            distinct.push(port);",
-            "        }",
-            "    }",
-            "    distinct",
-            "}"
-          ]
         },
         {
-          "matches": [
-            "requirements.forwarding.add.remote_port"
-          ],
-          "requirements": "requirements.forwarding.add.remote_port",
-          "text": [
-            ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
-            ":::"
-          ]
-        }
-      ],
-      "rationale": "Reviewed fn[distinct_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The helper removes duplicate and zero remote ports while keeping history order for the recent-port picker. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
-      "rust_item": "fn[distinct_ports]"
-    },
-    {
-      "citations": [
-        {
-          "name": "requirements.forwarding.add.port_history",
+          "name": "requirements.forwarding.add.remote_port",
           "role": "impl"
         },
         {
@@ -599,6 +563,7 @@
           "rust_file": "src/app.rs",
           "rust_item": "impl[App]/fn[new]",
           "text": [
+            "    // {impl}`requirements.forwarding.add.remote_port`",
             "    // {impl}`requirements.forwarding.add.port_history`",
             "    // {impl}`requirements.forwarding.host_discovery`",
             "    // {impl}`requirements.tui.table`",
@@ -608,7 +573,7 @@
             "            Err(error) => (Vec::new(), Some(error)),",
             "        };",
             "        let (recent_remote_ports, message) = match backend.load_recent_ports() {",
-            "            Ok(ports) => (distinct_ports(ports), None),",
+            "            Ok(ports) => (history::normalize_recent_ports(ports), None),",
             "            Err(error) => (",
             "                Vec::new(),",
             "                Some(format!(\"Could not load recent ports: {error}\")),",
@@ -637,7 +602,7 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         },
@@ -669,9 +634,20 @@
             "| mnemosyne | 8080 | 8081 | 🆇 Error: SSH connection failed |",
             ":::"
           ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.remote_port"
+          ],
+          "requirements": "requirements.forwarding.add.remote_port",
+          "text": [
+            ":::{req} forwarding.add.remote_port",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            ":::"
+          ]
         }
       ],
-      "rationale": "Reviewed impl[App]/fn[new] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, `requirements.forwarding.host_discovery`, `requirements.tui.table`, which are the applicable cited definitions. The constructor stores discovered hosts, loads and deduplicates port history, initializes an empty forward table, and retains load errors for display. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed App::new against port_history, remote_port, host_discovery, and tui.table. On successful history load it normalizes the backend sequence to the first 22 distinct valid ports in recency order, which supplies the remote-port picker with precisely the newest choices; a load error yields an empty list and visible message. The picker sorts these retained ports through displayed_recent_ports. Host and table initialization branches are unchanged. The four cited definitions jointly cover its effects, and the cap is exercised by recent_ports_keep_22_most_recent_and_numeric_selection.",
       "rust_item": "impl[App]/fn[new]"
     },
     {
@@ -1525,12 +1501,12 @@
           "requirements": "requirements.forwarding.add.remote_port",
           "text": [
             ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed impl[App]/fn[on_remote_port_key] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The method navigates recent ports, types into Other, and advances only after a valid remote port has been selected. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed impl[App]/fn[on_remote_port_key] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The method navigates recent ports, types into Other, and advances only after a valid remote port has been selected. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "impl[App]/fn[on_remote_port_key]"
     },
     {
@@ -1556,7 +1532,7 @@
             "        if dialog.remote_index == self.recent_remote_ports.len() {",
             "            parse_port(&dialog.remote_input)",
             "        } else {",
-            "            self.recent_remote_ports",
+            "            self.displayed_recent_ports()",
             "                .get(dialog.remote_index)",
             "                .copied()",
             "                .ok_or(\"Select a recent port or enter another port.\")",
@@ -1571,7 +1547,7 @@
           "requirements": "requirements.forwarding.add.remote_port",
           "text": [
             ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
             ":::"
           ]
         },
@@ -1587,7 +1563,7 @@
           ]
         }
       ],
-      "rationale": "Reviewed impl[App]/fn[selected_remote_port] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.remote_port`, `requirements.forwarding.port_validation`, which are the applicable cited definitions. The method returns the recent choice or parses the typed port, rejecting missing or out-of-range values before the local stage. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed selected_remote_port against remote_port and port_validation. The Other index parses the typed port and reports invalid input; a recent index now looks up the same numerically sorted sequence that the UI renders, and an out-of-range index returns the existing selection error. recent_remote_ports_survive_removal_and_new_app_instance selects 8030 first even though 9000 was used later. Both cited definitions cover these branches.",
       "rust_item": "impl[App]/fn[selected_remote_port]"
     },
     {
@@ -1727,6 +1703,10 @@
           "role": "impl"
         },
         {
+          "name": "requirements.forwarding.add.remote_port",
+          "role": "impl"
+        },
+        {
           "name": "requirements.forwarding.default_local_port",
           "role": "impl"
         },
@@ -1834,9 +1814,11 @@
             "            remote_port,",
             "            local_port,",
             "        });",
+            "        // {impl}`requirements.forwarding.add.remote_port`",
             "        // {impl}`requirements.forwarding.add.port_history`",
             "        self.recent_remote_ports.retain(|port| *port != remote_port);",
             "        self.recent_remote_ports.insert(0, remote_port);",
+            "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
             "        self.message = None;",
             "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
             "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -1863,7 +1845,7 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         },
@@ -1959,9 +1941,20 @@
             "```",
             ":::"
           ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.remote_port"
+          ],
+          "requirements": "requirements.forwarding.add.remote_port",
+          "text": [
+            ":::{req} forwarding.add.remote_port",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            ":::"
+          ]
         }
       ],
-      "rationale": "Reviewed impl[App]/fn[confirm_add] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add`, `requirements.forwarding.add.port_history`, `requirements.forwarding.default_local_port`, `requirements.forwarding.managed_conflict_choices`, `requirements.forwarding.manual_conflict`, `requirements.forwarding.manual_local_port`, `requirements.forwarding.port_validation`, `requirements.forwarding.suggestion_exhausted`, `requirements.forwarding.unmanaged_conflict_choices`, which are the applicable cited definitions. The method validates host and port choices, handles free, manual, suggested, managed, and unmanaged conflicts, stops a replaced managed process, starts the chosen forward, and persists remote-port history only after confirmation. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed confirm_add and its cited add-flow, remote-port picker, history, local-port choice, conflict, and validation requirements. All invalid-selection and port-conflict exits precede history mutation. After a valid confirmation, it moves the remote port to the front, truncates history to 22, and persists that recency sequence; the two history and remote-port requirements jointly specify this behavior and the resulting bounded picker choices. The existing save-error, conflict, and local-port branches remain covered by their citations. The recent-port model tests cover the cap, repeated confirmation, and eviction.",
       "rust_item": "impl[App]/fn[confirm_add]"
     },
     {
@@ -2717,12 +2710,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/impl[FakeBackend/Backend]/fn[load_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The fake returns stored history so picker and cross-instance persistence tests can assert recent choices. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/impl[FakeBackend/Backend]/fn[load_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The fake returns stored history so picker and cross-instance persistence tests can assert recent choices. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/impl[FakeBackend/Backend]/fn[load_recent_ports]"
     },
     {
@@ -2752,12 +2745,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/impl[FakeBackend/Backend]/fn[save_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The fake records confirmed remote ports for persistence and ordering assertions. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/impl[FakeBackend/Backend]/fn[save_recent_ports] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The fake records confirmed remote ports for persistence and ordering assertions. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/impl[FakeBackend/Backend]/fn[save_recent_ports]"
     },
     {
@@ -3028,12 +3021,12 @@
           "requirements": "requirements.forwarding.add.remote_port",
           "text": [
             ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[type_text] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The helper sends each typed character through App::on_key for host, remote-port, and manual local-port tests. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/fn[type_text] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The helper sends each typed character through App::on_key for host, remote-port, and manual local-port tests. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/fn[type_text]"
     },
     {
@@ -3128,12 +3121,12 @@
           "requirements": "requirements.forwarding.add.remote_port",
           "text": [
             ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[add] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add`, `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The helper drives all three picker stages through keyboard events and confirms the chosen port for add-flow tests. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/fn[add] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add`, `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The helper drives all three picker stages through keyboard events and confirms the chosen port for add-flow tests. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/fn[add]"
     },
     {
@@ -3314,12 +3307,12 @@
           "requirements": "requirements.forwarding.add.remote_port",
           "text": [
             ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[keyboard_can_choose_host_enter_port_and_select_radio_option] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add`, `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The test navigates host, typed remote port, and typed manual local port, then checks the resulting forward spec. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/fn[keyboard_can_choose_host_enter_port_and_select_radio_option] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add`, `requirements.forwarding.add.host`, `requirements.forwarding.add.local_port`, `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The test navigates host, typed remote port, and typed manual local port, then checks the resulting forward spec. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/fn[keyboard_can_choose_host_enter_port_and_select_radio_option]"
     },
     {
@@ -3455,6 +3448,7 @@
             "        add(&mut app, \"9000\", Choice::Preferred, \"\", 0);",
             "        app.on_key(key(KeyCode::Char('x')));",
             "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
+            "        assert_eq!(app.displayed_recent_ports(), [8030, 9000]);",
             "        drop(app);",
             "",
             "        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec![\"chronos\".into()]));",
@@ -3462,7 +3456,6 @@
             "        app.on_key(key(KeyCode::Enter));",
             "        assert_eq!(app.dialog.as_ref().unwrap().stage, AddStage::RemotePort);",
             "        assert_eq!(app.recent_remote_ports, [9000, 8030]);",
-            "        app.on_key(key(KeyCode::Down));",
             "        app.on_key(key(KeyCode::Enter));",
             "        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(8030));",
             "        app.on_key(key(KeyCode::Enter));",
@@ -3477,7 +3470,7 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         },
@@ -3488,12 +3481,12 @@
           "requirements": "requirements.forwarding.add.remote_port",
           "text": [
             ":::{req} forwarding.add.remote_port",
-            "The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[recent_remote_ports_survive_removal_and_new_app_instance] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, `requirements.forwarding.add.remote_port`, which are the applicable cited definitions. The test confirms two remote ports, removes a forward, creates a new app, and checks saved history order and recent selection. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed this test against remote_port and port_history. It confirms 8030 then 9000, removes a forward, checks that history still has both ports, and creates a second App from the saved backend state. The picker display is numeric [8030, 9000], selecting its first entry confirms 8030, and persistence moves 8030 to the front of recency history. Both cited definitions explain the assertions; the test passed.",
       "rust_item": "mod[tests]/fn[recent_remote_ports_survive_removal_and_new_app_instance]"
     },
     {
@@ -4294,6 +4287,121 @@
       ],
       "rationale": "Reviewed mod[tests]/fn[help_toggle_works_while_add_dialog_is_open] in src/app.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.help.shortcuts`, which are the applicable cited definitions. The test opens the add dialog, toggles help twice, and checks the help state changes without cancelling the dialog. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
       "rust_item": "mod[tests]/fn[help_toggle_works_while_add_dialog_is_open]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.add.remote_port",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/app.rs",
+          "rust_item": "impl[App]/fn[displayed_recent_ports]",
+          "text": [
+            "    // {impl}`requirements.forwarding.add.remote_port`",
+            "    pub fn displayed_recent_ports(&self) -> Vec<u16> {",
+            "        let mut ports = self.recent_remote_ports.clone();",
+            "        ports.sort_unstable();",
+            "        ports",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.remote_port"
+          ],
+          "requirements": "requirements.forwarding.add.remote_port",
+          "text": [
+            ":::{req} forwarding.add.remote_port",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed this helper against the remote_port definition and its callers. It clones the already capped recency history and sorts u16 values in ascending numeric order. The renderer and selection lookup call this same helper, so displayed order and selected port agree; the saved recency order is preserved. The remote_port citation covers its complete behavior, and numeric display and selection tests passed.",
+      "rust_item": "impl[App]/fn[displayed_recent_ports]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.add.port_history",
+          "role": "test"
+        },
+        {
+          "name": "requirements.forwarding.add.remote_port",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/app.rs",
+          "rust_item": "mod[tests]/fn[recent_ports_keep_22_most_recent_and_numeric_selection]",
+          "text": [
+            "    // {test}`requirements.forwarding.add.port_history`",
+            "    // {test}`requirements.forwarding.add.remote_port`",
+            "    #[test]",
+            "    fn recent_ports_keep_22_most_recent_and_numeric_selection() {",
+            "        let mut saved: Vec<u16> = (8000..8025).rev().collect();",
+            "        saved.insert(1, 8024);",
+            "        saved.insert(2, 0);",
+            "        let state = Rc::new(RefCell::new(FakeState {",
+            "            recent_ports: saved,",
+            "            ..FakeState::default()",
+            "        }));",
+            "        let mut app = App::new(",
+            "            Box::new(FakeBackend(state.clone())),",
+            "            Ok(vec![\"chronos\".into()]),",
+            "        );",
+            "        let expected: Vec<u16> = (8003..8025).rev().collect();",
+            "        assert_eq!(app.recent_remote_ports, expected);",
+            "        assert_eq!(",
+            "            app.displayed_recent_ports(),",
+            "            (8003..8025).collect::<Vec<u16>>()",
+            "        );",
+            "",
+            "        add(&mut app, \"7000\", Choice::Preferred, \"\", 0);",
+            "        let expected_saved: Vec<u16> = std::iter::once(7000).chain((8004..8025).rev()).collect();",
+            "        assert_eq!(state.borrow().recent_ports, expected_saved);",
+            "        drop(app);",
+            "",
+            "        let mut app = App::new(Box::new(FakeBackend(state)), Ok(vec![\"chronos\".into()]));",
+            "        assert_eq!(app.recent_remote_ports, expected_saved);",
+            "        app.on_key(key(KeyCode::Char('a')));",
+            "        app.on_key(key(KeyCode::Enter));",
+            "        app.on_key(key(KeyCode::Enter));",
+            "        assert_eq!(app.dialog.as_ref().unwrap().chosen_remote_port, Some(7000));",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.port_history"
+          ],
+          "requirements": "requirements.forwarding.add.port_history",
+          "text": [
+            ":::{req} forwarding.add.port_history",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.remote_port"
+          ],
+          "requirements": "requirements.forwarding.add.remote_port",
+          "text": [
+            ":::{req} forwarding.add.remote_port",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed this test against port_history and remote_port. It starts with 25 distinct recency-ordered ports plus a duplicate and zero, checks the newest 22 remain and that choices sort numerically, then confirms 7000. It checks eviction of the oldest port, the exact saved order, reload into a new App, and picker selection. These assertions cover the cap, deduplication, recency persistence, numeric presentation, and selection; the test passed.",
+      "rust_item": "mod[tests]/fn[recent_ports_keep_22_most_recent_and_numeric_selection]"
     }
   ],
   "rust_file": "src/app.rs"

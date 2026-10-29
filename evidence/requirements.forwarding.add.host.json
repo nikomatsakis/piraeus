@@ -3,16 +3,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 413,
-      "line_start": 413,
+      "line_end": 411,
+      "line_start": 411,
       "text": [
         "    // {impl}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 443,
-      "line_start": 414,
+      "line_end": 441,
+      "line_start": 412,
       "text": [
         "    fn on_host_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -48,8 +48,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 453,
-      "line_start": 446,
+      "line_end": 451,
+      "line_start": 444,
       "text": [
         "    fn selected_host(&self, dialog: &AddDialog) -> Option<String> {",
         "        if dialog.host_index == self.hosts.len() {",
@@ -276,32 +276,32 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 123,
-      "line_start": 123,
+      "line_end": 124,
+      "line_start": 124,
       "text": [
         "    // {impl}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 139,
-      "line_start": 139,
+      "line_end": 140,
+      "line_start": 140,
       "text": [
         "// {impl}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 147,
-      "line_start": 147,
+      "line_end": 148,
+      "line_start": 148,
       "text": [
         "// {impl}`requirements.forwarding.add.host`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 445,
-      "line_start": 445,
+      "line_end": 443,
+      "line_start": 443,
       "text": [
         "    // {impl}`requirements.forwarding.add.host`"
       ]

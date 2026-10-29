@@ -3,16 +3,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 341,
-      "line_start": 341,
+      "line_end": 339,
+      "line_start": 339,
       "text": [
         "            // {impl}`requirements.tui.selection`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 375,
-      "line_start": 367,
+      "line_end": 373,
+      "line_start": 365,
       "text": [
         "    fn select_next(&mut self) {",
         "        if self.forwards.is_empty() {",
@@ -27,8 +27,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 386,
-      "line_start": 378,
+      "line_end": 384,
+      "line_start": 376,
       "text": [
         "    fn select_previous(&mut self) {",
         "        if self.forwards.is_empty() {",
@@ -195,32 +195,32 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 142,
-      "line_start": 142,
+      "line_end": 143,
+      "line_start": 143,
       "text": [
         "// {impl}`requirements.tui.selection`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 208,
-      "line_start": 208,
+      "line_end": 206,
+      "line_start": 206,
       "text": [
         "    // {impl}`requirements.tui.selection`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 366,
-      "line_start": 366,
+      "line_end": 364,
+      "line_start": 364,
       "text": [
         "    // {impl}`requirements.tui.selection`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 377,
-      "line_start": 377,
+      "line_end": 375,
+      "line_start": 375,
       "text": [
         "    // {impl}`requirements.tui.selection`"
       ]

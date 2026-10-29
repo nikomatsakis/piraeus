@@ -163,16 +163,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 58,
-      "line_start": 58,
+      "line_end": 59,
+      "line_start": 59,
       "text": [
         "    // {impl}`requirements.tui.table`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 180,
-      "line_start": 180,
+      "line_end": 171,
+      "line_start": 171,
       "text": [
         "    // {impl}`requirements.tui.table`"
       ]

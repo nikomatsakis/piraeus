@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 313,
-      "line_start": 285,
+      "line_end": 311,
+      "line_start": 283,
       "text": [
         "    pub fn tick(&mut self) -> bool {",
         "        let mut changed = false;",
@@ -141,16 +141,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 22,
-      "line_start": 22,
+      "line_end": 23,
+      "line_start": 23,
       "text": [
         "    // {impl}`requirements.forwarding.startup_state`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 284,
-      "line_start": 284,
+      "line_end": 282,
+      "line_start": 282,
       "text": [
         "    // {impl}`requirements.forwarding.startup_state`"
       ]

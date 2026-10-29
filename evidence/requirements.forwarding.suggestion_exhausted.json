@@ -3,8 +3,8 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 271,
-      "line_start": 219,
+      "line_end": 269,
+      "line_start": 217,
       "text": [
         "    pub fn port_choices(&self, preferred: u16) -> PortChoices {",
         "        let conflict = self",
@@ -63,8 +63,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 550,
-      "line_start": 550,
+      "line_end": 548,
+      "line_start": 548,
       "text": [
         "    // {impl}`requirements.forwarding.suggestion_exhausted`"
       ]
@@ -138,8 +138,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 217,
-      "line_start": 217,
+      "line_end": 215,
+      "line_start": 215,
       "text": [
         "    // {impl}`requirements.forwarding.suggestion_exhausted`"
       ]

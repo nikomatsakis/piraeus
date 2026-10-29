@@ -40,11 +40,11 @@ The host stage MUST list hosts discovered from the user's SSH configuration and 
 :::
 
 :::{req} forwarding.add.remote_port
-The remote-port stage MUST list distinct remote ports confirmed earlier in this or a previous application run, most recent first, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.
+The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.
 :::
 
 :::{req} forwarding.add.port_history
-The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.
+The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.
 :::
 
 :::{req} forwarding.add.local_port

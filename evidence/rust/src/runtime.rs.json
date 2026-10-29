@@ -214,12 +214,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[load_recent_ports] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend delegates startup history loading and legacy migration to the history module. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[load_recent_ports] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend delegates startup history loading and legacy migration to the history module. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "impl[SystemBackend/Backend]/fn[load_recent_ports]"
     },
     {
@@ -248,12 +248,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[save_recent_ports] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend resolves the selected config path and persists confirmed remote-port history. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed impl[SystemBackend/Backend]/fn[save_recent_ports] in src/runtime.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The backend resolves the selected config path and persists confirmed remote-port history. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "impl[SystemBackend/Backend]/fn[save_recent_ports]"
     },
     {

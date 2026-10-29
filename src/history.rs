@@ -6,10 +6,27 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
+pub const RECENT_PORTS_LIMIT: usize = 22;
+
 #[derive(Default, Deserialize, Serialize)]
 struct PiraeusConfig {
     #[serde(default)]
     recent_remote_ports: Vec<u16>,
+}
+
+// {impl}`requirements.forwarding.add.remote_port`
+// {impl}`requirements.forwarding.add.port_history`
+pub fn normalize_recent_ports(ports: impl IntoIterator<Item = u16>) -> Vec<u16> {
+    let mut distinct = Vec::new();
+    for port in ports {
+        if port != 0 && !distinct.contains(&port) {
+            distinct.push(port);
+            if distinct.len() == RECENT_PORTS_LIMIT {
+                break;
+            }
+        }
+    }
+    distinct
 }
 
 // {impl}`requirements.forwarding.add.port_history`
@@ -98,13 +115,13 @@ pub fn load_recent_ports(path: &Path) -> Result<Vec<u16>, String> {
     };
     let config: PiraeusConfig = toml::from_str(&text)
         .map_err(|error| format!("Could not parse {}: {error}", path.display()))?;
-    Ok(config.recent_remote_ports)
+    Ok(normalize_recent_ports(config.recent_remote_ports))
 }
 
 // {impl}`requirements.forwarding.add.port_history`
 pub fn save_recent_ports(path: &Path, ports: &[u16]) -> Result<(), String> {
     let text = toml::to_string_pretty(&PiraeusConfig {
-        recent_remote_ports: ports.to_vec(),
+        recent_remote_ports: normalize_recent_ports(ports.iter().copied()),
     })
     .map_err(|error| format!("Could not encode recent ports: {error}"))?;
     if let Some(parent) = path.parent() {
@@ -227,5 +244,37 @@ mod tests {
             .unwrap()
             .as_nanos();
         env::temp_dir().join(format!("piraeus-history-{}-{suffix}", std::process::id()))
+    }
+
+    // {test}`requirements.forwarding.add.port_history`
+    #[test]
+    fn saved_and_imported_history_keep_22_recent_distinct_ports() {
+        let directory = temporary_directory();
+        let path = directory.join("piraeus").join("config.toml");
+        let mut ports: Vec<u16> = (8000..8025).rev().collect();
+        ports.insert(1, 8024);
+        ports.insert(2, 0);
+        let expected: Vec<u16> = (8003..8025).rev().collect();
+
+        save_recent_ports(&path, &ports).unwrap();
+        let saved: PiraeusConfig = toml::from_str(&fs::read_to_string(&path).unwrap()).unwrap();
+        assert_eq!(saved.recent_remote_ports, expected);
+
+        let legacy_path = directory.join(".piraeus.toml");
+        let legacy_text = toml::to_string_pretty(&PiraeusConfig {
+            recent_remote_ports: ports,
+        })
+        .unwrap();
+        fs::write(&legacy_path, legacy_text).unwrap();
+        assert_eq!(load_recent_ports(&legacy_path).unwrap(), expected);
+        let imported_path = directory.join("imported").join("config.toml");
+        assert_eq!(
+            load_or_import(&imported_path, &[legacy_path]).unwrap(),
+            expected
+        );
+        let imported: PiraeusConfig =
+            toml::from_str(&fs::read_to_string(&imported_path).unwrap()).unwrap();
+        assert_eq!(imported.recent_remote_ports, expected);
+        fs::remove_dir_all(directory).unwrap();
     }
 }

@@ -3,16 +3,16 @@
   "inputs": [
     {
       "file": "src/app.rs",
-      "line_end": 506,
-      "line_start": 506,
+      "line_end": 504,
+      "line_start": 504,
       "text": [
         "    // {impl}`requirements.forwarding.add.local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 528,
-      "line_start": 509,
+      "line_end": 526,
+      "line_start": 507,
       "text": [
         "    fn on_local_port_key(&self, dialog: &mut AddDialog, key: KeyEvent) {",
         "        match key.code {",
@@ -38,8 +38,8 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 542,
-      "line_start": 531,
+      "line_end": 540,
+      "line_start": 529,
       "text": [
         "    fn move_local_choice(&self, dialog: &mut AddDialog, direction: isize) {",
         "        let Some(remote_port) = dialog.chosen_remote_port else {",
@@ -58,7 +58,7 @@
     {
       "file": "src/app.rs",
       "line_end": 625,
-      "line_start": 552,
+      "line_start": 550,
       "text": [
         "    fn confirm_add(&mut self, mut dialog: AddDialog) {",
         "        let Some(host) = self.selected_host(&dialog) else {",
@@ -125,9 +125,11 @@
         "            remote_port,",
         "            local_port,",
         "        });",
+        "        // {impl}`requirements.forwarding.add.remote_port`",
         "        // {impl}`requirements.forwarding.add.port_history`",
         "        self.recent_remote_ports.retain(|port| *port != remote_port);",
         "        self.recent_remote_ports.insert(0, remote_port);",
+        "        self.recent_remote_ports.truncate(RECENT_PORTS_LIMIT);",
         "        self.message = None;",
         "        if let Err(error) = self.backend.save_recent_ports(&self.recent_remote_ports) {",
         "            self.message = Some(format!(\"Could not save recent ports: {error}\"));",
@@ -285,16 +287,16 @@
     },
     {
       "file": "src/app.rs",
-      "line_end": 140,
-      "line_start": 140,
+      "line_end": 141,
+      "line_start": 141,
       "text": [
         "// {impl}`requirements.forwarding.add.local_port`"
       ]
     },
     {
       "file": "src/app.rs",
-      "line_end": 530,
-      "line_start": 530,
+      "line_end": 528,
+      "line_start": 528,
       "text": [
         "    // {impl}`requirements.forwarding.add.local_port`"
       ]
@@ -324,6 +326,6 @@
       ]
     }
   ],
-  "rationale": "Checked conflict-dependent radio choices, arrow selection, direct manual numeric entry, and Enter confirmation. Model and rendering tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references.",
+  "rationale": "Checked conflict-dependent radio choices, arrow selection, direct manual numeric entry, and Enter confirmation. Model and rendering tests passed. Habeas 0.2 review: checked the added per-function citations against the unchanged product code and its behavior tests; the refreshed inputs show the same implementation with explicit function references. Rechecked the shared confirm_add function after the history change: its local-port and conflict branches are unchanged, while confirmed history now truncates to 22. The previously cited tests and new recent-port tests passed.",
   "requirement": "The local-port stage MUST show the applicable radio-style local-port choices with one visibly selected. `↑` and `↓` MUST move the selection. Typing digits MUST select the manual local-port choice and enter an alternative local port without a focus change. Pressing `Enter` with a valid choice MUST complete the add-forward flow."
 }

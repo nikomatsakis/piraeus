@@ -4,14 +4,50 @@
 }
 
 .habeas-shield {
-  display: block;
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+a.habeas-req-badge,
+a.habeas-req-badge:visited {
+  color: inherit;
+  text-decoration: none;
 }
 
 a.habeas-req-badge:hover {
-  filter: brightness(1.12);
+  filter: brightness(1.08);
 }
 
 a.habeas-req-badge:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
+}
+
+/* The three steps at the start of the intro. */
+#mdbook-content main > h1#habeas-codicem ~ ol:first-of-type {
+  counter-reset: intro-step;
+  list-style: none;
+  padding-left: 0;
+}
+
+#mdbook-content main > h1#habeas-codicem ~ ol:first-of-type > li {
+  counter-increment: intro-step;
+  margin: 0.9rem 0 1.25rem;
+  padding: 0.4em 0 0.4em 4.5rem;
+  position: relative;
+}
+
+#mdbook-content main > h1#habeas-codicem ~ ol:first-of-type > li::before {
+  color: var(--fg);
+  content: counter(intro-step) ".";
+  font-size: 2.25em;
+  font-weight: 700;
+  left: 0;
+  line-height: 1;
+  position: absolute;
+  text-align: right;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3.4rem;
 }

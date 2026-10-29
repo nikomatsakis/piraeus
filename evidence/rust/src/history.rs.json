@@ -28,12 +28,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[config_path] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The function reads HOME and XDG_CONFIG_HOME and returns the required current history path. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[config_path] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The function reads HOME and XDG_CONFIG_HOME and returns the required current history path. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[config_path]"
     },
     {
@@ -67,12 +67,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[load_and_migrate_recent_ports] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The function selects the current XDG path, builds legacy candidates, and loads or imports the first available history. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[load_and_migrate_recent_ports] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The function selects the current XDG path, builds legacy candidates, and loads or imports the first available history. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[load_and_migrate_recent_ports]"
     },
     {
@@ -106,12 +106,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[choose_config_path] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper appends piraeus/config.toml to the chosen configuration directory. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[choose_config_path] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper appends piraeus/config.toml to the chosen configuration directory. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[choose_config_path]"
     },
     {
@@ -151,12 +151,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[choose_config_directory] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper accepts an absolute XDG_CONFIG_HOME or falls back to HOME/.config, reporting when neither gives a path. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[choose_config_directory] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper accepts an absolute XDG_CONFIG_HOME or falls back to HOME/.config, reporting when neither gives a path. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[choose_config_directory]"
     },
     {
@@ -193,12 +193,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[legacy_config_paths] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper orders the prior piraeus, XDG pfm, and home pfm locations searched for migration. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[legacy_config_paths] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper orders the prior piraeus, XDG pfm, and home pfm locations searched for migration. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[legacy_config_paths]"
     },
     {
@@ -237,12 +237,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[load_or_import] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper prefers existing current history, otherwise copies the first legacy history into the current path, and otherwise starts empty. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[load_or_import] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper prefers existing current history, otherwise copies the first legacy history into the current path, and otherwise starts empty. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[load_or_import]"
     },
     {
@@ -272,12 +272,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[path_exists] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper checks whether a history file exists and propagates filesystem inspection errors with the path. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed fn[path_exists] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper checks whether a history file exists and propagates filesystem inspection errors with the path. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "fn[path_exists]"
     },
     {
@@ -302,7 +302,7 @@
             "    };",
             "    let config: PiraeusConfig = toml::from_str(&text)",
             "        .map_err(|error| format!(\"Could not parse {}: {error}\", path.display()))?;",
-            "    Ok(config.recent_remote_ports)",
+            "    Ok(normalize_recent_ports(config.recent_remote_ports))",
             "}"
           ]
         },
@@ -313,12 +313,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[load_recent_ports] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The function reads recent ports from TOML, treats a missing file as empty history, and reports read or parse errors. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed load_recent_ports against port_history. A missing file still yields empty history, read and TOML errors remain reported, and a successfully decoded array now passes through normalize_recent_ports to retain the first 22 distinct valid ports in recency order. The saved-and-imported-history test covers legacy arrays over the limit. Its cited requirement accounts for the observable load behavior.",
       "rust_item": "fn[load_recent_ports]"
     },
     {
@@ -337,7 +337,7 @@
             "// {impl}`requirements.forwarding.add.port_history`",
             "pub fn save_recent_ports(path: &Path, ports: &[u16]) -> Result<(), String> {",
             "    let text = toml::to_string_pretty(&PiraeusConfig {",
-            "        recent_remote_ports: ports.to_vec(),",
+            "        recent_remote_ports: normalize_recent_ports(ports.iter().copied()),",
             "    })",
             "    .map_err(|error| format!(\"Could not encode recent ports: {error}\"))?;",
             "    if let Some(parent) = path.parent() {",
@@ -355,12 +355,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed fn[save_recent_ports] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The function encodes the ordered ports, creates the destination directory, and writes the current TOML history file. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed save_recent_ports against port_history. It normalizes the incoming recency sequence before TOML encoding, creates the destination directory, and reports encode, directory, or write errors through the existing paths. The saved-and-imported-history test reads the physical TOML back and confirms 22 distinct recency-ordered ports. The port_history citation covers its effects.",
       "rust_item": "fn[save_recent_ports]"
     },
     {
@@ -418,12 +418,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[chooses_xdg_config_home_when_it_is_absolute] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The test checks absolute, relative, empty, and missing XDG values and verifies the legacy path ordering. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/fn[chooses_xdg_config_home_when_it_is_absolute] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The test checks absolute, relative, empty, and missing XDG values and verifies the legacy path ordering. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/fn[chooses_xdg_config_home_when_it_is_absolute]"
     },
     {
@@ -464,12 +464,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[saved_ports_survive_a_reload] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The test writes and reloads recent ports and checks malformed TOML produces a parse error. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/fn[saved_ports_survive_a_reload] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The test writes and reloads recent ports and checks malformed TOML produces a parse error. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/fn[saved_ports_survive_a_reload]"
     },
     {
@@ -542,12 +542,12 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[imports_legacy_history_from_home_or_xdg] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The test exercises all three legacy locations, checks imports persist, and confirms an existing new file wins. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/fn[imports_legacy_history_from_home_or_xdg] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The test exercises all three legacy locations, checks imports persist, and confirms an existing new file wins. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/fn[imports_legacy_history_from_home_or_xdg]"
     },
     {
@@ -580,13 +580,133 @@
           "requirements": "requirements.forwarding.add.port_history",
           "text": [
             ":::{req} forwarding.add.port_history",
-            "The application MUST remember the most recently confirmed remote ports across application runs. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
             ":::"
           ]
         }
       ],
-      "rationale": "Reviewed mod[tests]/fn[temporary_directory] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper creates a unique temporary pathname for history migration tests without touching user configuration. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function.",
+      "rationale": "Reviewed mod[tests]/fn[temporary_directory] in src/history.rs, its callers or test assertions, and the project definitions. The exact requirements inputs snapshot `requirements.forwarding.add.port_history`, which are the applicable cited definitions. The helper creates a unique temporary pathname for history migration tests without touching user configuration. The cited texts jointly account for this function's behavior; no additional definition governs a separate effect of this function. Rechecked the revised recent-port definitions: this unchanged function handles its cited input, navigation, persistence, rendering, or test role with the capped history and numeric picker supplied by the updated functions. Its existing branches introduce no additional behavior.",
       "rust_item": "mod[tests]/fn[temporary_directory]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.add.port_history",
+          "role": "impl"
+        },
+        {
+          "name": "requirements.forwarding.add.remote_port",
+          "role": "impl"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/history.rs",
+          "rust_item": "fn[normalize_recent_ports]",
+          "text": [
+            "// {impl}`requirements.forwarding.add.remote_port`",
+            "// {impl}`requirements.forwarding.add.port_history`",
+            "pub fn normalize_recent_ports(ports: impl IntoIterator<Item = u16>) -> Vec<u16> {",
+            "    let mut distinct = Vec::new();",
+            "    for port in ports {",
+            "        if port != 0 && !distinct.contains(&port) {",
+            "            distinct.push(port);",
+            "            if distinct.len() == RECENT_PORTS_LIMIT {",
+            "                break;",
+            "            }",
+            "        }",
+            "    }",
+            "    distinct",
+            "}"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.port_history"
+          ],
+          "requirements": "requirements.forwarding.add.port_history",
+          "text": [
+            ":::{req} forwarding.add.port_history",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            ":::"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.remote_port"
+          ],
+          "requirements": "requirements.forwarding.add.remote_port",
+          "text": [
+            ":::{req} forwarding.add.remote_port",
+            "The remote-port stage MUST list up to 22 distinct remote ports confirmed earlier in this or a previous application run, selecting the 22 most recently confirmed and displaying them in ascending numeric order, including ports whose forwards were removed. It MUST include an `Other` entry and remain usable when there are no recent ports. `↑` and `↓` MUST move the selection. Typing digits MUST select `Other` and enter a custom remote port without a focus change. Pressing `Enter` with a valid selected port MUST advance to the local-port stage.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed normalize_recent_ports against port_history and remote_port and its App, load, and save callers. It keeps the first occurrence of each nonzero u16, preserving newest-first input order, and stops after 22 distinct ports. Port_history specifies bounded recency persistence, while remote_port specifies selection of the 22 newest distinct picker choices. The two citations jointly cover this normalization; over-limit, duplicate, and zero cases are tested.",
+      "rust_item": "fn[normalize_recent_ports]"
+    },
+    {
+      "citations": [
+        {
+          "name": "requirements.forwarding.add.port_history",
+          "role": "test"
+        }
+      ],
+      "determination": true,
+      "inputs": [
+        {
+          "rust_file": "src/history.rs",
+          "rust_item": "mod[tests]/fn[saved_and_imported_history_keep_22_recent_distinct_ports]",
+          "text": [
+            "    // {test}`requirements.forwarding.add.port_history`",
+            "    #[test]",
+            "    fn saved_and_imported_history_keep_22_recent_distinct_ports() {",
+            "        let directory = temporary_directory();",
+            "        let path = directory.join(\"piraeus\").join(\"config.toml\");",
+            "        let mut ports: Vec<u16> = (8000..8025).rev().collect();",
+            "        ports.insert(1, 8024);",
+            "        ports.insert(2, 0);",
+            "        let expected: Vec<u16> = (8003..8025).rev().collect();",
+            "",
+            "        save_recent_ports(&path, &ports).unwrap();",
+            "        let saved: PiraeusConfig = toml::from_str(&fs::read_to_string(&path).unwrap()).unwrap();",
+            "        assert_eq!(saved.recent_remote_ports, expected);",
+            "",
+            "        let legacy_path = directory.join(\".piraeus.toml\");",
+            "        let legacy_text = toml::to_string_pretty(&PiraeusConfig {",
+            "            recent_remote_ports: ports,",
+            "        })",
+            "        .unwrap();",
+            "        fs::write(&legacy_path, legacy_text).unwrap();",
+            "        assert_eq!(load_recent_ports(&legacy_path).unwrap(), expected);",
+            "        let imported_path = directory.join(\"imported\").join(\"config.toml\");",
+            "        assert_eq!(",
+            "            load_or_import(&imported_path, &[legacy_path]).unwrap(),",
+            "            expected",
+            "        );",
+            "        let imported: PiraeusConfig =",
+            "            toml::from_str(&fs::read_to_string(&imported_path).unwrap()).unwrap();",
+            "        assert_eq!(imported.recent_remote_ports, expected);",
+            "        fs::remove_dir_all(directory).unwrap();",
+            "    }"
+          ]
+        },
+        {
+          "matches": [
+            "requirements.forwarding.add.port_history"
+          ],
+          "requirements": "requirements.forwarding.add.port_history",
+          "text": [
+            ":::{req} forwarding.add.port_history",
+            "The application MUST remember at most the 22 most recently confirmed distinct remote ports across application runs, retaining their recency order in persistent history. It MUST store this history at `$XDG_CONFIG_HOME/piraeus/config.toml` when `XDG_CONFIG_HOME` is an absolute path; when it is unset, empty, or relative, it MUST use the XDG default `~/.config/piraeus/config.toml`. If that file is absent, it MUST import recent ports from an existing `~/.piraeus.toml`, `~/.pfm.toml`, or `pfm/config.toml` in the selected XDG configuration directory and save them to the new path before presenting recent choices.",
+            ":::"
+          ]
+        }
+      ],
+      "rationale": "Reviewed this test against port_history. It writes 25 distinct ports plus a duplicate and zero, asserts that saved TOML contains exactly the newest 22 in recency order, loads an oversized legacy file, imports it, and checks the imported TOML has the same bounded sequence. All interesting save, load, and migration outcomes are asserted; the test passed.",
+      "rust_item": "mod[tests]/fn[saved_and_imported_history_keep_22_recent_distinct_ports]"
     }
   ],
   "rust_file": "src/history.rs"
